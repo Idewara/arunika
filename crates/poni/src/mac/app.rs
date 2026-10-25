@@ -380,6 +380,8 @@ pub struct App {
     oyenza: Option<services::oyenza::OyenzaService>,
     /// The Oyenza page is on screen: its day list stays live (`services::oyenza`).
     oyenza_watch: bool,
+    /// The Health page is on screen (it asks for the phone's steps as it opens).
+    health_shown: bool,
     /// Text we put on the clipboard ourselves (not recorded again).
     own_clip: Option<String>,
     clipboard: Option<services::clipboard::Watcher>,
@@ -494,6 +496,7 @@ impl App {
             fullscreen_hidden: false,
             oyenza: None,
             oyenza_watch: false,
+            health_shown: false,
             own_clip: None,
             clipboard: None,
             drag_hover: false,
@@ -2141,6 +2144,17 @@ impl App {
         }
     }
 
+    /// The Health page came on screen: the steps from the phone, now (unless
+    /// just asked for). Never signed in: nothing starts.
+    fn set_health_shown(&mut self, on: bool) {
+        if on != self.health_shown {
+            self.health_shown = on;
+            if let (true, Some(o)) = (on, &self.oyenza) {
+                o.send(OyenzaCmd::RefreshHealth);
+            }
+        }
+    }
+
     fn tell_oyenza_activity(&self) {
         if let Some(o) = &self.oyenza {
             o.set_activity(self.oyenza_activity());
@@ -2221,6 +2235,12 @@ impl App {
                 self.st.oyenza.updated_unix = Some(self.st.unix);
                 self.remind_bills(&day);
             }
+            OyenzaEvent::Health(next) => {
+                if let Some(steps) = self.st.take_health(next) {
+                    let notice = pages::health::goal_notice(steps, now + oyenza::NOTICE_S);
+                    self.st.show_or_hold(notice, self.fullscreen_hidden);
+                }
+            }
             OyenzaEvent::NoteSaved(saved) => {
                 let o = &mut self.st.oyenza;
                 o.saving = false;
@@ -2244,6 +2264,7 @@ impl App {
             OyenzaEvent::Disconnected { by_server } => {
                 self.end_sign_in();
                 self.st.oyenza = crate::state::OyenzaState::default();
+                self.st.health = None;
                 let (title, subtitle) =
                     if by_server { ("Oyenza disconnected", "Sign in again in Settings") } else { ("Disconnected from Oyenza", "Sign in again any time in Settings") };
                 self.st.notify(Icon::Unlink, palette::TEXT_DIM, title, subtitle, 6.0, None);
@@ -2562,6 +2583,7 @@ impl App {
         self.set_stats(self.mode == Mode::Expanded(PageKind::Today));
         self.set_sysmon(self.mode == Mode::Expanded(PageKind::System));
         self.set_oyenza_watch(self.mode == Mode::Expanded(PageKind::Oyenza));
+        self.set_health_shown(self.mode == Mode::Expanded(PageKind::Health));
         // The Pill theme floats the island below the top edge (below the menu
         // bar for what hangs under a notch).
         self.island.set_floating(self.gap_target(&self.mode));

@@ -24,7 +24,6 @@ use crate::{dragdrop, selftest, shell};
 use poni_core::addons::Status as AddonStatus;
 use poni_core::frametime::{ambient_divisor, MotionStats};
 use poni_core::geom::{palette, Color, Point, Rect};
-use poni_core::health::fmt_steps;
 use poni_core::oyenza;
 use poni_core::pairdrop::{MeetEvent, PeerEvent};
 use poni_core::phonedrop::{Event as PhoneEvent, QrMatrix};
@@ -1400,6 +1399,11 @@ impl App {
                 self.st.oyenza.updated_unix = Some(self.st.unix);
                 self.remind_bills(&day);
             }
+            OyenzaEvent::Health(next) => {
+                if let Some(steps) = self.st.take_health(next) {
+                    self.steps_notice(steps);
+                }
+            }
             OyenzaEvent::NoteSaved(saved) => {
                 let o = &mut self.st.oyenza;
                 o.saving = false;
@@ -1423,6 +1427,7 @@ impl App {
             OyenzaEvent::Disconnected { by_server } => {
                 self.end_sign_in();
                 self.st.oyenza = crate::state::OyenzaState::default();
+                self.st.health = None;
                 let (title, subtitle) =
                     if by_server { ("Oyenza disconnected", "Sign in again in Settings") } else { ("Disconnected from Oyenza", "Sign in again any time in Settings") };
                 self.st.notify(Icon::Unlink, palette::TEXT_DIM, title, subtitle, 6.0, None);
@@ -1467,6 +1472,14 @@ impl App {
         } else {
             self.st.notice = Some(notice);
         }
+    }
+
+    /// The step goal notice. While a full-screen app hides the island it waits
+    /// like a money notice (`AppState::show_or_hold`), and shows when the island
+    /// is back if it isn't old by then.
+    fn steps_notice(&mut self, steps: u32) {
+        let notice = pages::health::goal_notice(steps, self.st.now + oyenza::NOTICE_S);
+        self.st.show_or_hold(notice, self.fullscreen_hidden);
     }
 
     fn show_held_notice(&mut self, now: f64) {
@@ -1964,6 +1977,8 @@ impl App {
             self.cancel_hover();
             if self.st.page == PageKind::Oyenza {
                 self.oyenza(OyenzaCmd::Refresh);
+            } else if self.st.page == PageKind::Health {
+                self.oyenza(OyenzaCmd::RefreshHealth);
             }
         }
         self.request_frame();
@@ -3348,6 +3363,8 @@ impl App {
             }
             if p == PageKind::Oyenza {
                 self.oyenza(OyenzaCmd::Refresh);
+            } else if p == PageKind::Health {
+                self.oyenza(OyenzaCmd::RefreshHealth);
             }
         }
     }
@@ -3999,21 +4016,6 @@ fn paired_phones(pairs: Vec<poni_core::pairdrop::Pair>) -> Vec<PairedPhone> {
 
 fn files_label(n: usize) -> String {
     format!("{n} {}", if n == 1 { "file" } else { "files" })
-}
-
-/// The island's notice for the moment new numbers from the phone put today
-/// over the step goal (see `poni_core::health::goal_reached`).
-pub(crate) fn steps_goal_notice(steps: u32, until: f64) -> Notice {
-    Notice {
-        icon: Icon::Steps,
-        color: palette::GREEN,
-        title: format!("{} steps today", fmt_steps(steps)),
-        subtitle: "Daily step goal reached".into(),
-        until,
-        action: Some(NoticeAction::OpenPage(PageKind::Health)),
-        inline: None,
-        reveal: None,
-    }
 }
 
 #[cfg(test)]

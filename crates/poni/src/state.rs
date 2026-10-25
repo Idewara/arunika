@@ -573,6 +573,29 @@ impl AppState {
         self.unix + self.prayer.clock_shift
     }
 
+    /// New steps from the phone (`None`: none to show), kept in memory only,
+    /// never in data.json. Returns today's steps when they just passed the
+    /// goal; the first numbers after start or sign-in only set the baseline
+    /// (`poni_core::health::goal_notice`).
+    pub fn take_health(&mut self, next: Option<HealthSnapshot>) -> Option<u32> {
+        let today = self.local.day_key();
+        let reached = next.as_ref().filter(|n| poni_core::health::goal_notice(self.health.as_ref(), n, &today)).map(|n| n.steps_on(&today));
+        self.health = next;
+        reached
+    }
+
+    /// Show `n` now or, while a full-screen app hides the island (`hidden`), keep
+    /// it for when the island is back, the way money notices wait
+    /// (`OyenzaState::held`, shown then if no older than `HELD_MAX_S`). One
+    /// notice waits at a time, and a money or bill notice already waiting stays.
+    pub fn show_or_hold(&mut self, n: Notice, hidden: bool) {
+        if !hidden {
+            self.notice = Some(n);
+        } else if self.oyenza.held.as_ref().is_none_or(|(_, at)| self.now - at > poni_core::oyenza::HELD_MAX_S) {
+            self.oyenza.held = Some((n, self.now));
+        }
+    }
+
     pub fn cmd(&mut self, c: Command) {
         self.cmds.push(c);
     }
@@ -653,5 +676,59 @@ mod tests {
         pd.visitor = Some("iPhone".into());
         pd.ask = Some(PhoneAsk { id: 1, from: "iPhone".into(), files: vec![], total: 0 });
         assert!(st.phone_holds_island(), "a phone waits for an answer");
+    }
+
+    #[test]
+    fn the_goal_notice_is_only_for_steps_seen_passing_it() {
+        use poni_core::health::{HealthDay, HealthSource};
+        let mut st = AppState::new(Settings::default(), Store::default());
+        st.local = LocalDateTime { year: 2026, month: 10, day: 24, hour: 15, minute: 20, second: 0 };
+        let snap = |steps: u32| HealthSnapshot {
+            goal: 8000,
+            source: HealthSource::AppleHealth,
+            updated_at: 0,
+            days: vec![HealthDay { date: "2026-10-24".into(), steps, distance_m: None, active_kcal: None }],
+        };
+        // Over the goal in the first numbers after start: a baseline, no notice (a restart never repeats it).
+        assert_eq!(st.take_health(Some(snap(9000))), None);
+        assert_eq!(st.health.as_ref().map(|h| h.steps_on("2026-10-24")), Some(9000));
+        // Off in Oyenza: nothing kept; the numbers after it are a baseline again.
+        assert_eq!(st.take_health(None), None);
+        assert!(st.health.is_none());
+        assert_eq!(st.take_health(Some(snap(7900))), None);
+        assert_eq!(st.take_health(Some(snap(8010))), Some(8010));
+        assert_eq!(st.take_health(Some(snap(8500))), None);
+    }
+
+    #[test]
+    fn the_goal_notice_waits_while_a_full_screen_app_hides_the_island() {
+        let mut st = AppState::new(Settings::default(), Store::default());
+        st.now = 100.0;
+        let notice = |title: &str| Notice {
+            icon: Icon::Steps,
+            color: palette::GREEN,
+            title: title.into(),
+            subtitle: String::new(),
+            until: 0.0,
+            action: None,
+            inline: None,
+            reveal: None,
+        };
+        let held = |st: &AppState| st.oyenza.held.as_ref().map(|(n, at)| (n.title.clone(), *at));
+        // Hidden: it waits for the island instead of expiring unseen.
+        st.show_or_hold(notice("goal"), true);
+        assert!(st.notice.is_none());
+        assert_eq!(held(&st), Some(("goal".into(), 100.0)));
+        // A money notice already waiting stays...
+        st.oyenza.held = Some((notice("money"), 100.0));
+        st.show_or_hold(notice("goal"), true);
+        assert_eq!(held(&st), Some(("money".into(), 100.0)));
+        // ...unless it's too old to show any more.
+        st.now = 100.0 + poni_core::oyenza::HELD_MAX_S + 1.0;
+        st.show_or_hold(notice("goal"), true);
+        assert_eq!(held(&st).map(|h| h.0), Some("goal".into()));
+        // The island on screen: it shows at once.
+        st.show_or_hold(notice("now"), false);
+        assert_eq!(st.notice.as_ref().map(|n| n.title.as_str()), Some("now"));
     }
 }
