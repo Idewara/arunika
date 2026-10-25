@@ -50,4 +50,13 @@ The file follows GitHub's latest release. If a release turns out bad, mark the p
 
 ## What the app does with it
 
-No released version reads the file yet. The app's side comes next: it checks the file a couple of minutes after it starts and then every 12 hours, never while nobody is at the PC or on battery saver, believes it only if the signature checks out, and then tells you on the island once per version.
+Copies from 0.2.5 on read the file; 0.2.4 and older don't, so they need one last update by hand. Settings has **Tell me about new versions**, on by default.
+
+- **When it looks:** about two minutes after start, then every 12 hours (`poni_core::update::CHECK_EVERY_S`), remembered across starts in `update.json` in the data folder, so starting the app often costs nothing. A look that comes due while nobody is at the computer (locked, display off) or on battery saver waits until someone is back. A failed look tries again in an hour.
+- **How:** one request for the file, about 1 KB, on the add-on downloader's thread (`services/update.rs`), which sleeps the rest of the time. The signature is checked with the system's own crypto (CNG on Windows; on a Mac the P-256 code phone drop already builds in), then `poni_core::update::parse_payload` refuses anything that isn't this repository's own release of that version.
+- **The island:** a later version than the one running, with a download for this system (a Mac waits for the DMG), shows once per version as **Update available x** (the version dimmer), over the release's headline, with **Hide** (`crate::updates`). It waits until the island is closed and free, and leaves after 15 seconds. Clicking it opens the Update sheet.
+- **The Update sheet** (in Settings, in place of its rows): what's new, a card that gets the new version, and **See what's new in Oyenza Studio x** (the release page). **Not now** closes the island.
+- **Until it is installed:** the right-click menu starts with **Update to Oyenza Studio x…**, which opens the sheet, and Settings has a last row, **Update available x**, with **Update**.
+- **Getting it:** the card opens the release's page on Windows, where the Setup is, and downloads the DMG on a Mac.
+- **After updating:** the first start of a newer version says **Updated to x** once, with **What's new**.
+- A Microsoft Store copy doesn't look: the Store updates it.

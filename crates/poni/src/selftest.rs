@@ -91,8 +91,12 @@ const CLICK_TIMEOUT: f64 = 1.5;
 /// slow end); a CI step takes under 30 s for the whole run. The CI and Store
 /// test steps wait 120 s for the whole run, the Wine runner 180 s.
 const SCENE_DEADLINE: f64 = 50.0;
-/// Give up waiting for PNG writers at this point.
-const WRITE_DEADLINE: f64 = 43.5;
+/// Give up waiting for PNG writers at this point: 3.5 s after the scene
+/// deadline, so the last scenes' pictures get their time however long the
+/// run took. (It was a fixed 43.5 s, left behind when SCENE_DEADLINE went
+/// from 40 to 50; once the Glass runs took over 43.5 s, the last picture was
+/// still encoding and png-files failed.)
+const WRITE_DEADLINE: f64 = SCENE_DEADLINE + 3.5;
 /// One frame (layout + Direct2D render + present + readback) must fit in a 60 Hz frame.
 /// On a software rasterizer (CI runners) frame times are reported, not
 /// counted: they land on whole screen refreshes (about 16 or 31 ms) on a CPU
@@ -731,6 +735,7 @@ fn seed_prayer(st: &mut AppState, scene: Scene, until: f64) {
             icon: Icon::Moon,
             color: st.accent,
             title: crate::pages::prayer::moment_title(poni_core::prayer::Prayer::Ashar),
+            title_dim: String::new(),
             subtitle: format!("{} \u{b7} {place}", site.hhmm(ashar)),
             until,
             action: Some(NoticeAction::OpenPage(PageKind::Prayer)),
@@ -883,6 +888,32 @@ enum Scene {
     AsideHud,
     /// Settings with Stay picked over maximized windows.
     SettingsAsideStay,
+    /// A new version is out: the island tells once, with Update.
+    UpdateNotice,
+    /// The first start after an update: "Updated to", with What's new.
+    UpdatedNotice,
+    /// Settings while a new version is offered: Update on its last row.
+    SettingsUpdate,
+    /// The Update sheet (the notice or the menu's "Update to" line opens it).
+    UpdateSheet,
+}
+
+/// A later release than this build, as the update file describes one.
+fn fake_release() -> poni_core::update::Release {
+    let mut parts: Vec<u64> = crate::version::VERSION.split('.').filter_map(|p| p.parse().ok()).collect();
+    if let Some(last) = parts.last_mut() {
+        *last += 1;
+    }
+    let version = parts.iter().map(u64::to_string).collect::<Vec<_>>().join(".");
+    let repo = "https://github.com/lucacadalora/oyenza-studio/releases";
+    poni_core::update::Release {
+        date: "2026-10-26".into(),
+        headline: "A smoother island, and fixes".into(),
+        notes: format!("{repo}/tag/v{version}"),
+        windows: Some(poni_core::update::Download { url: format!("{repo}/download/v{version}/Oyenza-Studio-Setup-{version}.exe"), size: 2_500_000, sha256: "0".repeat(64) }),
+        mac: None,
+        version,
+    }
 }
 
 /// Running under Wine: its ntdll exports `wine_get_version`.
@@ -897,7 +928,7 @@ const SAMPLE_SCRIPT: &str = "Hi everyone, this one takes two minutes. Today I'll
 Drop any file on the island and it waits on the Shelf. Press the phone button, scan the code, and the file is on your phone. \
 No cable, no account, nothing to install on the phone.\n\nThat's it. Thanks for watching.";
 
-const SCENES: [Scene; 77] = [
+const SCENES: [Scene; 81] = [
     Scene::IdleClock,
     Scene::IdleEyes,
     Scene::Media,
@@ -987,6 +1018,12 @@ const SCENES: [Scene; 77] = [
     Scene::AsidePeek,
     Scene::AsideHud,
     Scene::SettingsAsideStay,
+    // New versions: the island's notice, "Updated to", Settings offering
+    // one, and the Update sheet.
+    Scene::UpdateNotice,
+    Scene::UpdatedNotice,
+    Scene::SettingsUpdate,
+    Scene::UpdateSheet,
 ];
 
 impl Scene {
@@ -1059,6 +1096,10 @@ impl Scene {
             Scene::AsidePeek => "aside-new-song".into(),
             Scene::AsideHud => "aside-volume-hud".into(),
             Scene::SettingsAsideStay => "page-settings-maximized-stay".into(),
+            Scene::UpdateNotice => "update-notice".into(),
+            Scene::UpdatedNotice => "updated-notice".into(),
+            Scene::SettingsUpdate => "page-settings-update".into(),
+            Scene::UpdateSheet => "page-update-sheet".into(),
         }
     }
 
@@ -1070,9 +1111,13 @@ impl Scene {
             Scene::HealthSignedOut => Some(PageKind::Health),
             Scene::OyenzaSignIn | Scene::OyenzaSaved | Scene::OyenzaYesterday | Scene::OyenzaTomorrow => Some(PageKind::Oyenza),
             Scene::HealthSignedIn | Scene::HealthStale => Some(PageKind::Health),
-            Scene::GearClick | Scene::SettingsSigningIn | Scene::SettingsSignedIn | Scene::SettingsStayOnTop | Scene::SettingsAsideStay => {
-                Some(PageKind::Settings)
-            }
+            Scene::GearClick
+            | Scene::SettingsSigningIn
+            | Scene::SettingsSignedIn
+            | Scene::SettingsStayOnTop
+            | Scene::SettingsAsideStay
+            | Scene::SettingsUpdate
+            | Scene::UpdateSheet => Some(PageKind::Settings),
             Scene::SystemMemory
             | Scene::SystemDrives
             | Scene::SystemNetwork
@@ -1841,6 +1886,11 @@ impl SelfTest {
         st.settings.hide_in_fullscreen = scene != Scene::SettingsStayOnTop;
         // Step aside over maximized windows (the default), except where Stay is picked.
         st.settings.step_aside = scene != Scene::SettingsAsideStay;
+        // A later version offered, only where Settings shows it.
+        st.update = match scene {
+            Scene::SettingsUpdate | Scene::UpdateSheet => crate::state::UpdateView { offer: Some(fake_release()), sheet: scene == Scene::UpdateSheet },
+            _ => crate::state::UpdateView::default(),
+        };
         // A new song's title shows for its few seconds (held here).
         st.ui.peek_until = if scene == Scene::AsidePeek { now + 30.0 } else { 0.0 };
         st.phone = fake_phone(scene, now);
@@ -1884,6 +1934,8 @@ impl SelfTest {
             _ => None,
         };
         st.notice = match scene {
+            Scene::UpdateNotice => Some(crate::updates::new_version_notice(&fake_release(), st.accent, until)),
+            Scene::UpdatedNotice => Some(crate::updates::updated_notice(Some(fake_release().headline), until)),
             Scene::HealthNotice => {
                 let steps = st.health.as_ref().map_or(0, |h| h.steps_on(&st.local.day_key()));
                 Some(crate::pages::health::goal_notice(steps, until))
@@ -1894,6 +1946,7 @@ impl SelfTest {
                     icon: Icon::MoneyIn,
                     color: palette::GREEN,
                     title: "Money in · BCA".into(),
+                    title_dim: String::new(),
                     subtitle: if hidden { "Amount and sender hidden".into() } else { "Rp 1.250.000 · Gaji Oktober".into() },
                     until,
                     action: Some(NoticeAction::OpenPage(PageKind::Oyenza)),
@@ -1905,6 +1958,7 @@ impl SelfTest {
                 icon: Icon::Phone,
                 color: palette::GREEN,
                 title: "3 files from Pixel 10 are on the Shelf".into(),
+                title_dim: String::new(),
                 subtitle: "Open the Shelf to see them".into(),
                 until,
                 action: Some(NoticeAction::OpenPage(PageKind::Shelf)),
@@ -1915,6 +1969,7 @@ impl SelfTest {
                 icon: Icon::MoneyOut,
                 color: palette::BLUE,
                 title: "Money out · BCA".into(),
+                title_dim: String::new(),
                 subtitle: "Amount and payee hidden".into(),
                 until,
                 action: Some(NoticeAction::OpenPage(PageKind::Oyenza)),
@@ -1925,6 +1980,7 @@ impl SelfTest {
                 icon: Icon::Calendar,
                 color: palette::ORANGE,
                 title: "Spotify renews tomorrow".into(),
+                title_dim: String::new(),
                 subtitle: "Amount hidden".into(),
                 until,
                 action: Some(NoticeAction::OpenPage(PageKind::Oyenza)),
