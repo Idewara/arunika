@@ -11,6 +11,7 @@ use objc2_app_kit::{
 use objc2_core_foundation::CGFloat;
 use objc2_core_graphics::{CGBlendMode, CGContext};
 use objc2_foundation::{NSObject, NSObjectProtocol, NSSize, NSString};
+use crate::state::OyenzaLink;
 use poni_core::settings::{IdleStyle, Settings, Theme};
 use std::cell::RefCell;
 
@@ -31,6 +32,11 @@ pub enum MenuCmd {
     AppleMusicToken,
     AppleMusicHelp,
     AppleMusicForget,
+    OyenzaSignIn,
+    OyenzaCancel,
+    ToggleOyenzaAmounts,
+    OyenzaOpen,
+    OyenzaDisconnect,
     OpenSettings,
     ReloadSettings,
     OpenDataFolder,
@@ -42,6 +48,8 @@ pub enum MenuCmd {
 pub enum MenuItem {
     Item { label: String, cmd: MenuCmd, checked: bool, key: &'static str },
     Sub { label: String, items: Vec<MenuItem> },
+    /// A line to read, not to pick (greyed out).
+    Info { label: String },
     Separator,
 }
 
@@ -49,7 +57,7 @@ fn item(label: &str, cmd: MenuCmd, checked: bool) -> MenuItem {
     MenuItem::Item { label: label.to_string(), cmd, checked, key: "" }
 }
 
-pub fn menu_items(s: &Settings, pinned: bool, login: Login, recorder: bool) -> Vec<MenuItem> {
+pub fn menu_items(s: &Settings, pinned: bool, login: Login, recorder: bool, oyenza: &OyenzaLink) -> Vec<MenuItem> {
     let theme = |label: &str, t: Theme| item(label, MenuCmd::SetTheme(t), s.theme == t);
     let fullscreen = |label: &str, hide: bool| item(label, MenuCmd::SetHideFullscreen(hide), s.hide_in_fullscreen == hide);
     // The theme's own idle looks (the status bar is Pill's), the one it
@@ -77,6 +85,7 @@ pub fn menu_items(s: &Settings, pinned: bool, login: Login, recorder: bool) -> V
         item("Synced lyrics", MenuCmd::ToggleLyrics, s.lyrics),
         item("Lyrics pronunciation (romaji, pinyin, Korean)", MenuCmd::TogglePronunciation, s.lyrics_pronunciation),
         apple_music_menu(),
+        oyenza_menu(s, oyenza),
         item("Clipboard history", MenuCmd::ToggleClipboard, s.clipboard_history),
         item("Sounds", MenuCmd::ToggleSounds, s.sounds),
         MenuItem::Sub { label: "In full-screen apps".into(), items: vec![fullscreen("Hide", true), fullscreen("Stay on top", false)] },
@@ -99,6 +108,23 @@ pub fn menu_items(s: &Settings, pinned: bool, login: Login, recorder: bool) -> V
         items.splice(0..0, [item("Record this screen", MenuCmd::RecordScreen, false), MenuItem::Separator]);
     }
     items
+}
+
+/// Oyenza, optional: sign in with a code from oyenza.app, then what the
+/// island may show, and signing out (as in the Windows tray).
+fn oyenza_menu(s: &Settings, link: &OyenzaLink) -> MenuItem {
+    let items = match link {
+        OyenzaLink::Off => vec![item("Sign in to Oyenza…", MenuCmd::OyenzaSignIn, false)],
+        OyenzaLink::Connecting { .. } => vec![item("Cancel sign-in", MenuCmd::OyenzaCancel, false)],
+        OyenzaLink::Connected { account } => vec![
+            MenuItem::Info { label: format!("Connected as {account}") },
+            item("Show amounts on the island", MenuCmd::ToggleOyenzaAmounts, s.oyenza_show_amounts),
+            item("Open oyenza.app", MenuCmd::OyenzaOpen, false),
+            MenuItem::Separator,
+            item("Disconnect", MenuCmd::OyenzaDisconnect, false),
+        ],
+    };
+    MenuItem::Sub { label: "Oyenza".into(), items }
 }
 
 /// Opt-in lyrics from Apple Music with the person's own token.
@@ -156,7 +182,7 @@ pub struct MenuBar {
 }
 
 impl MenuBar {
-    pub fn add(mtm: MainThreadMarker, s: &Settings, pinned: bool, login: Login) -> MenuBar {
+    pub fn add(mtm: MainThreadMarker, s: &Settings, pinned: bool, login: Login, oyenza: &OyenzaLink) -> MenuBar {
         let item = NSStatusBar::systemStatusBar().statusItemWithLength(NSVariableStatusItemLength);
         if let Some(button) = item.button(mtm) {
             match mark_image(mtm) {
@@ -166,15 +192,15 @@ impl MenuBar {
             button.setToolTip(Some(&NSString::from_str(&format!("Oyenza Studio {}", crate::version::VERSION))));
         }
         let target: Retained<MenuTarget> = unsafe { objc2::msg_send![MenuTarget::alloc(mtm), init] };
-        let menu = build(mtm, &target, &menu_items(s, pinned, login, crate::services::recorder::installed()));
+        let menu = build(mtm, &target, &menu_items(s, pinned, login, crate::services::recorder::installed(), oyenza));
         item.setMenu(Some(&menu));
         ITEM.with(|i| *i.borrow_mut() = Some(item.clone()));
         MenuBar { item, target, menu }
     }
 
     /// Rebuild the menu (ticks follow the settings).
-    pub fn refresh(&mut self, mtm: MainThreadMarker, s: &Settings, pinned: bool, login: Login) {
-        self.menu = build(mtm, &self.target, &menu_items(s, pinned, login, crate::services::recorder::installed()));
+    pub fn refresh(&mut self, mtm: MainThreadMarker, s: &Settings, pinned: bool, login: Login, oyenza: &OyenzaLink) {
+        self.menu = build(mtm, &self.target, &menu_items(s, pinned, login, crate::services::recorder::installed(), oyenza));
         self.item.setMenu(Some(&self.menu));
     }
 }
@@ -206,6 +232,11 @@ fn build_into(mtm: MainThreadMarker, target: &MenuTarget, items: &[MenuItem], cm
                 let sub = build_into(mtm, target, items, cmds);
                 let mi = unsafe { NSMenuItem::initWithTitle_action_keyEquivalent(NSMenuItem::alloc(mtm), &NSString::from_str(label), None, &NSString::from_str("")) };
                 mi.setSubmenu(Some(&sub));
+                menu.addItem(&mi);
+            }
+            MenuItem::Info { label } => {
+                let mi = unsafe { NSMenuItem::initWithTitle_action_keyEquivalent(NSMenuItem::alloc(mtm), &NSString::from_str(label), None, &NSString::from_str("")) };
+                mi.setEnabled(false);
                 menu.addItem(&mi);
             }
             MenuItem::Separator => menu.addItem(&NSMenuItem::separatorItem(mtm)),
