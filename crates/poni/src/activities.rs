@@ -221,7 +221,7 @@ pub fn geom(m: &Mode, st: &AppState) -> Geom {
         Mode::Idle => match idle_look(st) {
             // The status bar is the Pill theme's; the other themes show the clock.
             IdleStyle::Clock | IdleStyle::Status => {
-                let base = if st.settings.use_24h { 84.0 } else { 104.0 };
+                let base: f32 = if st.settings.use_24h { 84.0 } else { 104.0 };
                 let badge = match clock_badge(st) {
                     Some(ClockBadge::Charging) => 22.0,
                     Some(ClockBadge::Low(_)) => 34.0,
