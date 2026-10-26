@@ -1105,12 +1105,13 @@ mod tests {
     fn the_decoder_reads_the_embedded_eyes_art() {
         // A real zlib stream (dynamic-huffman blocks, every filter type) from
         // the app's own assets, checksummed chunk by chunk on the way in.
-        // The frames are colour type 2 (RGB): opaque, the black background
-        // ships as black pixels, so "transparent" is not expected here.
+        // The frames are RGBA: the video's black background is transparent
+        // (flood-keyed from the borders), the eyes and their glow opaque.
         let png: &[u8] = include_bytes!("../res/eyes/frame_00.png");
         let d = crate::png::decode(png).expect("the eyes art decodes");
         assert_eq!((d.width, d.height), (280, 79));
-        assert!(d.pixels.chunks_exact(4).all(|p| p[3] == 255), "fully opaque");
+        assert!(d.pixels.chunks_exact(4).any(|p| p[3] == 255), "has opaque pixels (the eyes)");
+        assert!(d.pixels.chunks_exact(4).any(|p| p[3] == 0), "has transparent pixels (the keyed background)");
         assert!(d.pixels.chunks_exact(4).any(|p| p[0] > 0 || p[1] > 0 || p[2] > 0), "has the art's pixels");
         assert_eq!(d.pixels.len(), (280 * 79 * 4) as usize);
         // Corruption and truncation are refused, not rendered.
