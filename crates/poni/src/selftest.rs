@@ -764,6 +764,8 @@ fn fake_power(plugged: bool) -> PowerState {
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Scene {
     IdleClock,
+    /// The resting clock while the battery charges: the charging mascot.
+    IdleCharging,
     IdleEyes,
     Media,
     Timer,
@@ -930,7 +932,7 @@ const SAMPLE_SCRIPT: &str = "Hi everyone, this one takes two minutes. Today I'll
 Drop any file on the island and it waits on the Shelf. Press the phone button, scan the code, and the file is on your phone. \
 No cable, no account, nothing to install on the phone.\n\nThat's it. Thanks for watching.";
 
-const SCENES: [Scene; 82] = [
+const SCENES: [Scene; 83] = [
     Scene::IdleClock,
     Scene::IdleEyes,
     Scene::Media,
@@ -1027,12 +1029,16 @@ const SCENES: [Scene; 82] = [
     Scene::SettingsUpdate,
     Scene::UpdateSheet,
     Scene::UpdateReady,
+    // Appended so the numbers above stay: the resting clock while the PC
+    // charges, the charging mascot beside it.
+    Scene::IdleCharging,
 ];
 
 impl Scene {
     fn name(self) -> String {
         match self {
             Scene::IdleClock => "idle-clock".into(),
+            Scene::IdleCharging => "idle-charging".into(),
             Scene::IdleEyes => "idle-eyes".into(),
             Scene::Media => "media-activity".into(),
             Scene::Timer => "timer-activity".into(),
@@ -1874,7 +1880,7 @@ impl SelfTest {
             }
         }
         let st = &mut app.st;
-        st.power = fake_power(scene == Scene::ChargingHud);
+        st.power = fake_power(matches!(scene, Scene::ChargingHud | Scene::IdleCharging));
         if scene == Scene::LowBatteryHud {
             st.power.percent = LOW_BATTERY;
         }

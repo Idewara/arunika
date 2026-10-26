@@ -86,7 +86,7 @@ pub fn geom(st: &AppState) -> Option<Geom> {
 fn estimate(st: &AppState) -> f32 {
     let chars = |s: &str| s.chars().count() as f32 * 7.6;
     let text = chars(&fmt_date_short(&st.local)) + DATE_GAP + chars(&fmt_clock(&st.local, st.settings.use_24h));
-    let right = if st.power.has_battery { PCT_GAP + chars("100%") + BATT_GAP + BATT_W + BATT_END } else { end_inset(H) };
+    let right = if st.power.has_battery { PCT_GAP + chars("100%") + BATT_GAP + BATT_W + BATT_END } else { end_inset(H) } + crate::mascot::slot(st);
     even(left_w(st, H) + text + 2.0 * CHIP_PAD + right)
 }
 
@@ -136,9 +136,14 @@ pub fn draw(ui: &mut Ui, st: &mut AppState, body: Rect) -> bool {
         ui.c.icon(icon, Rect::new(body.x + VOL_X, cy - VOL_BOX / 2.0, VOL_BOX, VOL_BOX), GLYPH);
     }
 
-    // Right: the battery, its nub BATT_END from the end.
-    let mut x1 = body.right() - end_inset(body.h);
-    let mut right_w = end_inset(H);
+    // Right: the battery, its nub BATT_END from the end; the mascot keeps it
+    // company at the bar's right end while it shows (the width hug below and
+    // the geom pass count the same slot).
+    let m_w = crate::mascot::w(st);
+    let m_slot = crate::mascot::slot(st);
+    let right = body.right() - m_slot;
+    let mut x1 = right - end_inset(body.h);
+    let mut right_w = end_inset(H) + m_slot;
     if st.power.has_battery {
         let p = st.power;
         // Plugged in counts as charging, as the Charging pop-up and the
@@ -149,13 +154,13 @@ pub fn draw(ui: &mut Ui, st: &mut AppState, body: Rect) -> bool {
         // does): a sliver of red alone is easy to miss.
         let pct_ts = ts.color(if low(p.percent, charging) { palette::RED } else { PCT });
         let (pw, _) = ui.c.measure(&pct, &pct_ts, 100.0);
-        let bx = snap(ui, body.right() - BATT_END - BATT_W);
+        let bx = snap(ui, right - BATT_END - BATT_W);
         let by = snap(ui, cy - BATT.1 / 2.0);
         battery(ui, Rect::new(bx, by, BATT.0, BATT.1), p.percent, charging);
         let tx = bx - BATT_GAP - pw;
         ui.c.text(&pct, Rect::new(tx, body.y, pw + 2.0, body.h), &pct_ts);
         x1 = tx - PCT_GAP;
-        right_w = PCT_GAP + pw + BATT_GAP + BATT_W + BATT_END;
+        right_w = PCT_GAP + pw + BATT_GAP + BATT_W + BATT_END + m_slot;
     }
 
     // The inner pill, centred between the two (they sit at the ends, so
@@ -170,6 +175,12 @@ pub fn draw(ui: &mut Ui, st: &mut AppState, body: Rect) -> bool {
     let tx = chip.x + (cw - (dw + DATE_GAP + tw)) / 2.0;
     ui.c.text(&date, Rect::new(tx, body.y, dw + 2.0, body.h), &ts);
     ui.c.text(&time, Rect::new(tx + dw + DATE_GAP, body.y, tw + 2.0, body.h), &ts);
+
+    // The mascot at the bar's right end, inside the slot the width hug counts.
+    if m_w > 0.0 {
+        let mr = body.right() - end_inset(body.h);
+        crate::mascot::draw(ui, st, Rect::new(mr - m_w, cy - crate::mascot::H / 2.0, m_w, crate::mascot::H));
+    }
 
     // Hug what was just measured from the next frame on.
     let want = even(left_w(st, H) + chip_w + right_w);

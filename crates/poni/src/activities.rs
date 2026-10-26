@@ -1,4 +1,5 @@
-//! What the collapsed island shows: idle pill, live activities (media,
+//! What the collapsed island shows: the idle pill (the clock, its battery
+//! badge and the mascot, `crate::mascot`), live activities (media,
 //! timer, the minutes before a prayer, the readout over games), HUD
 //! pop-ups (volume, charging, Bluetooth) and notices.
 //!
@@ -204,7 +205,8 @@ pub fn geom(m: &Mode, st: &AppState) -> Geom {
                     Some(ClockBadge::Low(_)) => 34.0,
                     None => 0.0,
                 };
-                Geom::new(base + badge, 30.0, 14.0)
+                // The mascot keeps the clock company: the pill grows by its slot.
+                Geom::new(base + badge + crate::mascot::slot(st), 30.0, 14.0)
             }
             IdleStyle::Minimal => Geom::new(150.0, 26.0, 12.0),
             IdleStyle::Eyes => Geom::new(118.0, 30.0, 14.0),
@@ -253,15 +255,17 @@ fn hidden_strip() -> Geom {
     Geom::new(150.0, 5.0, 2.5)
 }
 
-/// Needs continuous ambient frames (near 60 fps): animated equalizer while music plays.
-/// A paused (lingering) pill is static.
+/// Needs continuous ambient frames (near 60 fps): animated equalizer while music plays,
+/// the mascot's flame on the resting pill. A paused (lingering) pill is static.
 pub fn is_live(m: &Mode, st: &AppState) -> bool {
     if let Some(live) = crate::pill::is_live(m, st) {
         return live;
     }
-    let Some(media) = st.media.as_ref() else { return false };
     match m {
-        Mode::Activity(Activity::Media) | Mode::Activity(Activity::MediaTimer) => media.is_playing(),
+        Mode::Idle => crate::mascot::animates(st),
+        Mode::Activity(Activity::Media) | Mode::Activity(Activity::MediaTimer) => {
+            st.media.as_ref().is_some_and(|m| m.is_playing())
+        }
         _ => false,
     }
 }
@@ -329,11 +333,22 @@ fn draw_idle(ui: &mut Ui, st: &mut AppState, body: Rect) {
         IdleStyle::Clock | IdleStyle::Status => {
             let time = fmt_clock(&st.local, st.settings.use_24h);
             let ts = TextStyle::body().weight(Weight::Semibold).tabular();
+            // The mascot after the clock, sharing the group; where it shows
+            // the pill is `slot` wider (the geom pass counts the same slot).
+            let m_w = crate::mascot::w(st);
+            let m_slot = crate::mascot::slot(st);
             let Some(badge) = clock_badge(st) else {
-                ui.c.text(&time, body, &ts.center());
+                if m_w <= 0.0 {
+                    ui.c.text(&time, body, &ts.center());
+                    return;
+                }
+                let (tw, _) = ui.c.measure(&time, &ts, 400.0);
+                let x0 = body.center().x - (tw + m_slot) / 2.0;
+                ui.c.text(&time, Rect::new(x0, body.y, tw + 2.0, body.h), &ts);
+                crate::mascot::draw(ui, st, Rect::new(x0 + tw + crate::mascot::GAP, cy - crate::mascot::H / 2.0, m_w, crate::mascot::H));
                 return;
             };
-            // Badge + gap + time, centred as one group.
+            // Badge + gap + time (+ gap + mascot), centred as one group.
             let (tw, _) = ui.c.measure(&time, &ts, 400.0);
             let pct_ts = TextStyle::footnote().weight(Weight::Semibold).tabular().color(palette::RED);
             let (bw, pct) = match badge {
@@ -343,7 +358,7 @@ fn draw_idle(ui: &mut Ui, st: &mut AppState, body: Rect) {
                     (ui.c.measure(&s, &pct_ts, 100.0).0, s)
                 }
             };
-            let x0 = body.center().x - (bw + BADGE_GAP + tw) / 2.0;
+            let x0 = body.center().x - (bw + BADGE_GAP + tw + m_slot) / 2.0;
             match badge {
                 ClockBadge::Charging => {
                     let r = Rect::new(x0 - BOLT_INSET, cy - BOLT / 2.0, BOLT, BOLT);
@@ -351,7 +366,11 @@ fn draw_idle(ui: &mut Ui, st: &mut AppState, body: Rect) {
                 }
                 ClockBadge::Low(_) => ui.c.text(&pct, Rect::new(x0, body.y, bw + 2.0, body.h), &pct_ts),
             }
-            ui.c.text(&time, Rect::new(x0 + bw + BADGE_GAP, body.y, tw + 2.0, body.h), &ts);
+            let tx = x0 + bw + BADGE_GAP;
+            ui.c.text(&time, Rect::new(tx, body.y, tw + 2.0, body.h), &ts);
+            if m_w > 0.0 {
+                crate::mascot::draw(ui, st, Rect::new(tx + tw + crate::mascot::GAP, cy - crate::mascot::H / 2.0, m_w, crate::mascot::H));
+            }
         }
         IdleStyle::Eyes => {
             let blink = (st.now % BLINK_PERIOD) < BLINK_LEN;

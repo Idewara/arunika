@@ -92,33 +92,51 @@ fn battery_state(st: &AppState) -> Option<(u8, bool)> {
 
 fn clock_width(st: &AppState) -> f32 {
     let h24 = st.settings.use_24h;
+    // The mascot after the battery (or the centred clock): the pill grows by its slot.
+    let slot = crate::mascot::slot(st);
     if battery_state(st).is_none() {
-        return if h24 { CLOCK_W } else { CLOCK_12H_W };
+        return (if h24 { CLOCK_W } else { CLOCK_12H_W } + slot).round();
     }
     let time = if h24 { TIME_SLOT } else { TIME_12H_SLOT };
-    (SIDE + time + MID_GAP + PCT_SLOT + PCT_GAP + BATTERY_W + SIDE).round()
+    (SIDE + time + MID_GAP + PCT_SLOT + PCT_GAP + BATTERY_W + SIDE + slot).round()
 }
 
-/// "13:27" at the left end, "99%" and the battery at the right one (ref2).
-/// Without a battery the time sits alone in the middle.
+/// "13:27" at the left end, "99%" and the battery at the right one (ref2),
+/// the mascot after the battery. Without a battery the time and the mascot
+/// sit centred as one group.
 fn draw_clock(ui: &mut Ui, st: &AppState, body: Rect) {
     let time = fmt_clock(&st.local, st.settings.use_24h);
     let ts = TextStyle::headline().tabular().color(Color::white(1.0));
+    let cy = body.center().y;
+    let m_w = crate::mascot::w(st);
+    let m_slot = crate::mascot::slot(st);
     let Some((percent, charging)) = battery_state(st) else {
-        ui.c.text(&time, body, &ts.center());
+        if m_w <= 0.0 {
+            ui.c.text(&time, body, &ts.center());
+            return;
+        }
+        let (tw, _) = ui.c.measure(&time, &ts, 400.0);
+        let x0 = body.center().x - (tw + m_slot) / 2.0;
+        ui.c.text(&time, Rect::new(x0, body.y, tw + 2.0, body.h), &ts);
+        crate::mascot::draw(ui, st, Rect::new(x0 + tw + crate::mascot::GAP, cy - crate::mascot::H / 2.0, m_w, crate::mascot::H));
         return;
     };
     let (tw, _) = ui.c.measure(&time, &ts, 400.0);
     ui.c.text(&time, Rect::new(body.x + SIDE, body.y, tw + 2.0, body.h), &ts);
 
-    let cy = body.center().y;
-    let glyph = Rect::new(body.right() - SIDE - BATTERY_W, cy - BATTERY_H / 2.0, BATTERY_W, BATTERY_H);
+    // The battery at the right end, the mascot after it while it shows (the
+    // geom pass counts the same slot).
+    let right = body.right() - SIDE - m_slot;
+    let glyph = Rect::new(right - BATTERY_W, cy - BATTERY_H / 2.0, BATTERY_W, BATTERY_H);
     battery(ui, glyph, percent, charging);
     let pct = format!("{percent}%");
     let pct_ts = TextStyle::body().weight(Weight::Medium).tabular().color(PCT_INK);
     let (pw, _) = ui.c.measure(&pct, &pct_ts, 200.0);
     let x = glyph.x - PCT_GAP - pw;
     ui.c.text(&pct, Rect::new(x, body.y, pw + 2.0, body.h), &pct_ts);
+    if m_w > 0.0 {
+        crate::mascot::draw(ui, st, Rect::new(body.right() - SIDE - m_w, cy - crate::mascot::H / 2.0, m_w, crate::mascot::H));
+    }
 }
 
 /// A drawn battery in `r`, the nub on its right (natural size
@@ -182,20 +200,26 @@ mod tests {
     use poni_core::store::Store;
 
     fn state(battery: bool, use_24h: bool) -> AppState {
+        use poni_core::datetime::LocalDateTime;
         let mut st = AppState::new(Settings::default(), Store::default());
         st.settings.theme = Theme::Pill;
         st.settings.use_24h = use_24h;
+        // Mid-afternoon and nothing on: the resting (angry) pose, whose art
+        // is 96x85 like the width math below says.
+        st.local = LocalDateTime { hour: 15, ..Default::default() };
         st.power = PowerState { has_battery: battery, percent: 99, charging: false, on_ac: !battery, saver: false };
         st
     }
 
     #[test]
-    fn the_resting_pill_is_a_capsule_sized_to_the_time_and_the_battery() {
+    fn the_resting_pill_is_a_capsule_sized_to_the_time_the_battery_and_the_mascot() {
+        // The mascot's slot: a 6 DIP gap, then the art (21 DIP tall, 96x85).
+        let slot = crate::mascot::GAP + crate::mascot::H * 96.0 / 85.0;
         let size = |battery, use_24h| geom(&state(battery, use_24h));
-        assert_eq!(size(true, true), Some(Geom::new(152.0, 32.0, 16.0)));
-        assert_eq!(size(true, false), Some(Geom::new(180.0, 32.0, 16.0)));
-        assert_eq!(size(false, true), Some(Geom::new(84.0, 32.0, 16.0)));
-        assert_eq!(size(false, false), Some(Geom::new(104.0, 32.0, 16.0)));
+        assert_eq!(size(true, true), Some(Geom::new((152.0 + slot).round(), 32.0, 16.0)));
+        assert_eq!(size(true, false), Some(Geom::new((180.0 + slot).round(), 32.0, 16.0)));
+        assert_eq!(size(false, true), Some(Geom::new((84.0 + slot).round(), 32.0, 16.0)));
+        assert_eq!(size(false, false), Some(Geom::new((104.0 + slot).round(), 32.0, 16.0)));
     }
 
     #[test]
