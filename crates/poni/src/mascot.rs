@@ -42,12 +42,12 @@ enum Pose {
 /// The pose's PNG, straight from the exe.
 fn bytes(p: Pose) -> &'static [u8] {
     match p {
-        Pose::Angry => include_bytes!("res/mascot/01_angry.png"),
-        Pose::Sleepy => include_bytes!("res/mascot/07_sleepy.png"),
-        Pose::Laughing => include_bytes!("res/mascot/09_laughing_tears.png"),
-        Pose::Focused => include_bytes!("res/mascot/13_focused_angry.png"),
-        Pose::Charging => include_bytes!("res/mascot/16_charging.png"),
-        Pose::Waving => include_bytes!("res/mascot/20_waving.png"),
+        Pose::Angry => include_bytes!("../res/mascot/01_angry.png"),
+        Pose::Sleepy => include_bytes!("../res/mascot/07_sleepy.png"),
+        Pose::Laughing => include_bytes!("../res/mascot/09_laughing_tears.png"),
+        Pose::Focused => include_bytes!("../res/mascot/13_focused_angry.png"),
+        Pose::Charging => include_bytes!("../res/mascot/16_charging.png"),
+        Pose::Waving => include_bytes!("../res/mascot/20_waving.png"),
     }
 }
 
