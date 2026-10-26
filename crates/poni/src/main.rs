@@ -34,6 +34,8 @@ mod commands;
 mod dragdrop;
 #[cfg(windows)]
 mod events;
+#[cfg(any(windows, target_os = "macos"))]
+mod eyes;
 #[cfg(windows)]
 mod gfx;
 #[cfg(windows)]

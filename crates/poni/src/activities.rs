@@ -16,7 +16,6 @@ use poni_core::frames::fmt_fps;
 use poni_core::geom::{clamp01, palette, Color, Point, Rect};
 use poni_core::pomodoro::Phase;
 use poni_core::settings::IdleStyle;
-use poni_core::svgpath::Seg;
 use poni_core::sysmon::fmt_pct;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -278,22 +277,26 @@ fn hidden_strip() -> Geom {
     Geom::new(150.0, 5.0, 2.5)
 }
 
-/// Needs continuous ambient frames (near 60 fps): animated equalizer while music plays.
-/// A paused (lingering) pill is static.
+/// Needs continuous ambient frames (near 60 fps): the idle eyes' sprite
+/// playback and the animated equalizer while music plays. A paused
+/// (lingering) pill is static.
 pub fn is_live(m: &Mode, st: &AppState) -> bool {
     if let Some(live) = crate::pill::is_live(m, st) {
         return live;
     }
-    let Some(media) = st.media.as_ref() else { return false };
     match m {
-        Mode::Activity(Activity::Media) | Mode::Activity(Activity::MediaTimer) => media.is_playing(),
+        Mode::Idle => crate::eyes::animates(st),
+        Mode::Activity(Activity::Media) | Mode::Activity(Activity::MediaTimer) => {
+            st.media.as_ref().is_some_and(|m| m.is_playing())
+        }
         _ => false,
     }
 }
 
-/// Next time the collapsed content changes on its own: eye blinks, a paused
-/// pill giving way to idle, the title peek ending. One-shot wakes, so the
-/// app stays at zero CPU in between.
+/// Next time the collapsed content changes on its own: a paused pill giving
+/// way to idle, the title peek ending. One-shot wakes, so the app stays at
+/// zero CPU in between. (The idle eyes need none: while they show, `is_live`
+/// keeps the ambient frames coming; the sprite is a function of `st.now`.)
 pub fn next_wake(m: &Mode, st: &AppState) -> Option<f64> {
     let now = st.now;
     let mut next: Option<f64> = None;
@@ -302,18 +305,6 @@ pub fn next_wake(m: &Mode, st: &AppState) -> Option<f64> {
             next = Some(next.map_or(t, |n: f64| n.min(t)));
         }
     };
-    if *m == Mode::Idle && idle_look(st) == IdleStyle::Eyes && !st.power.saver {
-        // The eyes' own schedule: blinks (a frame each BLINK_STEP while one
-        // eases shut and open) and wander glances, and a step every EYE_STEP
-        // while the pupils ease toward where they're headed. All one-shot
-        // wakes; the eyes rest on battery saver, as the equalizer does (lock
-        // and display-off gating is the app's, in schedule_wake).
-        consider(blink_next(now));
-        consider(wander_next(now));
-        if st.ui.eye_look != st.ui.eye_target {
-            consider(now + EYE_STEP);
-        }
-    }
     if !matches!(m, Mode::Expanded(_)) {
         if let Some(end) = media_grace_end(st) {
             consider(end);
@@ -335,211 +326,8 @@ pub fn next_wake(m: &Mode, st: &AppState) -> Option<f64> {
 
 // ------------------------------------------------------------- the eyes
 
-/// A blink every 5.5 s on average, each ±0.75 s: blinks land 4–7 s apart.
-/// Each one shuts over `BLINK_CLOSE`, holds shut for a beat, and opens again
-/// over `BLINK_OPEN`: a quick close and a slower open, as in the reference.
-const BLINK_PERIOD: f64 = 5.5;
-const BLINK_JITTER: f64 = 0.75;
-const BLINK_CLOSE: f64 = 0.07;
-const BLINK_HOLD: f64 = 0.02;
-const BLINK_OPEN: f64 = 0.13;
-/// While a blink eases, the next frame comes this soon.
-const BLINK_STEP: f64 = 1.0 / 30.0;
-/// A glance in a random direction every 7 s on average, each ±1 s (5–9 s
-/// apart), held this long.
-const WANDER_PERIOD: f64 = 7.0;
-const WANDER_JITTER: f64 = 1.0;
-const WANDER_LEN: f64 = 0.7;
-/// The two eyes sit this far either side of the pill's centre; each is a
-/// horizontal almond (a curved lens pointed at both ends, three times as
-/// wide as tall) in `EYE_RX`/`EYE_RY` half-extents. One neon look on every
-/// theme: an electric-blue core with a soft deep-blue halo on the pill.
-const EYE_DX: f32 = 11.0;
-const EYE_RX: f32 = 9.75;
-const EYE_RY: f32 = 3.25;
-const EYE_CORE: Color = Color::hex(0x3FA9FF);
-const EYE_GLOW: Color = Color::hex(0x0A54C8);
-const EYE_PUPIL: Color = Color::hex(0x0A0A1A);
-/// How far the pupils roam inside their eye: ±25 % of the eye's width
-/// across, ±20 % of its height up/down (the reference's long sweeps).
-const PUPIL_X: f32 = EYE_RX * 0.5;
-const PUPIL_Y: f32 = EYE_RY * 0.4;
-const PUPIL_R: f32 = 1.8;
-/// The cursor pulls the pupils from this far (DIPs); further away they ease
-/// back to centre instead of snapping.
-const EYE_REACH: f32 = 600.0;
-/// While the pupils ease toward their target, the next frame comes this soon.
-const EYE_STEP: f64 = 0.08;
-
-/// A cycle's cheap deterministic pseudo-random in 0..1 (no RNG state: the
-/// same frame always draws the same eyes, and the wake schedule agrees with
-/// the draw because both compute from `now`).
-fn hash01(n: i64, salt: u64) -> f64 {
-    let mut x = (n as u64).wrapping_mul(0x9E3779B97F4A7C15).wrapping_add(salt);
-    x = (x ^ (x >> 30)).wrapping_mul(0xBF58476D1CE4E5B9);
-    x = (x ^ (x >> 27)).wrapping_mul(0x94D049BB133111EB);
-    x ^= x >> 31;
-    (x >> 11) as f64 / (1u64 << 53) as f64
-}
-
-/// When blink `k` starts (jittered inside its 5.5 s cycle).
-fn blink_at(k: i64) -> f64 {
-    k as f64 * BLINK_PERIOD + (hash01(k, 1) - 0.5) * 2.0 * BLINK_JITTER
-}
-
-/// Lid openness right now (1 = fully open, 0 = shut) and the next moment
-/// the eyes need a frame: a blink's start or end, or a step while one eases.
-/// `pub(crate)` for the self-test, which waits for a quiet moment before the
-/// IdleEyes screenshot.
-pub(crate) fn blink_state(now: f64) -> (f32, f64) {
-    let k0 = (now / BLINK_PERIOD).floor() as i64;
-    let (mut lid, mut next) = (1.0f32, f64::INFINITY);
-    for k in k0..=k0 + 2 {
-        let t = blink_at(k);
-        if t > now {
-            next = next.min(t);
-            continue;
-        }
-        let end = t + BLINK_CLOSE + BLINK_HOLD + BLINK_OPEN;
-        if end <= now {
-            continue;
-        }
-        let dt = now - t;
-        lid = lid.min(if dt < BLINK_CLOSE {
-            // Ease shut: accelerating, quick.
-            let u = (dt / BLINK_CLOSE) as f32;
-            1.0 - u * u
-        } else if dt < BLINK_CLOSE + BLINK_HOLD {
-            0.0
-        } else {
-            // Ease open: decelerating, slower than the close.
-            let u = ((dt - BLINK_CLOSE - BLINK_HOLD) / BLINK_OPEN) as f32;
-            u * (2.0 - u)
-        });
-        next = next.min((now + BLINK_STEP).min(end));
-    }
-    (lid, next)
-}
-
-fn blink_next(now: f64) -> f64 {
-    blink_state(now).1
-}
-
-/// Wander glance `k`: when it starts and the pupil offset it glances at.
-fn wander_at(k: i64) -> (f64, (f32, f32)) {
-    let t = k as f64 * WANDER_PERIOD + (hash01(k, 2) - 0.5) * 2.0 * WANDER_JITTER;
-    let a = hash01(k, 3) * std::f64::consts::TAU;
-    (t, (a.cos() as f32 * PUPIL_X, a.sin() as f32 * PUPIL_Y))
-}
-
-/// The glance under way (its pupil offset), and the next wander boundary.
-fn wander_state(now: f64) -> (Option<(f32, f32)>, f64) {
-    let k0 = (now / WANDER_PERIOD).floor() as i64;
-    let (mut glance, mut next) = (None, f64::INFINITY);
-    for k in k0..=k0 + 2 {
-        let (t, dir) = wander_at(k);
-        if (t..t + WANDER_LEN).contains(&now) {
-            glance = Some(dir);
-        }
-        if t > now {
-            next = next.min(t);
-        }
-        if t + WANDER_LEN > now {
-            next = next.min(t + WANDER_LEN);
-        }
-    }
-    (glance, next)
-}
-
-fn wander_next(now: f64) -> f64 {
-    wander_state(now).1
-}
-
-/// Where the pupils head from here: a wander glance in its moment, else the
-/// cursor while it's within reach, else back to centre.
-fn eye_target(st: &AppState, mouse: Option<Point>, body: Rect) -> (f32, f32) {
-    if let (Some(dir), _) = wander_state(st.now) {
-        return dir;
-    }
-    let c = body.center();
-    match mouse.or(st.pointer).filter(|p| (p.x - c.x).hypot(p.y - c.y) <= EYE_REACH) {
-        Some(p) => (((p.x - c.x) / 300.0).clamp(-1.0, 1.0) * PUPIL_X, ((p.y - c.y) / 200.0).clamp(-1.0, 1.0) * PUPIL_Y),
-        None => (0.0, 0.0),
-    }
-}
-
-/// The almond eye centred on `c` with half-extents `rx`/`ry`: a pair of
-/// quadratic arcs above and below, meeting in points at both ends. `ry`
-/// scales with the lid, so a closing eye narrows toward its centre line.
-fn eye_path(c: Point, rx: f32, ry: f32) -> [Seg; 6] {
-    let (x, y) = (c.x, c.y);
-    [
-        Seg::MoveTo(x - rx, y),
-        Seg::QuadTo(x - rx * 0.6, y - ry, x, y - ry),
-        Seg::QuadTo(x + rx * 0.6, y - ry, x + rx, y),
-        Seg::QuadTo(x + rx * 0.6, y + ry, x, y + ry),
-        Seg::QuadTo(x - rx * 0.6, y + ry, x - rx, y),
-        Seg::Close,
-    ]
-}
-
-/// The two eyes: glowing blue almonds with a dark roaming pupil each, shut
-/// to a thin upward crescent while a blink runs. The pupils ease a step a
-/// frame toward `eye_target` (stored so `next_wake` knows whether more
-/// frames are due).
-fn draw_eyes(ui: &mut Ui, st: &mut AppState, body: Rect) {
-    let (lid, _) = blink_state(st.now);
-    let cy = body.center().y;
-    let target = eye_target(st, ui.input.mouse, body);
-    let (lx, ly) = st.ui.eye_look;
-    let (mut nx, mut ny) = (lx + (target.0 - lx) * 0.4, ly + (target.1 - ly) * 0.4);
-    if (nx - target.0).abs() < 0.05 && (ny - target.1).abs() < 0.05 {
-        nx = target.0;
-        ny = target.1;
-    }
-    st.ui.eye_look = (nx, ny);
-    st.ui.eye_target = target;
-    let nx = nx.clamp(-PUPIL_X, PUPIL_X);
-    let ny = ny.clamp(-PUPIL_Y, PUPIL_Y);
-    for side in [-1.0f32, 1.0] {
-        let c = Point::new(body.center().x + EYE_DX * side, cy);
-        if lid <= 0.08 {
-            // Shut: a thin upward-curved crescent (a slim smile line), not a
-            // squash of the almond, with a faint halo stroke under the bright one.
-            let segs = [
-                Seg::MoveTo(c.x - EYE_RX * 0.62, c.y - 1.0),
-                Seg::QuadTo(c.x, c.y + 2.2, c.x + EYE_RX * 0.62, c.y - 1.0),
-            ];
-            ui.c.path(&segs, None, Some((EYE_GLOW.with_alpha(0.14), 4.0)));
-            ui.c.path(&segs, None, Some((EYE_CORE, 1.75)));
-            continue;
-        }
-        let squish = lid;
-        let ry = EYE_RY * squish;
-        // Halo: the same almond path grown and fainter, twice, then the
-        // bright core. On the black pill the stacked low-alpha fills read as
-        // a neon glow; no blur pass is spent on it.
-        for (grow, alpha) in [(1.55, 0.10), (1.28, 0.18)] {
-            ui.c.path(
-                &eye_path(c, EYE_RX * grow, ry * grow),
-                Some(EYE_GLOW.with_alpha(alpha)),
-                None,
-            );
-        }
-        ui.c.path(
-            &eye_path(c, EYE_RX, ry),
-            Some(EYE_CORE.with_alpha(0.95)),
-            None,
-        );
-        if lid > 0.35 {
-            // The pupil roams; it shrinks a little as it nears the almond's
-            // edge so it never pokes out, and narrows with the shutting eye.
-            let edge = (nx.abs() / PUPIL_X).max(ny.abs() / PUPIL_Y);
-            let r = PUPIL_R * (1.0 - 0.35 * edge) * squish;
-            ui.c.fill_circle(Point::new(c.x + nx, c.y + ny * squish), r, EYE_PUPIL);
-        }
-    }
-}
+/// The two eyes are the reference video's frames played back by [`crate::eyes`];
+/// this module only decides when they show and reserves their slot.
 
 pub fn draw(ui: &mut Ui, st: &mut AppState, m: &Mode, body: Rect) {
     if crate::pill::draw(ui, st, m, body) {
@@ -591,7 +379,7 @@ fn draw_idle(ui: &mut Ui, st: &mut AppState, body: Rect) {
             }
             ui.c.text(&time, Rect::new(x0 + bw + BADGE_GAP, body.y, tw + 2.0, body.h), &ts);
         }
-        IdleStyle::Eyes => draw_eyes(ui, st, body),
+        IdleStyle::Eyes => crate::eyes::draw(ui, st, body),
         IdleStyle::Minimal | IdleStyle::Hidden => {}
     }
 }
@@ -1062,46 +850,30 @@ mod tests {
         st.settings.idle_style = IdleStyle::Eyes;
         assert_eq!(idle_look(&st), IdleStyle::Eyes);
         assert_eq!(geom(&Mode::Idle, &st), Geom::new(118.0, 30.0, 14.0));
+        // The eyes showing, their frames advance; no scheduled wakes needed
+        // (the sprite is a function of `st.now`, driven by the ambient frames).
+        assert!(is_live(&Mode::Idle, &st));
+        assert_eq!(next_wake(&Mode::Idle, &st), None);
         // The pointer on the island: the clock look, at the eyes' width, so
-        // the pill doesn't shrink out from under it.
+        // the pill doesn't shrink out from under it; static, so no frames.
         st.hovering = true;
         assert_eq!(idle_look(&st), IdleStyle::Clock);
         assert_eq!(geom(&Mode::Idle, &st), Geom::new(118.0, 30.0, 14.0));
-        // The eyes' wakes stop while the clock shows, and come back after.
-        assert_eq!(next_wake(&Mode::Idle, &st), None);
+        assert!(!is_live(&Mode::Idle, &st));
         st.hovering = false;
         assert_eq!(idle_look(&st), IdleStyle::Eyes);
-        assert!(next_wake(&Mode::Idle, &st).is_some());
+        assert!(is_live(&Mode::Idle, &st));
         // ...and they rest on battery saver, as the equalizer's frames do.
         st.power.saver = true;
-        assert_eq!(next_wake(&Mode::Idle, &st), None);
+        assert!(!is_live(&Mode::Idle, &st));
     }
 
     #[test]
-    fn blinks_and_wanders_keep_their_spacing_and_stay_schedulable() {
-        // Consecutive starts: blinks 4–7 s apart, wander glances 5–9 s apart.
-        for k in 0..200 {
-            let d = blink_at(k + 1) - blink_at(k);
-            assert!((4.0..=7.0).contains(&d), "blink spacing {d}");
-            let d = wander_at(k + 1).0 - wander_at(k).0;
-            assert!((5.0..=9.0).contains(&d), "wander spacing {d}");
-        }
-        // From any moment the next boundary is ahead and never far.
-        for now in [0.0, 1234.567, 99999.1] {
-            let (_, b) = blink_state(now);
-            assert!(b > now && b <= now + BLINK_PERIOD + 2.0 * BLINK_JITTER, "blink next {b} from {now}");
-            let (_, w) = wander_state(now);
-            assert!(w > now && w <= now + WANDER_PERIOD + 2.0 * WANDER_JITTER, "wander next {w} from {now}");
-        }
-        // Mid-blink the lid is shut (held closed or easing); a moment after
-        // the blink ends it is fully open again.
-        let t = blink_at(20);
-        assert!(blink_state(t + BLINK_CLOSE + BLINK_HOLD / 2.0).0 == 0.0);
-        assert!(blink_state(t + (BLINK_CLOSE + BLINK_HOLD + BLINK_OPEN) / 2.0).0 < 1.0);
-        assert_eq!(
-            blink_state(t + BLINK_CLOSE + BLINK_HOLD + BLINK_OPEN + 0.01).0,
-            1.0
-        );
+    fn the_eyes_frames_step_with_the_clock() {
+        assert_eq!(crate::eyes::frame_index(0.0), 0);
+        assert_eq!(crate::eyes::frame_index(1.0), 15);
+        assert_eq!(crate::eyes::frame_index(4.0), 0, "the 4-second loop wraps");
+        assert_eq!(crate::eyes::frame_index(-1.0), 0, "negative times clamp");
     }
 
     #[test]

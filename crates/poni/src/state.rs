@@ -10,7 +10,7 @@ use crate::pages::PageKind;
 use poni_core::addons::Status as AddonStatus;
 use poni_core::cliphist::ClipHistory;
 use poni_core::datetime::LocalDateTime;
-use poni_core::geom::{palette, Color, Point};
+use poni_core::geom::{palette, Color};
 use poni_core::health::HealthSnapshot;
 use poni_core::lrc::Lyrics;
 use poni_core::oyenza::{Activity, Bill, DayPick, Saved, Seen};
@@ -292,12 +292,6 @@ pub struct PageUiState {
     pub before_settings: Option<PageKind>,
     /// Start with Windows, as last read off the UI thread (None until Settings first opens).
     pub autostart: Option<bool>,
-    /// The idle eyes' pupils: where they sit and where they're headed, in
-    /// DIPs from each eye's centre (±2 across, ±1 up/down). The draw eases
-    /// the look a step a frame toward the target; while they differ,
-    /// `activities::next_wake` keeps the frames coming.
-    pub eye_look: (f32, f32),
-    pub eye_target: (f32, f32),
 }
 
 /// Whether Windows lets Arunika read a game's frames. Its event tracing
@@ -485,10 +479,6 @@ pub struct AppState {
     /// its hover tracking every frame; the Mac leaves it false (there hover
     /// still opens the island).
     pub hovering: bool,
-    /// The pointer in canvas DIPs, wherever on screen it is (the idle eyes
-    /// glance at it). Windows reads it once a frame; None before the first
-    /// read, in the self-test, and on the Mac away from the island.
-    pub pointer: Option<Point>,
     /// Phone drop, while it's open.
     pub phone: Option<PhoneDrop>,
     /// Paired phones, newest first (`services::pairdrop`).
@@ -570,7 +560,6 @@ impl AppState {
             aside: false,
             drag_hover: false,
             hovering: false,
-            pointer: None,
             phone: None,
             paired: Vec::new(),
             pair_server: None,

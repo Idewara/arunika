@@ -1,4 +1,5 @@
-//! Dependency-free PNG encoder (self-test screenshots, generated sample files).
+//! Dependency-free PNG codec (self-test screenshots, generated sample files,
+//! the embedded idle-eyes art).
 //!
 //! Writes 8-bit, non-interlaced RGBA or greyscale images. Each row gets the
 //! PNG filter with the smallest sum of absolute differences (the classic
@@ -6,6 +7,13 @@
 //! fixed-Huffman deflate block driven by a greedy LZ77 matcher. When that
 //! would come out larger than the input (noise), stored blocks are used
 //! instead. CRC-32 and Adler-32 are computed here too.
+//!
+//! [`decode`] reads the PNGs this crate writes and ships: 8-bit,
+//! non-interlaced, colour types 0 (grey), 2 (RGB), 4 (grey + alpha) and 6
+//! (RGBA), any RFC 1950 block layout. Album art and thumbnails stay with the
+//! platform decoders (`services::imaging`, `mac/services/thumbs`); this one
+//! is for small art embedded in the exe (the eyes frames): no COM, no
+//! threads, no new dependencies.
 
 use std::path::Path;
 
@@ -462,6 +470,309 @@ fn deflate_fixed(data: &[u8]) -> Vec<u8> {
     w.finish()
 }
 
+// ---------------------------------------------------------------- decoder
+
+/// A decoded PNG: straight (non-premultiplied) RGBA, `width * 4` stride.
+pub struct Decoded {
+    pub width: u32,
+    pub height: u32,
+    pub pixels: Vec<u8>,
+}
+
+/// Decode a PNG into straight RGBA: CRC-checked chunks, zlib inflate
+/// (stored, fixed and dynamic deflate blocks), per-row filter reversal, then
+/// the colour type expanded to RGBA.
+pub fn decode(png: &[u8]) -> Result<Decoded, String> {
+    if png.len() < 8 + 12 || png[..8] != SIGNATURE {
+        return Err("bad PNG signature".into());
+    }
+    let mut pos = 8;
+    let (mut ihdr, mut idat) = (None, Vec::new());
+    while pos + 12 <= png.len() {
+        let len = u32::from_be_bytes(png[pos..pos + 4].try_into().map_err(|_| "short chunk")?) as usize;
+        let kind: [u8; 4] = png[pos + 4..pos + 8].try_into().map_err(|_| "short chunk")?;
+        let body_end = pos + 8 + len;
+        let crc_end = body_end + 4;
+        if crc_end > png.len() {
+            return Err("truncated chunk".into());
+        }
+        let stored = u32::from_be_bytes(png[body_end..crc_end].try_into().map_err(|_| "short crc")?);
+        if crc32(&png[pos + 4..body_end]) != stored {
+            return Err(format!("bad CRC on {}", String::from_utf8_lossy(&kind)));
+        }
+        match &kind {
+            b"IHDR" => ihdr = Some(&png[pos + 8..body_end]),
+            b"IDAT" => idat.extend_from_slice(&png[pos + 8..body_end]),
+            b"IEND" => break,
+            _ => {}
+        }
+        pos = crc_end;
+    }
+    let ihdr = ihdr.ok_or("no IHDR")?;
+    if ihdr.len() != 13 {
+        return Err("IHDR must be 13 bytes".into());
+    }
+    let w = u32::from_be_bytes(ihdr[0..4].try_into().map_err(|_| "ihdr")?);
+    let h = u32::from_be_bytes(ihdr[4..8].try_into().map_err(|_| "ihdr")?);
+    if w == 0 || h == 0 {
+        return Err("empty image".into());
+    }
+    if ihdr[8] != 8 {
+        return Err(format!("bit depth {} (want 8)", ihdr[8]));
+    }
+    if ihdr[12] != 0 {
+        return Err("interlaced PNGs are not supported".into());
+    }
+    let ch = match ihdr[9] {
+        0 => 1,
+        4 => 2,
+        2 => 3,
+        6 => 4,
+        c => return Err(format!("colour type {c} is not supported")),
+    };
+    let raw = inflate(&idat)?;
+    let rows = unfilter(&raw, w as usize, h as usize, ch)?;
+    let px = (w as usize) * (h as usize);
+    let mut pixels = Vec::with_capacity(px * 4);
+    match ihdr[9] {
+        6 => pixels = rows,
+        2 => {
+            for p in rows.chunks_exact(3) {
+                pixels.extend_from_slice(&[p[0], p[1], p[2], 255]);
+            }
+        }
+        4 => {
+            for p in rows.chunks_exact(2) {
+                pixels.extend_from_slice(&[p[0], p[0], p[0], p[1]]);
+            }
+        }
+        _ => {
+            for &g in &rows {
+                pixels.extend_from_slice(&[g, g, g, 255]);
+            }
+        }
+    }
+    Ok(Decoded { width: w, height: h, pixels })
+}
+
+/// Reverse the per-row filters (types 0-4) into tightly packed scanlines.
+fn unfilter(raw: &[u8], w: usize, h: usize, bpp: usize) -> Result<Vec<u8>, String> {
+    let row = w * bpp;
+    if raw.len() < (row + 1) * h {
+        return Err("not enough image data".into());
+    }
+    let mut px = vec![0u8; row * h];
+    for y in 0..h {
+        let f = raw[y * (row + 1)];
+        for i in 0..row {
+            let x = raw[y * (row + 1) + 1 + i];
+            let a = if i >= bpp { px[y * row + i - bpp] } else { 0 };
+            let b = if y > 0 { px[(y - 1) * row + i] } else { 0 };
+            let c = if y > 0 && i >= bpp { px[(y - 1) * row + i - bpp] } else { 0 };
+            px[y * row + i] = match f {
+                0 => x,
+                1 => x.wrapping_add(a),
+                2 => x.wrapping_add(b),
+                3 => x.wrapping_add(((a as u16 + b as u16) / 2) as u8),
+                4 => x.wrapping_add(paeth(a, b, c)),
+                _ => return Err(format!("bad filter {f}")),
+            };
+        }
+    }
+    Ok(px)
+}
+
+struct BitReader<'a> {
+    d: &'a [u8],
+    pos: usize,
+    bit: u32,
+}
+
+impl BitReader<'_> {
+    fn bit(&mut self) -> Result<u32, String> {
+        let byte = *self.d.get(self.pos).ok_or("unexpected end of deflate data")?;
+        let b = (byte >> self.bit) & 1;
+        self.bit += 1;
+        if self.bit == 8 {
+            self.bit = 0;
+            self.pos += 1;
+        }
+        Ok(b as u32)
+    }
+
+    fn bits(&mut self, n: u32) -> Result<u32, String> {
+        let mut v = 0;
+        for i in 0..n {
+            v |= self.bit()? << i;
+        }
+        Ok(v)
+    }
+
+    fn align(&mut self) {
+        if self.bit != 0 {
+            self.bit = 0;
+            self.pos += 1;
+        }
+    }
+}
+
+/// Canonical Huffman decoder (RFC 1951 §3.2.2): per-length symbol counts and
+/// the symbols in code order, decoded one bit at a time (the embedded art is
+/// small, so no lookup table is worth its memory).
+struct Huffman {
+    counts: [u16; 16],
+    symbols: Vec<u16>,
+}
+
+impl Huffman {
+    fn build(lengths: &[u8]) -> Huffman {
+        let mut counts = [0u16; 16];
+        for &l in lengths {
+            counts[l as usize] += 1;
+        }
+        counts[0] = 0;
+        let mut offs = [0usize; 16];
+        for l in 1..16 {
+            offs[l] = offs[l - 1] + counts[l - 1] as usize;
+        }
+        let mut symbols = vec![0u16; lengths.len()];
+        for (s, &l) in lengths.iter().enumerate() {
+            if l != 0 {
+                symbols[offs[l as usize]] = s as u16;
+                offs[l as usize] += 1;
+            }
+        }
+        Huffman { counts, symbols }
+    }
+
+    fn decode(&self, r: &mut BitReader) -> Result<u16, String> {
+        let (mut code, mut first, mut index) = (0i32, 0i32, 0i32);
+        for len in 1..16 {
+            code |= r.bit()? as i32;
+            let count = self.counts[len] as i32;
+            if code - count < first {
+                let i = (index + (code - first)) as usize;
+                return self.symbols.get(i).copied().ok_or("bad huffman code".into());
+            }
+            index += count;
+            first = (first + count) << 1;
+            code <<= 1;
+        }
+        Err("invalid huffman code".into())
+    }
+}
+
+/// Inflate a zlib stream (stored, fixed and dynamic deflate blocks).
+fn inflate(z: &[u8]) -> Result<Vec<u8>, String> {
+    if z.len() < 6 || z[0] & 0x0f != 8 || ((z[0] as u32) << 8 | z[1] as u32) % 31 != 0 {
+        return Err("bad zlib header".into());
+    }
+    let mut r = BitReader { d: &z[2..z.len() - 4], pos: 0, bit: 0 };
+    let mut out = Vec::new();
+    loop {
+        let last = r.bits(1)?;
+        match r.bits(2)? {
+            0 => {
+                r.align();
+                let b = r.d.get(r.pos..r.pos + 4).ok_or("short stored header")?;
+                let (len, nlen) = (u16::from_le_bytes([b[0], b[1]]), u16::from_le_bytes([b[2], b[3]]));
+                if len != !nlen {
+                    return Err("LEN/NLEN mismatch".into());
+                }
+                r.pos += 4;
+                let body = r.d.get(r.pos..r.pos + len as usize).ok_or("short stored block")?;
+                out.extend_from_slice(body);
+                r.pos += len as usize;
+            }
+            1 => {
+                let mut litlen = [0u8; 288];
+                litlen[0..144].fill(8);
+                litlen[144..256].fill(9);
+                litlen[256..280].fill(7);
+                litlen[280..288].fill(8);
+                let dist = [5u8; 30];
+                block(&mut r, &mut out, &Huffman::build(&litlen), &Huffman::build(&dist))?;
+            }
+            2 => {
+                let (hlit, hdist, hclen) = (r.bits(5)? as usize + 257, r.bits(5)? as usize + 1, r.bits(4)? as usize + 4);
+                const ORDER: [usize; 19] = [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15];
+                let mut clen = [0u8; 19];
+                for &o in ORDER.iter().take(hclen) {
+                    clen[o] = r.bits(3)? as u8;
+                }
+                let clh = Huffman::build(&clen);
+                let mut lens = Vec::with_capacity(hlit + hdist);
+                while lens.len() < hlit + hdist {
+                    match clh.decode(&mut r)? {
+                        l @ 0..=15 => lens.push(l as u8),
+                        16 => {
+                            let prev = *lens.last().ok_or("repeat with no previous length")?;
+                            for _ in 0..3 + r.bits(2)? {
+                                lens.push(prev);
+                            }
+                        }
+                        17 => {
+                            for _ in 0..3 + r.bits(3)? {
+                                lens.push(0);
+                            }
+                        }
+                        18 => {
+                            for _ in 0..11 + r.bits(7)? {
+                                lens.push(0);
+                            }
+                        }
+                        _ => return Err("bad code-length symbol".into()),
+                    }
+                }
+                if lens.len() > hlit + hdist {
+                    return Err("too many code lengths".into());
+                }
+                let (litlen, dist) = lens.split_at(hlit);
+                block(&mut r, &mut out, &Huffman::build(litlen), &Huffman::build(dist))?;
+            }
+            t => return Err(format!("unsupported block type {t}")),
+        }
+        if last == 1 {
+            break;
+        }
+    }
+    let want = u32::from_be_bytes(z[z.len() - 4..].try_into().map_err(|_| "short zlib trailer")?);
+    if adler32(&out) != want {
+        return Err("adler mismatch".into());
+    }
+    Ok(out)
+}
+
+/// One deflate block's LZ77 decode (shared by the fixed and dynamic tables).
+fn block(r: &mut BitReader, out: &mut Vec<u8>, litlen: &Huffman, dist: &Huffman) -> Result<(), String> {
+    loop {
+        match litlen.decode(r)? {
+            s if s < 256 => out.push(s as u8),
+            256 => return Ok(()),
+            s => {
+                if !(257..=285).contains(&s) {
+                    return Err("bad length symbol".into());
+                }
+                let li = (s - 257) as usize;
+                let len = LEN_BASE[li] as usize + r.bits(LEN_EXTRA[li] as u32)? as usize;
+                let dsym = dist.decode(r)?;
+                if dsym > 29 {
+                    return Err("bad distance symbol".into());
+                }
+                let di = dsym as usize;
+                let d = DIST_BASE[di] as usize + r.bits(DIST_EXTRA[di] as u32)? as usize;
+                if d > out.len() {
+                    return Err("distance beyond the output so far".into());
+                }
+                for _ in 0..len {
+                    let b = out[out.len() - d];
+                    out.push(b);
+                }
+            }
+        }
+    }
+}
+
 // ---------------------------------------------------------------- tests
 
 #[cfg(test)]
@@ -772,5 +1083,42 @@ mod tests {
         assert_eq!(&d.pixels[..4], &[1, 2, 3, 0]);
         assert!(save_rgba(std::env::temp_dir().join("arunika-png-test-bad.png"), 2, 2, &[0; 3]).is_err());
         assert!(save_gray(std::env::temp_dir().join("arunika-png-test-empty.png"), 0, 2, &[]).is_err());
+    }
+
+    #[test]
+    fn the_decoder_roundtrips_what_the_encoder_writes() {
+        // (The `decode` above is the test-only inflater; this exercises the
+        // shipping one through `crate::png`.)
+        let (w, h) = (13u32, 7u32);
+        let rgba: Vec<u8> = (0..w * h * 4).map(|i| (i * 31 % 253) as u8).collect();
+        let d = crate::png::decode(&encode_rgba(w, h, &rgba)).expect("decodes");
+        assert_eq!((d.width, d.height), (w, h));
+        assert_eq!(d.pixels, rgba);
+
+        let gray: Vec<u8> = (0..w * h).map(|i| (i * 17 % 251) as u8).collect();
+        let d = crate::png::decode(&encode_gray(w, h, &gray)).expect("decodes");
+        let rgba: Vec<u8> = gray.iter().flat_map(|&g| [g, g, g, 255]).collect();
+        assert_eq!(d.pixels, rgba, "grey expands to RGBA");
+    }
+
+    #[test]
+    fn the_decoder_reads_the_embedded_eyes_art() {
+        // A real zlib stream (dynamic-huffman blocks, every filter type) from
+        // the app's own assets, checksummed chunk by chunk on the way in.
+        // The frames are colour type 2 (RGB): opaque, the black background
+        // ships as black pixels, so "transparent" is not expected here.
+        let png: &[u8] = include_bytes!("../res/eyes/frame_00.png");
+        let d = crate::png::decode(png).expect("the eyes art decodes");
+        assert_eq!((d.width, d.height), (280, 79));
+        assert!(d.pixels.chunks_exact(4).all(|p| p[3] == 255), "fully opaque");
+        assert!(d.pixels.chunks_exact(4).any(|p| p[0] > 0 || p[1] > 0 || p[2] > 0), "has the art's pixels");
+        assert_eq!(d.pixels.len(), (280 * 79 * 4) as usize);
+        // Corruption and truncation are refused, not rendered.
+        let mut bad = png.to_vec();
+        let i = bad.len() - 20;
+        bad[i] ^= 0xff;
+        assert!(crate::png::decode(&bad).is_err());
+        assert!(crate::png::decode(&png[..png.len() - 1]).is_err());
+        assert!(crate::png::decode(&png[..8]).is_err());
     }
 }

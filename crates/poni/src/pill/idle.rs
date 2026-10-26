@@ -85,8 +85,8 @@ pub fn draw(ui: &mut Ui, st: &mut AppState, body: Rect) -> bool {
             true
         }
         IdleStyle::Minimal => true,
-        // Classic draws the eyes (blinking and glancing on their own wake)
-        // and the invisible strip.
+        // The activities module draws the eyes (the video frames) and the
+        // invisible strip.
         IdleStyle::Eyes | IdleStyle::Hidden => false,
     }
 }

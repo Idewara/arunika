@@ -1637,7 +1637,7 @@ impl SelfTest {
                 let steps = steps + 1;
                 let waited = now - since;
                 let timed_out = waited > self.settle_limit(app);
-                let ready = steps >= MIN_STEPS && stable >= STABLE_STEPS && !(scene == Scene::IdleEyes && mid_blink());
+                let ready = steps >= MIN_STEPS && stable >= STABLE_STEPS;
                 if ready || timed_out {
                     self.capture(app, i, !timed_out || settled, waited);
                     self.phase = self.next_phase(i + 1, now);
@@ -1884,11 +1884,6 @@ impl SelfTest {
         st.volume = VolumeState { level: 0.64, muted: false, known: true };
         st.pinned = false;
         st.drag_hover = scene == Scene::ShelfDrop;
-        // The eyes' pupils start centred in every scene, and the (unpolled)
-        // pointer is away: screenshots don't depend on the real cursor.
-        st.pointer = None;
-        st.ui.eye_look = (0.0, 0.0);
-        st.ui.eye_target = (0.0, 0.0);
         st.health = match scene {
             Scene::HealthSignedOut | Scene::HealthSignedIn => None,
             Scene::HealthStale => Some(sample_week(st, 3)),
@@ -2923,14 +2918,6 @@ fn lyric_line_check(st: &AppState) -> Check {
 fn first_tab_point(body: Rect) -> Point {
     let header = crate::pages::header_rect(body);
     Point::new(header.x + 15.0, header.center().y)
-}
-
-/// In or near a blink (activities::blink_state): the IdleEyes screenshot
-/// waits for a quiet moment, so the eyes are fully open in it.
-fn mid_blink() -> bool {
-    let now = clock::mono();
-    let (lid, next) = crate::activities::blink_state(now);
-    lid < 1.0 || next - now < 0.3
 }
 
 fn round2(v: f64) -> f64 {

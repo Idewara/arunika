@@ -2684,19 +2684,8 @@ impl App {
         let now = self.st.now;
 
         // What the draw pass reads about the pointer: whether it rests on the
-        // island (the idle look swaps to the clock) and where on screen it is
-        // (the idle eyes glance at it). One GetCursorPos a frame; none in the
-        // self-test, whose scenes pin `st.pointer` themselves.
+        // island (the idle look swaps to the clock while it does).
         self.st.hovering = self.hovering;
-        if self.selftest.is_none() {
-            let mut pt = POINT::default();
-            unsafe {
-                if GetCursorPos(&mut pt).is_ok() {
-                    let s = self.gfx.scale();
-                    self.st.pointer = Some(Point::new((pt.x - self.surface.x) as f32 / s, (pt.y - self.surface.y) as f32 / s));
-                }
-            }
-        }
 
         // The pointer left the open island since the last frame: the close
         // starts on this frame, no timer in between.
