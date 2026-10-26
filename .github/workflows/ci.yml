@@ -489,9 +489,12 @@ jobs:
         # Upgrade from this repository's own latest release (its fixed-name
         # installer asset). A fresh fork has no release yet, so a 404 here is
         # expected and tolerated: the step below then runs without -Previous,
-        # which tools/ci-installer.ps1 treats as optional.
+        # which tools/ci-installer.ps1 treats as optional. curl -f keeps a 404
+        # from writing an error page into previous-setup.exe.
         continue-on-error: true
-        run: Invoke-WebRequest -Uri "https://github.com/Idewara/arunika/releases/latest/download/Arunika-Setup.exe" -OutFile previous-setup.exe
+        run: |
+          curl.exe -fsSL -o previous-setup.exe "https://github.com/Idewara/arunika/releases/latest/download/Arunika-Setup.exe"
+          if ($LASTEXITCODE -ne 0) { Remove-Item previous-setup.exe -ErrorAction SilentlyContinue; exit 1 }
       - name: Install, check, uninstall
         shell: pwsh
         run: |
