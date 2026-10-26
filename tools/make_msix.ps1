@@ -1,6 +1,6 @@
-# Build the Microsoft Store package (MSIX) from a release poni.exe:
+# Build the Microsoft Store package (MSIX) from a release arunika.exe:
 #
-#   ./tools/make_msix.ps1 -Exe target\release\poni.exe -Version 0.1.2
+#   ./tools/make_msix.ps1 -Exe target\release\arunika.exe -Version 0.1.2
 #
 # Writes dist\Arunika-<version>.msix, unsigned: the Store signs what it ships.
 # Needs the Windows SDK (makepri.exe, makeappx.exe) and Python with Pillow.
@@ -43,11 +43,11 @@ $OutDir = (Resolve-Path $OutDir).Path
 $layout = Join-Path $OutDir "msix-layout"
 if (Test-Path $layout) { Remove-Item -Recurse -Force $layout }
 New-Item -ItemType Directory -Force -Path (Join-Path $layout "Assets") | Out-Null
-Copy-Item $Exe (Join-Path $layout "poni.exe")
+Copy-Item $Exe (Join-Path $layout "arunika.exe")
 Copy-Item (Join-Path $root "THIRD-PARTY-NOTICES.txt") (Join-Path $layout "THIRD-PARTY-NOTICES.txt")
 
 # Tile, Start list and taskbar images, drawn from the app icon.
-python (Join-Path $root "tools\make_msix_assets.py") (Join-Path $root "crates\poni\res\poni.ico") (Join-Path $layout "Assets") | Out-Host
+python (Join-Path $root "tools\make_msix_assets.py") (Join-Path $root "crates\poni\res\arunika.ico") (Join-Path $layout "Assets") | Out-Host
 if ($LASTEXITCODE -ne 0) { throw "make_msix_assets.py failed with exit code $LASTEXITCODE" }
 
 $values = @{

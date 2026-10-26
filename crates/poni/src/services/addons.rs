@@ -48,7 +48,7 @@ impl AddonService {
         let shared = Arc::new(Shared { q: Mutex::new(Queue { want, jobs: Vec::new(), shutdown: false }), cv: Condvar::new() });
         let worker = shared.clone();
         std::thread::Builder::new()
-            .name("poni-addons".into())
+            .name("arunika-addons".into())
             .spawn(move || worker_main(worker, sink, crate::paths::addons_dir()))
             .map_err(|e| io::Error::other(format!("could not start the add-ons thread: {e}")))?;
         Ok(Self { shared })

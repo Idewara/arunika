@@ -1,5 +1,5 @@
 //! Small secrets on disk (the Apple Music token), readable only by this Mac
-//! account: a file with owner-only permissions in Poni's cache folder. The
+//! account: a file with owner-only permissions in Arunika's cache folder. The
 //! Windows app seals the same file with DPAPI, which likewise any program
 //! running as that user can open; the API is the same, so the shared
 //! Apple Music code uses it unchanged.

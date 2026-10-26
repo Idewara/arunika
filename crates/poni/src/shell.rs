@@ -3,7 +3,7 @@
 //! `ShellExecuteW` never runs on the UI thread: shell handlers may run a
 //! nested modal loop there that swallows the island's messages, and a UNC
 //! path can block for many seconds while the network times out. Every call
-//! gets a short-lived "poni-shell" STA thread instead.
+//! gets a short-lived "arunika-shell" STA thread instead.
 //!
 //! Targets arrive from drag-and-drop (shelf paths) and from pages (URLs), so
 //! only two kinds are handed to the shell: existing absolute local or UNC
@@ -72,7 +72,7 @@ pub fn open_recorder_link(link: &str) {
 }
 
 /// Open Settings > Apps > Startup (asynchronously). The Store build sends
-/// people there when they turned Poni's startup task off in Windows, the only
+/// people there when they turned Arunika's startup task off in Windows, the only
 /// place it can be turned back on.
 pub fn open_startup_settings() {
     run("open", || {
@@ -111,14 +111,14 @@ pub fn reveal(path: &str) {
     });
 }
 
-/// Run `job` on a new "poni-shell" thread inside a single-threaded apartment.
+/// Run `job` on a new "arunika-shell" thread inside a single-threaded apartment.
 fn run(what: &'static str, job: impl FnOnce() + Send + 'static) {
     if IN_FLIGHT.fetch_add(1, Ordering::SeqCst) >= MAX_IN_FLIGHT {
         IN_FLIGHT.fetch_sub(1, Ordering::SeqCst);
         crate::pwarn!("{what} refused: {MAX_IN_FLIGHT} shell requests are still pending");
         return;
     }
-    let spawned = std::thread::Builder::new().name("poni-shell".into()).spawn(move || {
+    let spawned = std::thread::Builder::new().name("arunika-shell".into()).spawn(move || {
         let _slot = Slot;
         // Shell extensions are apartment-threaded COM objects; DDE is off.
         let hr = unsafe { CoInitializeEx(None, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE) };

@@ -1,4 +1,4 @@
-//! New versions (docs/updates.md): https://arunika.app/latest.json says
+//! New versions (docs/updates.md): https://arunika.idewara.com/latest.json says
 //! which release is the latest, signed with a key from data/update-keys.txt.
 //! The app checks the signature with the system's own crypto
 //! (`services::update`); this module reads the file, refuses anything that
@@ -8,7 +8,7 @@
 use serde::{Deserialize, Serialize};
 
 /// Where every copy looks.
-pub const FEED_URL: &str = "https://arunika.app/latest.json";
+pub const FEED_URL: &str = "https://arunika.idewara.com/latest.json";
 /// Downloads only ever come from this repository's releases.
 const DOWNLOADS: &str = "https://github.com/Idewara/arunika/releases/download/v";
 const RELEASE_PAGE: &str = "https://github.com/Idewara/arunika/releases/tag/v";

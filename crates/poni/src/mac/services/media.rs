@@ -141,7 +141,7 @@ impl MediaService {
                 center.addObserver_selector_name_object_suspensionBehavior(obs, sel, Some(&NSString::from_str(name)), None, NSNotificationSuspensionBehavior::DeliverImmediately)
             };
         }
-        if let Err(e) = std::thread::Builder::new().name("poni-media".into()).spawn(move || Worker::new(sink).run(rx)) {
+        if let Err(e) = std::thread::Builder::new().name("arunika-media".into()).spawn(move || Worker::new(sink).run(rx)) {
             pwarn!("media: could not start its thread ({e})");
         }
         MediaService { tx, _observer: observer }
@@ -162,7 +162,7 @@ define_class!(
     /// Receives the players' distributed notifications (main thread).
     #[unsafe(super(NSObject))]
     #[thread_kind = MainThreadOnly]
-    #[name = "PoniNowPlayingObserver"]
+    #[name = "ArunikaNowPlayingObserver"]
     struct NowPlayingObserver;
 
     unsafe impl NSObjectProtocol for NowPlayingObserver {}
@@ -237,7 +237,7 @@ impl Worker {
     }
 
     fn run(mut self, rx: Receiver<Msg>) {
-        // Whatever already plays when Poni starts.
+        // Whatever already plays when Arunika starts.
         for p in Player::ALL {
             if p.running() {
                 self.read(p);

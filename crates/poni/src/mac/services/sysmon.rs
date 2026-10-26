@@ -74,7 +74,7 @@ const FIRST: Duration = Duration::from_millis(350);
 const SLOW: Duration = Duration::from_secs(10);
 /// Readings in a row the GPU may miss before it is looked for again.
 const GPU_MISSES: u32 = 3;
-/// Readings of each kind whose cost goes to poni.log.
+/// Readings of each kind whose cost goes to arunika.log.
 const LOGGED_READINGS: u32 = 3;
 
 const PROCESSOR_CPU_LOAD_INFO: i32 = 2;
@@ -230,7 +230,7 @@ enum Msg {
 impl SysMon {
     pub fn start(sink: EventSink, background: bool) -> std::io::Result<Self> {
         let (tx, rx) = mpsc::channel();
-        let thread = std::thread::Builder::new().name("poni-sysmon".into()).spawn(move || worker(sink, rx, background))?;
+        let thread = std::thread::Builder::new().name("arunika-sysmon".into()).spawn(move || worker(sink, rx, background))?;
         Ok(Self { tx, thread: Some(thread) })
     }
 
@@ -1292,7 +1292,7 @@ define_class!(
     /// Hears the displays sleep and wake and the Mac lock and unlock (main thread).
     #[unsafe(super(NSObject))]
     #[thread_kind = MainThreadOnly]
-    #[name = "PoniAwayObserver"]
+    #[name = "ArunikaAwayObserver"]
     struct AwayObserver;
 
     unsafe impl NSObjectProtocol for AwayObserver {}
@@ -1322,7 +1322,7 @@ define_class!(
 
 /// Tell the app when nobody can see the screen: the displays sleep and wake
 /// (NSWorkspace), the Mac locks and unlocks (macOS's distributed
-/// notifications, asked for at once: Poni is never the app in front).
+/// notifications, asked for at once: Arunika is never the app in front).
 /// The observer stays for the app's life.
 pub fn watch_away(mtm: MainThreadMarker, sink: EventSink) {
     if let Ok(mut g) = AWAY_SINK.lock() {

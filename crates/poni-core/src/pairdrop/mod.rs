@@ -35,8 +35,8 @@ pub use peer::PeerEvent;
 
 use std::sync::OnceLock;
 
-/// The meeting server Arunika uses unless `PONI_DROP_SERVER` says otherwise.
-pub const DEFAULT_SERVER: &str = "https://drop.arunika.app";
+/// The meeting server Arunika uses unless `ARUNIKA_DROP_SERVER` says otherwise.
+pub const DEFAULT_SERVER: &str = "https://drop.arunika.idewara.com";
 
 /// Public STUN servers for the PC's own internet address.
 pub const STUN_SERVERS: &[&str] = &["stun.cloudflare.com:3478", "stun.l.google.com:19302"];
@@ -45,7 +45,7 @@ type Logger = Box<dyn Fn(&str) + Send + Sync>;
 
 static LOGGER: OnceLock<Logger> = OnceLock::new();
 
-/// Where this module's log lines go (the Windows crate's poni.log). Unset,
+/// Where this module's log lines go (the Windows crate's arunika.log). Unset,
 /// they're dropped.
 pub fn set_logger(f: impl Fn(&str) + Send + Sync + 'static) {
     let _ = LOGGER.set(Box::new(f));

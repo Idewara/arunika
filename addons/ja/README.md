@@ -13,16 +13,16 @@ file downloads once and the song is read again once it's in place
 keeps it off; from then on the Music page offers it under the lyrics
 ("Romaji for kanji: get Japanese readings"), one click away.
 The code that reads with it (`crates/poni-core/src/romanize/ja_dict.rs`,
-`crates/poni/src/services/romanize.rs`) is part of poni.exe and loads the
+`crates/poni/src/services/romanize.rs`) is part of arunika.exe and loads the
 dictionary only for a Japanese song, about 30 MB for that song.
 
 The files are published, byte for byte, on the pre-release
-[`addon-ja-1`](https://github.com/lucacadalora/oyenza-studio/releases/tag/addon-ja-1).
+[`addon-ja-1`](https://github.com/Idewara/arunika/releases/tag/addon-ja-1).
 Each one's size and SHA-256 are built into the app (`poni_core::addons::JAPANESE_READINGS`),
 and `cargo test -p poni-core addons` checks that they match the files here.
 
 - `ja-readings.dic.zst` is `crates/poni-core/data/ja-readings.dic.zst`:
-  mecab-ipadic trimmed for lyrics, with Oyenza Studio's fixes
+  mecab-ipadic trimmed for lyrics, with Arunika's fixes
   (`tools/ja_dict_fixes.csv`), compiled for vibrato and packed with zstd by
   `tools/make_ja_dict.py`. The `ja-dict` workflow checks that the file is
   exactly what the script builds.
@@ -38,7 +38,7 @@ deleted.
 The Mac app gets the same files the same way: the first Japanese song that
 needs them, the offer under the lyrics or its switch in the Mac's Add-ons tab
 (where it's the only add-on) turns it on, the shared downloader (`crates/poni/src/services/addons.rs`, on the Mac's
-URLSession client) puts them in `~/Library/Caches/Poni/addons/`, and
+URLSession client) puts them in `~/Library/Caches/Arunika/addons/`, and
 `crates/poni/src/mac/services/romanize.rs` reads every Japanese song with
 the dictionary. Switching it off there deletes them. Nothing in either app's
 download carries it.

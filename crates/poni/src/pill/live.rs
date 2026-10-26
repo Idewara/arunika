@@ -226,7 +226,7 @@ fn prayer_w(st: &AppState) -> f32 {
     (GLYPH_INSET + MOON + MOON_GAP + 7.0 * prayer_slot_text(prayer).chars().count() as f32 + TEXT_INSET).ceil()
 }
 
-/// A filled crescent `d` across centred on `c`: Poni's moon icon, filled
+/// A filled crescent `d` across centred on `c`: Arunika's moon icon, filled
 /// (also the Mac's, in the right ear around a notch).
 pub(crate) fn moon(ui: &mut Ui, c: Point, d: f32, col: Color) {
     // The icon's outline on its 24-unit grid: a circle of radius 8 round
@@ -319,7 +319,7 @@ impl Piece {
 }
 
 /// "144 fps | GPU 97% · 71° | CPU 38%" along one baseline, centred: the
-/// frame rate is a dash until Windows lets Poni read frames and while the
+/// frame rate is a dash until Windows lets Arunika read frames and while the
 /// game isn't drawing (dimmer while the one-time OK is outstanding); the
 /// rest comes from the System page's readers.
 fn draw_game(ui: &mut Ui, st: &AppState, body: Rect) {

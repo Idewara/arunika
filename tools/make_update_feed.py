@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Write latest.json, the file every copy of Arunika reads to learn that
 a new version is out (docs/updates.md). The Website workflow publishes it as
-https://arunika.app/latest.json with every deploy.
+https://arunika.idewara.com/latest.json with every deploy.
 
 It describes the latest GitHub release: its version and day, the first bold
 line of its notes as a headline, and the Windows installer and Mac DMG with

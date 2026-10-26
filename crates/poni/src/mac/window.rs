@@ -109,7 +109,7 @@ define_class!(
     /// while a text field is focused.
     #[unsafe(super(NSPanel, NSWindow, NSResponder, NSObject))]
     #[thread_kind = MainThreadOnly]
-    #[name = "PoniIslandPanel"]
+    #[name = "ArunikaIslandPanel"]
     pub struct IslandPanel;
 
     unsafe impl NSObjectProtocol for IslandPanel {}
@@ -149,7 +149,7 @@ define_class!(
     /// Draws the island (y down, like the Windows canvas) and forwards input.
     #[unsafe(super(NSView, NSResponder, NSObject))]
     #[thread_kind = MainThreadOnly]
-    #[name = "PoniIslandView"]
+    #[name = "ArunikaIslandView"]
     pub struct IslandView;
 
     unsafe impl NSObjectProtocol for IslandView {}

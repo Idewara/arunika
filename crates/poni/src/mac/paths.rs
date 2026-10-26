@@ -1,16 +1,16 @@
-//! Where Poni keeps its files on a Mac.
+//! Where Arunika keeps its files on a Mac.
 //!
-//! - Settings + data: `~/Library/Application Support/Poni/`
-//! - Cache:           `~/Library/Caches/Poni/`
-//! - Log:             `~/Library/Logs/Poni/poni.log` (Console.app lists it)
+//! - Settings + data: `~/Library/Application Support/Arunika/`
+//! - Cache:           `~/Library/Caches/Arunika/`
+//! - Log:             `~/Library/Logs/Arunika/arunika.log` (Console.app lists it)
 //!
-//! `PONI_HOME` overrides all three (used by `--render` and `--smoke` to stay
+//! `ARUNIKA_HOME` overrides all three (used by `--render` and `--smoke` to stay
 //! isolated).
 
 use std::path::PathBuf;
 
 fn home_override() -> Option<PathBuf> {
-    std::env::var_os("PONI_HOME").map(PathBuf::from)
+    std::env::var_os("ARUNIKA_HOME").map(PathBuf::from)
 }
 
 fn library() -> PathBuf {
@@ -18,11 +18,11 @@ fn library() -> PathBuf {
 }
 
 pub fn data_dir() -> PathBuf {
-    home_override().unwrap_or_else(|| library().join("Application Support").join("Poni"))
+    home_override().unwrap_or_else(|| library().join("Application Support").join("Arunika"))
 }
 
 pub fn cache_dir() -> PathBuf {
-    home_override().map(|h| h.join("cache")).unwrap_or_else(|| library().join("Caches").join("Poni"))
+    home_override().map(|h| h.join("cache")).unwrap_or_else(|| library().join("Caches").join("Arunika"))
 }
 
 pub fn settings_path() -> PathBuf {
@@ -34,12 +34,12 @@ pub fn store_path() -> PathBuf {
 }
 
 pub fn log_path() -> PathBuf {
-    home_override().map(|h| h.join("poni.log")).unwrap_or_else(|| library().join("Logs").join("Poni").join("poni.log"))
+    home_override().map(|h| h.join("arunika.log")).unwrap_or_else(|| library().join("Logs").join("Arunika").join("arunika.log"))
 }
 
-/// Held while Poni runs, so a second copy quits at start.
+/// Held while Arunika runs, so a second copy quits at start.
 pub fn lock_path() -> PathBuf {
-    cache_dir().join("poni.lock")
+    cache_dir().join("arunika.lock")
 }
 
 /// Where files from a phone land (Phone drop): `~/Downloads/Arunika`. Shelf

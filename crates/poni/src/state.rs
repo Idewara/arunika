@@ -337,7 +337,7 @@ pub struct GameState {
 pub enum OyenzaLink {
     #[default]
     Off,
-    /// A code on screen, waiting for approval in arunika.app, until mono time `until`.
+    /// A code on screen, waiting for approval in arunika.idewara.com, until mono time `until`.
     Connecting { code: String, url: String, until: f64 },
     Connected { account: String },
 }

@@ -103,7 +103,7 @@ fn download(client: Result<&Client, &str>, d: &update::Download, path: &std::pat
 /// Run the Setup at `setup` silently, once it still matches `d`. Like any
 /// install it closes this copy (it saves first); it keeps Start with
 /// Windows as it is and opens the new version when done (`/reopen`,
-/// installer/poni.nsi).
+/// installer/arunika.nsi).
 #[cfg(windows)]
 pub fn install(setup: &std::path::Path, d: &update::Download) -> Result<(), String> {
     if !std::fs::read(setup).is_ok_and(|b| d.matches(&b)) {

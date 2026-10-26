@@ -1,22 +1,22 @@
-# Oyenza Studio architecture
+# Arunika architecture
 
-Oyenza Studio is a "living notch" for Windows 10/11: a black island that hangs from the
+Arunika is a "living notch" for Windows 10/11: a black island that hangs from the
 top-centre of the screen, shows live activities (media, timers, pop-ups) while
 collapsed, and expands on hover into pages (Music + synced lyrics, Focus,
 Health, Shelf, Tasks, Clipboard, Today, System). The Shelf's Phone drop serves a
 small web page on the local network so a phone can send files to it.
 
-It was called Oyen Poni until 0.2.0, and plain Poni before that. The code keeps the
-old short name where people don't see it: the crates (`poni`, `poni-core`), `poni.exe`,
-its folders (`%LOCALAPPDATA%\Programs\Poni`, `%APPDATA%\Poni`), the uninstall key and
-Run value, `Local\Poni.Island`, the Mac bundle id `com.oyenza.poni` and the `PONI_*`
-variables. Changing those would break upgrades and settings, so they stay.
+Forked from Oyenza Studio (called Oyen Poni until 0.2.0), it ships fresh, so the technical
+names are its own: `arunika.exe`, its folders (`%LOCALAPPDATA%\Programs\Arunika`,
+`%APPDATA%\Arunika`), the uninstall key and Run value, `Local\Arunika.Island`, the Mac bundle
+id `app.arunika.notch` and the `ARUNIKA_*` variables. The crates keep the old short name
+(`poni`, `poni-core`, `poni_core::`) — renaming them is a phase of its own.
 
 ## Crates
 
 | Crate | What | Builds on |
 |---|---|---|
-| `crates/poni-core` | Pure logic + models: geometry/colour, springs, LRC parsing, LRCLIB URL/JSON, Apple Music lyrics (web-player token, API replies, TTML), romaji under Japanese, Korean and Chinese lyrics (`romanize/`; Japanese kanji come from Windows' reading analyzer, or from Oyenza Studio's own dictionary, `romanize/ja_dict.rs` with `data/ja-readings.dic.zst`, built by `tools/make_ja_dict.py`, which both apps download as the Japanese readings add-on), player metadata fix-ups, Pomodoro, the steps snapshot Oyenza sends (`health.rs`), tasks, shelf, clipboard history, settings, JSON store, SVG path parser, Phone drop (`phonedrop/`: the LAN web server, the phone page, safe file names, QR codes), add-ons (`addons.rs`: each add-on's files with their size and SHA-256, and what the Add-ons page says; `sha256.rs` checks them), prayer times (`prayer/`: Adhan's sun math ported from adhan-js, with Kemenag RI's rules for Indonesia and Umm al-Qura for Saudi Arabia, checked against Kemenag's published 2026 schedule and Oyen Umroh's engine; the place list is `addons/sholat/places.json`), the System page's arithmetic (`sysmon.rs`: CPU load, per-app usage from two process lists, the process list's binary layout, a minute of history, number formats), and the whole PC's power (`power.rs`: the Corsair HXi/RMi and MSI Ai power supplies' USB protocols, decoded from their replies, and the estimate when a PSU doesn't report). **No OS calls** beyond `std` file and socket I/O (`store`, `phonedrop`), so the server's tests run over real sockets anywhere. | any OS (`cargo test -p poni-core`) |
+| `crates/poni-core` | Pure logic + models: geometry/colour, springs, LRC parsing, LRCLIB URL/JSON, Apple Music lyrics (web-player token, API replies, TTML), romaji under Japanese, Korean and Chinese lyrics (`romanize/`; Japanese kanji come from Windows' reading analyzer, or from Arunika's own dictionary, `romanize/ja_dict.rs` with `data/ja-readings.dic.zst`, built by `tools/make_ja_dict.py`, which both apps download as the Japanese readings add-on), player metadata fix-ups, Pomodoro, the steps snapshot Arunika sends (`health.rs`), tasks, shelf, clipboard history, settings, JSON store, SVG path parser, Phone drop (`phonedrop/`: the LAN web server, the phone page, safe file names, QR codes), add-ons (`addons.rs`: each add-on's files with their size and SHA-256, and what the Add-ons page says; `sha256.rs` checks them), prayer times (`prayer/`: Adhan's sun math ported from adhan-js, with Kemenag RI's rules for Indonesia and Umm al-Qura for Saudi Arabia, checked against Kemenag's published 2026 schedule and Oyen Umroh's engine; the place list is `addons/sholat/places.json`), the System page's arithmetic (`sysmon.rs`: CPU load, per-app usage from two process lists, the process list's binary layout, a minute of history, number formats), and the whole PC's power (`power.rs`: the Corsair HXi/RMi and MSI Ai power supplies' USB protocols, decoded from their replies, and the estimate when a PSU doesn't report). **No OS calls** beyond `std` file and socket I/O (`store`, `phonedrop`), so the server's tests run over real sockets anywhere. | any OS (`cargo test -p poni-core`) |
 | `crates/poni` | The Windows app (Win32 + Direct2D + WinRT via `windows` 0.58) | Windows only (`cargo wcheck` / `cargo wbuild` cross from macOS/Linux) |
 | `crates/poni/src/mac/` | The Mac app (AppKit + Core Graphics + Core Text via `objc2`): its own window, renderer, main loop, notch layouts and menu bar item around the same state, pages and activities. See [The Mac app](#the-mac-app). | macOS 14+ (`cargo mcheck` type-checks it from Linux) |
 
@@ -45,7 +45,7 @@ variables. Changing those would break upgrades and settings, so they stay.
     0 elsewhere), refreshed at ~30 Hz while the island moves and exactly at
     rest, so transparent pixels stay click-through.
   * Software renderer (fallback: no DirectComposition, e.g. Wine; repeated
-    device loss; `PONI_RENDERER=software`): Direct2D in software into a DIB
+    device loss; `ARUNIKA_RENDERER=software`): Direct2D in software into a DIB
     pushed with `UpdateLayeredWindowIndirect`, copying only the rectangle the
     island covered this frame and last.
   * Content that fades in or out during a morph is drawn into an offscreen
@@ -165,29 +165,29 @@ pub fn draw(ui: &mut Ui, st: &mut AppState, area: Rect);  // draw + handle input
 | `gfx.rs`, `icons.rs`, `ui.rs`, `island.rs`, `window.rs` | rendering/UI foundation |
 | `state.rs`, `events.rs`, `commands.rs` | shared contracts |
 | `pages/*.rs` | expanded pages |
-| `services/*.rs` | media (Apple Music's own progress slider and back button through UI Automation in `applemusic_ui`: it declines both from Windows' media controls), lyrics/http, audio, bluetooth, fullscreen, clipboard, imaging, oyenza, power, sound, sysstats, phonedrop (started and stopped by the Shelf's phone panel), sysmon (the System page's readings: each second while the page is open or a game's readout shows, a light reading a second for the kept minute while it's closed; all of it rests while nobody is at the PC, the kept minute also on battery saver; while the page is open on a desktop it also loads NVML for an NVIDIA card's watts and reads a power supply that reports over USB, both closed with the page), psu (that power supply: found among the HID devices by its USB ids, read with requests only, replies matched to them), addons (add-on files: downloaded from their GitHub pre-release when an add-on is switched on, checked against the size and SHA-256 in `poni_core::addons`, deleted when it is switched off; asleep otherwise), frames (Show over games' frame count: a real-time event tracing session of the game's Present calls, only while the readout shows; the one-time OK that lets the app read it is `poni.exe --allow-fps <SID>`, run elevated) |
+| `services/*.rs` | media (Apple Music's own progress slider and back button through UI Automation in `applemusic_ui`: it declines both from Windows' media controls), lyrics/http, audio, bluetooth, fullscreen, clipboard, imaging, oyenza, power, sound, sysstats, phonedrop (started and stopped by the Shelf's phone panel), sysmon (the System page's readings: each second while the page is open or a game's readout shows, a light reading a second for the kept minute while it's closed; all of it rests while nobody is at the PC, the kept minute also on battery saver; while the page is open on a desktop it also loads NVML for an NVIDIA card's watts and reads a power supply that reports over USB, both closed with the page), psu (that power supply: found among the HID devices by its USB ids, read with requests only, replies matched to them), addons (add-on files: downloaded from their GitHub pre-release when an add-on is switched on, checked against the size and SHA-256 in `poni_core::addons`, deleted when it is switched off; asleep otherwise), frames (Show over games' frame count: a real-time event tracing session of the game's Present calls, only while the readout shows; the one-time OK that lets the app read it is `arunika.exe --allow-fps <SID>`, run elevated) |
 | `dragdrop.rs`, `shell.rs`, `tray.rs`, `autostart.rs` | OS integration |
 | `version.rs` | which build this is for the menu's About line: the version, and from `build.rs` release, test build (commit) or local build, and the day CI built it |
 | `updates.rs` | new versions, the app's side: when to read the update file (`update.json` remembers), the island's notice ("Update available x", Hide), the offer the menu and Settings show, and on Windows the new version's Setup (downloaded first, run with `/S /reopen` now or before the next start); the Update sheet it opens is drawn by `pages/settings.rs` (rules in `poni_core::update`, the read and signature check in `services/update.rs`; docs/updates.md) |
-| `selftest.rs` | `poni.exe --selftest <dir>` scripted screenshots for CI |
+| `selftest.rs` | `arunika.exe --selftest <dir>` scripted screenshots for CI |
 
 ## Data
 
-* Settings: `%APPDATA%\Poni\settings.json` (created with defaults; tray → "Open settings file").
-* Data (tasks, shelf, focus stats): `%APPDATA%\Poni\data.json`. Drinks logged by the old Water page stay in it untouched (`water`).
-* Cache + log: `%LOCALAPPDATA%\Poni\` (`lyrics\*.json`, `poni.log`), plus the Apple Music
+* Settings: `%APPDATA%\Arunika\settings.json` (created with defaults; tray → "Open settings file").
+* Data (tasks, shelf, focus stats): `%APPDATA%\Arunika\data.json`. Drinks logged by the old Water page stay in it untouched (`water`).
+* Cache + log: `%LOCALAPPDATA%\Arunika\` (`lyrics\*.json`, `arunika.log`), plus the Apple Music
   token sealed with DPAPI (`apple-music-token.bin`) and the web player's public
   developer token (`apple-music-web.json`).
-* Phone drop: received files go to `Downloads\Oyenza Studio` (`paths::phone_inbox_dir`),
+* Phone drop: received files go to `Downloads\Arunika` (`paths::phone_inbox_dir`),
   staged in a `.oyen-poni-incoming-<n>` folder there until every file of a send has arrived.
-* Oyenza (optional): the sign-in, this PC's own key, sealed with DPAPI
-  (`%LOCALAPPDATA%\Poni\oyenza-link.bin`; `oyenza-revoke.bin` while a sign-out
+* Arunika sign-in (optional): this PC's own key, sealed with DPAPI
+  (`%LOCALAPPDATA%\Arunika\oyenza-link.bin`; `oyenza-revoke.bin` while a sign-out
   still has to reach the server). The worker (`services/oyenza.rs`) asks
-  api.oyenza.app on its own thread, paced by the PC's use and power, and
+  api.arunika.idewara.com on its own thread, paced by the PC's use and power, and
   checks the tab's day list every 15 s only while the tab is on screen
   (`App::set_oyenza_watch`, beside the System page's sampler); words,
   parsing and cadence are in `poni_core::oyenza`, the tab in `pages/oyenza.rs`.
-* `PONI_HOME` overrides both (the self-test uses it).
+* `ARUNIKA_HOME` overrides both (the self-test uses it).
 * Clipboard history is memory-only and skips content marked
   `ExcludeClipboardContentFromMonitorProcessing` / `CanIncludeInClipboardHistory=0`
   (password managers set these).
@@ -198,7 +198,7 @@ pub fn draw(ui: &mut Ui, st: &mut AppState, area: Rect);  // draw + handle input
 cargo test -p poni-core          # logic tests, any OS
 python3 tools/make_ja_dict.py    # rebuild the Japanese reading dictionary, fixes in tools/ja_dict_fixes.csv (--check compares)
 cargo wcheck                     # type-check the Windows app from macOS/Linux
-cargo wbuild                     # cross-build target/x86_64-pc-windows-gnu/release/poni.exe (needs mingw-w64)
+cargo wbuild                     # cross-build target/x86_64-pc-windows-gnu/release/arunika.exe (needs mingw-w64)
 cargo build -p poni --release    # on Windows (MSVC)
 cargo mcheck                     # type-check the Mac app from Linux/Windows (no linker needed)
 cargo build -p poni --release    # on a Mac: the Mac app (tools/make_mac_app.sh makes the .app and DMG)
@@ -207,7 +207,7 @@ cargo build -p poni --release    # on a Mac: the Mac app (tools/make_mac_app.sh 
 ## The Mac app
 
 Built in slices (slice 1: the island, drawing, clock, timer and the menu bar
-item; music, the Shelf, clipboard history, pop-ups and Oyenza sign-in come
+item; music, the Shelf, clipboard history, pop-ups and Arunika sign-in come
 later). `main.rs` builds the shared modules (`activities`, `commands`,
 `icons`, `island`, `pages`, `plog`, `png`, `state`, `ui`) for both
 systems and takes the platform ones from `src/mac/` by `#[path]` on macOS, so
@@ -220,12 +220,12 @@ the Windows files are untouched.
 | `mac/app.rs` | The island's behaviour, ported from `app.rs`: hover lift, dwell to open, collapse delay, morphs and cross-fades, page switches, notices, the Pomodoro, settings and data. Clicks pass through to the apps below except over the island (the app toggles the panel's `ignoresMouseEvents` from global mouse-move monitors, which need no permission) |
 | `mac/notch.rs` | The camera notch: resting islands hide inside it, live activities sit in the menu bar's line left and right of the camera, notices and the open island hang below it |
 | `mac/menubar.rs` | The menu bar item (the island's silhouette as a template image) and its menu, also on a right-click of the island |
-| `mac/render.rs` | `poni --render <dir> [--theme cream] [--notch]`: every state with sample data as PNGs, offscreen (CI's way to look at the Mac drawing; the runners have no notch) |
+| `mac/render.rs` | `arunika --render <dir> [--theme cream] [--notch]`: every state with sample data as PNGs, offscreen (CI's way to look at the Mac drawing; the runners have no notch) |
 | `mac/clock.rs`, `paths.rs`, `events.rs`, `services.rs`, `dragdrop.rs` | Local time, `~/Library` folders, the event channel (drained on the main queue), the accent colour, links, clipboard, sounds |
 
 CI (`.github/workflows/mac.yml`, on `main` and `mac-*` branches) builds for
 Apple Silicon and Intel, renders every state, runs the real window through a
-few states with screenshots (`poni --smoke <dir>` writes where its window is
-and waits for each screenshot), and packages `Oyenza-Studio-<version>-mac-unsigned.dmg`
+few states with screenshots (`arunika --smoke <dir>` writes where its window is
+and waits for each screenshot), and packages `Arunika-<version>-mac-unsigned.dmg`
 (ad-hoc signed; Developer ID signing and notarization need the Apple secrets).
 

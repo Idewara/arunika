@@ -90,7 +90,7 @@ extern "C" {
 }
 
 /// The Mac's name in System Settings > General > About (also what
-/// arunika.app lists it as, `services::oyenza`).
+/// arunika.idewara.com lists it as, `services::oyenza`).
 pub(crate) fn computer_name() -> Option<String> {
     let raw = unsafe { SCDynamicStoreCopyComputerName(std::ptr::null(), std::ptr::null_mut()) };
     std::ptr::NonNull::new(raw as *mut CFString).map(|p| unsafe { CFRetained::from_raw(p) }.to_string()).filter(|n| !n.trim().is_empty())

@@ -44,7 +44,7 @@ const MAX_TEXT_UNITS: usize = 1024 * 1024 / 2;
 const OPEN_RETRY_MS: [u64; 4] = [4, 8, 16, 24];
 
 /// Window class of the history listener's message-only window.
-const LISTENER_CLASS: PCWSTR = w!("Poni.ClipListener");
+const LISTENER_CLASS: PCWSTR = w!("Arunika.ClipListener");
 /// How long `start` waits for the listener window (normally a millisecond).
 const START_TIMEOUT: Duration = Duration::from_secs(1);
 /// How long `stop` waits for the listener thread before detaching it (it
@@ -79,7 +79,7 @@ impl ClipboardHistory {
         let (init_tx, init_rx) = mpsc::sync_channel(0);
         let (done_tx, done) = mpsc::channel();
         let thread = std::thread::Builder::new()
-            .name("poni-clip".into())
+            .name("arunika-clip".into())
             .spawn(move || {
                 listener_main(sink, thread_flag, init_tx);
                 let _ = done_tx.send(());
@@ -218,7 +218,7 @@ fn create_listener_window() -> windows::core::Result<HWND> {
         CreateWindowExW(
             WINDOW_EX_STYLE(0),
             LISTENER_CLASS,
-            w!("Poni clipboard"),
+            w!("Arunika clipboard"),
             WINDOW_STYLE(0),
             0,
             0,

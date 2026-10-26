@@ -135,7 +135,7 @@ fn enter<R>(f: impl FnOnce(&mut App) -> R) -> Option<R> {
 
 pub fn main_entry() -> i32 {
     let args: Vec<String> = std::env::args().collect();
-    let arg_after = |flag: &str| args.iter().position(|a| a == flag).map(|i| args.get(i + 1).cloned().unwrap_or_else(|| "poni-out".into()));
+    let arg_after = |flag: &str| args.iter().position(|a| a == flag).map(|i| args.get(i + 1).cloned().unwrap_or_else(|| "arunika-out".into()));
     if let Some(dir) = arg_after("--render") {
         return crate::render::run(&dir, &args);
     }
@@ -150,7 +150,7 @@ pub fn main_entry() -> i32 {
         // Absolute: Finder icons and file URLs need full paths.
         let home = std::path::absolute(dir.join("home")).unwrap_or_else(|_| dir.join("home"));
         let _ = std::fs::remove_dir_all(&home);
-        std::env::set_var("PONI_HOME", &home);
+        std::env::set_var("ARUNIKA_HOME", &home);
     }
     crate::plog::init(paths::log_path());
     pinfo!("Arunika {} starting on macOS (args: {:?})", env!("CARGO_PKG_VERSION"), &args[1..]);
@@ -181,7 +181,7 @@ pub fn main_entry() -> i32 {
     0
 }
 
-/// Hold a lock file for as long as Poni runs. `Err` = another copy holds it.
+/// Hold a lock file for as long as Arunika runs. `Err` = another copy holds it.
 fn single_instance() -> Result<Option<std::fs::File>, ()> {
     use std::os::fd::AsRawFd;
     extern "C" {
@@ -918,7 +918,7 @@ impl App {
                     }
                     Err(e) => {
                         pwarn!("settings.json not reloaded: {e}");
-                        self.st.notify(Icon::Sliders, palette::ORANGE, "Settings not reloaded", "settings.json has an error; see poni.log", 5.0, None);
+                        self.st.notify(Icon::Sliders, palette::ORANGE, "Settings not reloaded", "settings.json has an error; see arunika.log", 5.0, None);
                     }
                 }
             }
@@ -986,7 +986,7 @@ impl App {
         };
         if let Err(e) = services::secret::save(&paths::apple_music_token_path(), &token) {
             pwarn!("apple music: cannot save the token ({e})");
-            self.st.notify(Icon::Lyrics, palette::ORANGE, "Couldn't save the token", "Details in poni.log", 5.0, None);
+            self.st.notify(Icon::Lyrics, palette::ORANGE, "Couldn't save the token", "Details in arunika.log", 5.0, None);
             return;
         }
         pinfo!("apple music: token saved");
@@ -1001,7 +1001,7 @@ impl App {
     fn forget_apple_music_token(&mut self) {
         if let Err(e) = services::secret::delete(&paths::apple_music_token_path()) {
             pwarn!("apple music: cannot remove the token ({e})");
-            self.st.notify(Icon::Lyrics, palette::ORANGE, "Couldn't remove the token", "Details in poni.log", 5.0, None);
+            self.st.notify(Icon::Lyrics, palette::ORANGE, "Couldn't remove the token", "Details in arunika.log", 5.0, None);
             return;
         }
         pinfo!("apple music: token removed");
@@ -2191,7 +2191,7 @@ impl App {
                 }
                 // The System page's app icons, from Finder (on the main thread). The
                 // first can take a tenth of a second (Finder's icons starting up in
-                // Poni), so none starts while the island moves: the page asks again
+                // Arunika), so none starts while the island moves: the page asks again
                 // with its next frame.
                 Command::LoadAppIcon(p) => {
                     if !self.st.app_icons.contains_key(&p) && self.island.settled() {
@@ -2289,7 +2289,7 @@ impl App {
             OyenzaEvent::Restored { account } => self.st.oyenza.link = OyenzaLink::Connected { account },
             OyenzaEvent::Connecting { code, url, expires_in_s } => {
                 self.st.oyenza.link = OyenzaLink::Connecting { code, url, until: now + expires_in_s as f64 };
-                // Keep the code on screen while the person goes to arunika.app.
+                // Keep the code on screen while the person goes to arunika.idewara.com.
                 if self.st.oyenza.pinned_before.is_none() {
                     self.st.oyenza.pinned_before = Some(self.st.pinned);
                 }
@@ -2362,7 +2362,7 @@ impl App {
             }
             OyenzaEvent::Undone => self.st.oyenza.flash = Some(("Taken back".into(), now + 3.0)),
             OyenzaEvent::UndoFailed(code) => {
-                let line = if code == "too_late" { "Too late to undo here. Change it in arunika.app" } else { "Couldn't undo. Change it in arunika.app" };
+                let line = if code == "too_late" { "Too late to undo here. Change it in arunika.idewara.com" } else { "Couldn't undo. Change it in arunika.idewara.com" };
                 self.st.oyenza.flash = Some((line.into(), now + 5.0));
             }
             OyenzaEvent::Disconnected { by_server } => {
@@ -3196,7 +3196,7 @@ impl App {
                 self.smoke_post = Some(smoke_post());
             }
             "oyenza-code" => {
-                let url = "https://arunika.app/connect?code=KPJX-TMNQ".to_string();
+                let url = "https://arunika.idewara.com/connect?code=KPJX-TMNQ".to_string();
                 self.on_oyenza(OyenzaEvent::Connecting { code: "KPJX-TMNQ".into(), url, expires_in_s: 600 });
             }
             "oyenza-page" => {
@@ -3689,7 +3689,7 @@ fn smoke_post() -> (bool, String) {
         let _ = c.write_all(format!("HTTP/1.1 200 OK\r\nContent-Type: application/json\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{body}", body.len()).as_bytes());
         String::from_utf8_lossy(&buf).into_owned()
     });
-    let json = "{\"app\":\"poni\",\"name\":\"Smoke Mac\"}";
+    let json = "{\"app\":\"arunika\",\"name\":\"Smoke Mac\"}";
     let answer = services::http::Client::new("Arunika smoke").and_then(|c| {
         c.send(services::http::Method::Post, &format!("http://127.0.0.1:{port}/connect/start"), &[("Authorization", "Bearer arnk_smoke")], Some(json), Duration::from_secs(5))
     });

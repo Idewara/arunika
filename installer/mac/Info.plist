@@ -10,11 +10,11 @@
 	<key>CFBundleName</key>
 	<string>Arunika</string>
 	<key>CFBundleExecutable</key>
-	<string>poni</string>
+	<string>arunika</string>
 	<key>CFBundleIconFile</key>
 	<string>Arunika</string>
 	<key>CFBundleIdentifier</key>
-	<string>app.arunika.poni</string>
+	<string>app.arunika.notch</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>

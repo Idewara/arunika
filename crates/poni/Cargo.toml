@@ -5,16 +5,16 @@ edition.workspace = true
 publish.workspace = true
 license.workspace = true
 repository.workspace = true
-description = "Poni - a living notch (Dynamic Island) for Windows 10/11"
+description = "Arunika - a living notch (Dynamic Island) for Windows 10/11"
 build = "build.rs"
 
 [[bin]]
-name = "poni"
+name = "arunika"
 path = "src/main.rs"
 
 [dependencies]
 # Arunika's own Japanese reading dictionary (3.8 MB) is not built into
-# poni.exe: Windows downloads it as the Japanese readings add-on
+# arunika.exe: Windows downloads it as the Japanese readings add-on
 # (poni_core::addons::JAPANESE_READINGS) for the people who want it.
 poni-core = { path = "../poni-core" }
 serde.workspace = true

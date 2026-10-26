@@ -54,7 +54,7 @@ jobs:
       # layouts are looked at.
       - name: Render the island (offscreen)
         run: |
-          bin=target/aarch64-apple-darwin/release/poni
+          bin=target/aarch64-apple-darwin/release/arunika
           $bin --render mac-renders
           $bin --render mac-renders --theme oyen
           $bin --render mac-renders --theme glass
@@ -69,13 +69,13 @@ jobs:
         run: |
           python3 -m venv .icon-venv
           .icon-venv/bin/pip install --quiet pillow
-          .icon-venv/bin/python tools/make_mac_icon.py build/OyenzaStudio.iconset
-          iconutil -c icns build/OyenzaStudio.iconset -o build/OyenzaStudio.icns
+          .icon-venv/bin/python tools/make_mac_icon.py build/Arunika.iconset
+          iconutil -c icns build/Arunika.iconset -o build/Arunika.icns
 
       - name: App bundle and DMG
         run: |
           chmod +x tools/make_mac_app.sh
-          tools/make_mac_app.sh target/aarch64-apple-darwin/release/poni target/x86_64-apple-darwin/release/poni build/OyenzaStudio.icns dist
+          tools/make_mac_app.sh target/aarch64-apple-darwin/release/arunika target/x86_64-apple-darwin/release/arunika build/Arunika.icns dist
 
       # The real app on the runner's screen: idle, hover, open (Focus, then
       # Today with live stats), the timer, a notice, the volume and charging
@@ -86,24 +86,24 @@ jobs:
       # has, and the menu. At each state the app writes where its window is
       # and waits; tools/mac-smoke.sh takes the screenshot and answers.
       - name: Smoke run (the real window, with screenshots)
-        run: bash tools/mac-smoke.sh "dist/Oyenza Studio.app/Contents/MacOS/poni"
+        run: bash tools/mac-smoke.sh "dist/Arunika.app/Contents/MacOS/arunika"
 
       - name: Check the DMG
         run: |
           dmg=$(ls dist/*.dmg)
-          hdiutil attach "$dmg" -nobrowse -readonly -mountpoint /tmp/poni-dmg
-          ls -la /tmp/poni-dmg
+          hdiutil attach "$dmg" -nobrowse -readonly -mountpoint /tmp/arunika-dmg
+          ls -la /tmp/arunika-dmg
           # What a PR costs on the Mac: the DMG, and the app's binary in it.
-          ls -l "$dmg" "/tmp/poni-dmg/Oyenza Studio.app/Contents/MacOS/poni"
-          plutil -p "/tmp/poni-dmg/Oyenza Studio.app/Contents/Info.plist"
-          lipo -info "/tmp/poni-dmg/Oyenza Studio.app/Contents/MacOS/poni"
-          codesign --verify --deep --strict "/tmp/poni-dmg/Oyenza Studio.app"
-          spctl --assess --type execute -vv "/tmp/poni-dmg/Oyenza Studio.app" || echo "(expected: Gatekeeper turns down a build that isn't signed with a Developer ID yet)"
-          hdiutil detach /tmp/poni-dmg
+          ls -l "$dmg" "/tmp/arunika-dmg/Arunika.app/Contents/MacOS/arunika"
+          plutil -p "/tmp/arunika-dmg/Arunika.app/Contents/Info.plist"
+          lipo -info "/tmp/arunika-dmg/Arunika.app/Contents/MacOS/arunika"
+          codesign --verify --deep --strict "/tmp/arunika-dmg/Arunika.app"
+          spctl --assess --type execute -vv "/tmp/arunika-dmg/Arunika.app" || echo "(expected: Gatekeeper turns down a build that isn't signed with a Developer ID yet)"
+          hdiutil detach /tmp/arunika-dmg
 
       - uses: actions/upload-artifact@v4
         with:
-          name: oyenza-studio-mac-dmg
+          name: arunika-mac-dmg
           path: dist/*.dmg
       - uses: actions/upload-artifact@v4
         if: always()
@@ -118,7 +118,7 @@ jobs:
             smoke/*.png
             smoke/report.json
             smoke/stdout.txt
-            smoke/home/poni.log
+            smoke/home/arunika.log
 
   # Liquid Glass came with macOS 26: the same DMG's smoke run on a macOS 26
   # runner, where the Glass steps show the real glass (the macOS 15 run
@@ -131,16 +131,16 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
-          name: oyenza-studio-mac-dmg
+          name: arunika-mac-dmg
           path: dmg
       - name: Smoke run (the real window, with screenshots)
         run: |
           sw_vers
-          hdiutil attach dmg/*.dmg -nobrowse -readonly -mountpoint /tmp/poni-dmg
+          hdiutil attach dmg/*.dmg -nobrowse -readonly -mountpoint /tmp/arunika-dmg
           mkdir -p dist
-          cp -R "/tmp/poni-dmg/Oyenza Studio.app" dist/
-          hdiutil detach /tmp/poni-dmg
-          bash tools/mac-smoke.sh "dist/Oyenza Studio.app/Contents/MacOS/poni"
+          cp -R "/tmp/arunika-dmg/Arunika.app" dist/
+          hdiutil detach /tmp/arunika-dmg
+          bash tools/mac-smoke.sh "dist/Arunika.app/Contents/MacOS/arunika"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -149,7 +149,7 @@ jobs:
             smoke/*.png
             smoke/report.json
             smoke/stdout.txt
-            smoke/home/poni.log
+            smoke/home/arunika.log
 
   # The signing path on every run that isn't a release, with a throwaway
   # certificate: the app gets the hardened runtime and its entitlements, the
@@ -165,7 +165,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
-          name: oyenza-studio-mac-dmg
+          name: arunika-mac-dmg
           path: dmg
       - name: A throwaway signing certificate in a temporary keychain
         run: |
@@ -173,7 +173,7 @@ jobs:
           pw="$(openssl rand -hex 16)"
           cd "$RUNNER_TEMP"
           printf '%s\n' '[req]' 'distinguished_name = dn' 'prompt = no' 'x509_extensions = ext' \
-            '[dn]' 'CN = Oyenza Studio CI throwaway signing' \
+            '[dn]' 'CN = Arunika CI throwaway signing' \
             '[ext]' 'basicConstraints = critical, CA:false' 'keyUsage = critical, digitalSignature' \
             'extendedKeyUsage = critical, codeSigning' > sign.cnf
           /usr/bin/openssl req -x509 -newkey rsa:2048 -nodes -days 2 -config sign.cnf -keyout sign.key -out sign.crt
@@ -189,7 +189,7 @@ jobs:
             || echo "(could not mark the throwaway certificate trusted)"
           rm -f sign.key sign.p12
           security find-identity -p codesigning "$kc"
-          id=$(security find-identity -p codesigning "$kc" | awk '/Oyenza Studio CI throwaway signing/ {print $2; exit}')
+          id=$(security find-identity -p codesigning "$kc" | awk '/Arunika CI throwaway signing/ {print $2; exit}')
           [ -n "$id" ] || exit 1
           echo "KEYCHAIN=$kc" >> "$GITHUB_ENV"
           echo "IDENTITY=$id" >> "$GITHUB_ENV"
@@ -197,14 +197,14 @@ jobs:
         run: NOTARIZE=0 SIGN_KEYCHAIN="$KEYCHAIN" bash tools/sign_mac_dmg.sh dmg/*.dmg signed "$IDENTITY"
       - name: Smoke run, the app under the hardened runtime
         run: |
-          hdiutil attach signed/*.dmg -nobrowse -readonly -mountpoint /tmp/poni-signed
+          hdiutil attach signed/*.dmg -nobrowse -readonly -mountpoint /tmp/arunika-signed
           mkdir -p dist
-          cp -R /tmp/poni-signed/*.app dist/
-          hdiutil detach /tmp/poni-signed
+          cp -R /tmp/arunika-signed/*.app dist/
+          hdiutil detach /tmp/arunika-signed
           apps=(dist/*.app)
           app="${apps[0]}"
           codesign --display --verbose=2 "$app" 2>&1 | grep -E "^(Authority|Timestamp|CodeDirectory)"
-          bash tools/mac-smoke.sh "$app/Contents/MacOS/poni"
+          bash tools/mac-smoke.sh "$app/Contents/MacOS/arunika"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -213,7 +213,7 @@ jobs:
             smoke/*.png
             smoke/report.json
             smoke/stdout.txt
-            smoke/home/poni.log
+            smoke/home/arunika.log
 
   # The release DMG, signed with the Developer ID, notarized by Apple and
   # stapled, so it opens with a plain "Open". Runs on release tags, and by hand
@@ -246,7 +246,7 @@ jobs:
       - uses: actions/download-artifact@v4
         if: steps.secrets.outputs.present == 'true'
         with:
-          name: oyenza-studio-mac-dmg
+          name: arunika-mac-dmg
           path: dmg
       - name: The Developer ID certificate in a temporary keychain
         if: steps.secrets.outputs.present == 'true'
@@ -291,17 +291,17 @@ jobs:
       - name: Smoke run, the signed app
         if: steps.dmg.outputs.signed == 'true'
         run: |
-          hdiutil attach signed/*.dmg -nobrowse -readonly -mountpoint /tmp/poni-signed
+          hdiutil attach signed/*.dmg -nobrowse -readonly -mountpoint /tmp/arunika-signed
           mkdir -p dist
-          cp -R /tmp/poni-signed/*.app dist/
-          hdiutil detach /tmp/poni-signed
+          cp -R /tmp/arunika-signed/*.app dist/
+          hdiutil detach /tmp/arunika-signed
           apps=(dist/*.app)
           app="${apps[0]}"
-          bash tools/mac-smoke.sh "$app/Contents/MacOS/poni"
+          bash tools/mac-smoke.sh "$app/Contents/MacOS/arunika"
       - uses: actions/upload-artifact@v4
         if: steps.dmg.outputs.signed == 'true'
         with:
-          name: oyenza-studio-mac-dmg-signed
+          name: arunika-mac-dmg-signed
           path: signed/*.dmg
       - name: Remove the keychain and the key
         if: always()
@@ -309,12 +309,11 @@ jobs:
           if [ -n "${KEYCHAIN:-}" ]; then security delete-keychain "$KEYCHAIN" || true; fi
           rm -f "$RUNNER_TEMP/notary-key.p8"
 
-  # The Mac app on the release: Oyenza-Studio-<version>-mac.dmg, plus
-  # Oyenza-Studio-Mac.dmg, the fixed name the README's and the website's Mac
-  # buttons download from releases/latest, and Oyen-Poni-Mac.dmg, the fixed
-  # name from before the rename (0.1.17 to the last 0.1.x), which links out there still
-  # use. ci publishes the release once the Windows build, installer and install
-  # test pass, so this waits for it. It
+  # The Mac app on the release: Arunika-<version>-mac.dmg, plus
+  # Arunika-Mac.dmg, the fixed name the README's and the website's Mac
+  # buttons download from releases/latest. This fork ships fresh: no
+  # legacy-name DMG from before the rename. ci publishes the release once the
+  # Windows build, installer and install test pass, so this waits for it. It
   # takes the sign job's DMG when there is one; when signing failed it still
   # adds the ad-hoc DMG, so the Mac buttons never break, and warns.
   release:
@@ -328,12 +327,12 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: oyenza-studio-mac-dmg
+          name: arunika-mac-dmg
           path: dist
       - uses: actions/download-artifact@v4
         if: needs.sign.result == 'success' && needs.sign.outputs.signed == 'true'
         with:
-          name: oyenza-studio-mac-dmg-signed
+          name: arunika-mac-dmg-signed
           path: signed
       - name: Use the signed DMG when there is one
         env:
@@ -355,14 +354,13 @@ jobs:
         run: |
           tag="$GITHUB_REF_NAME"
           src=$(ls dist/*.dmg | head -1)
-          [ "$src" = "dist/Oyenza-Studio-${tag#v}-mac.dmg" ] || cp "$src" "dist/Oyenza-Studio-${tag#v}-mac.dmg"
-          cp "$src" dist/Oyenza-Studio-Mac.dmg
-          cp "$src" dist/Oyen-Poni-Mac.dmg
+          [ "$src" = "dist/Arunika-${tag#v}-mac.dmg" ] || cp "$src" "dist/Arunika-${tag#v}-mac.dmg"
+          cp "$src" dist/Arunika-Mac.dmg
           for i in $(seq 1 90); do
             gh release view "$tag" > /dev/null 2>&1 && break
             sleep 30
           done
-          gh release upload "$tag" "dist/Oyenza-Studio-${tag#v}-mac.dmg" dist/Oyenza-Studio-Mac.dmg dist/Oyen-Poni-Mac.dmg --clobber
+          gh release upload "$tag" "dist/Arunika-${tag#v}-mac.dmg" dist/Arunika-Mac.dmg --clobber
       # latest.json tells Macs about a release only once its DMG is there
       # (docs/updates.md): have the Website workflow write it again now.
       - name: Let the update file name the DMG

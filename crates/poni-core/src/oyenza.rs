@@ -1,11 +1,11 @@
-//! Arunika (arunika.app), optional: what the island shows from a person's money
+//! Arunika (arunika.idewara.com), optional: what the island shows from a person's money
 //! app once they sign in from the tray, and the words it uses.
 //!
 //! Signing in is a device code, the way a TV signs in: the island shows 8
-//! letters, the person approves them in arunika.app (where they are signed in
+//! letters, the person approves them in arunika.idewara.com (where they are signed in
 //! anyway), and the island gets a key of its own (`arnk_…`). No password is
-//! ever typed into Poni, and the key opens only the island's routes on
-//! api.arunika.app (catat-server `routes/island.ts`): money in and out that
+//! ever typed into Arunika, and the key opens only the island's routes on
+//! api.arunika.idewara.com (catat-server `routes/island.ts`): money in and out that
 //! arrived by itself in the last 2 hours (the notices), the last 7 days of
 //! transactions by day (the Arunika page's live view), bills due in the next
 //! 30 days, saving a spend typed here (with a short Undo), and the daily step
@@ -23,8 +23,8 @@ use crate::health::HealthSnapshot;
 use crate::urlenc::with_query;
 use serde::{Deserialize, Serialize};
 
-pub const API: &str = "https://api.arunika.app";
-pub const WEB: &str = "https://arunika.app";
+pub const API: &str = "https://api.arunika.idewara.com";
+pub const WEB: &str = "https://arunika.idewara.com";
 pub const APP: &str = "arunika";
 
 /// Money is asked for this often while the PC is in use on mains power...
@@ -63,8 +63,8 @@ pub const NOTE_MAX_CHARS: usize = 300;
 // ---------------------------------------------------------------- the link
 
 /// What the PC keeps after signing in, sealed with Windows (DPAPI) under
-/// `%LOCALAPPDATA%\Poni\` (on a Mac, a file only its account can read, in
-/// `~/Library/Application Support/Poni/`). The key is never logged or shown.
+/// `%LOCALAPPDATA%\Arunika\` (on a Mac, a file only its account can read, in
+/// `~/Library/Application Support/Arunika/`). The key is never logged or shown.
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Link {
     pub key: String,
@@ -137,10 +137,10 @@ pub fn note_body(text: &str, tz: &str) -> String {
     serde_json::json!({ "text": text, "tz": tz }).to_string()
 }
 
-/// What arunika.app lists a computer as when the system gives no name.
+/// What arunika.idewara.com lists a computer as when the system gives no name.
 const UNNAMED: &str = if cfg!(target_os = "macos") { "Mac" } else { "Windows PC" };
 
-/// The PC's name as arunika.app will list it: one printable line, 40 characters
+/// The PC's name as arunika.idewara.com will list it: one printable line, 40 characters
 /// at most ([`UNNAMED`] when the system gives none).
 pub fn pc_name(raw: &str) -> String {
     let clean: String = raw.chars().filter(|c| !c.is_control()).collect::<String>().split_whitespace().collect::<Vec<_>>().join(" ");
@@ -834,7 +834,7 @@ pub fn note_error_text(code: &str) -> &'static str {
 pub fn connect_failure_text(code: &str) -> (&'static str, &'static str) {
     match code {
         "expired" | "invalid_code" => ("Sign-in code expired", "Start again from the tray"),
-        "denied" => ("Not connected", "The code was refused in arunika.app"),
+        "denied" => ("Not connected", "The code was refused in arunika.idewara.com"),
         "offline" => ("Can't reach Arunika", "Check the connection and try again"),
         _ => ("Couldn't sign in to Arunika", "Try again from the tray"),
     }
@@ -910,12 +910,12 @@ mod tests {
 
     #[test]
     fn urls_and_bodies() {
-        assert_eq!(money_url(None, "+07:00"), "https://api.arunika.app/island/money?tz=%2B07%3A00&kinds=all");
-        assert_eq!(money_url(Some("123"), "+07:00"), "https://api.arunika.app/island/money?since=123&tz=%2B07%3A00&kinds=all");
-        assert_eq!(activity_url("+07:00", None), "https://api.arunika.app/island/activity?tz=%2B07%3A00&days=7");
-        assert_eq!(activity_url("+07:00", Some("9")), "https://api.arunika.app/island/activity?tz=%2B07%3A00&days=7&since=9");
-        assert_eq!(bills_url("-03:30"), "https://api.arunika.app/island/bills?tz=-03%3A30&days=31");
-        assert_eq!(undo_url("abc 1/2"), "https://api.arunika.app/island/note/abc%201%2F2");
+        assert_eq!(money_url(None, "+07:00"), "https://api.arunika.idewara.com/island/money?tz=%2B07%3A00&kinds=all");
+        assert_eq!(money_url(Some("123"), "+07:00"), "https://api.arunika.idewara.com/island/money?since=123&tz=%2B07%3A00&kinds=all");
+        assert_eq!(activity_url("+07:00", None), "https://api.arunika.idewara.com/island/activity?tz=%2B07%3A00&days=7");
+        assert_eq!(activity_url("+07:00", Some("9")), "https://api.arunika.idewara.com/island/activity?tz=%2B07%3A00&days=7&since=9");
+        assert_eq!(bills_url("-03:30"), "https://api.arunika.idewara.com/island/bills?tz=-03%3A30&days=31");
+        assert_eq!(undo_url("abc 1/2"), "https://api.arunika.idewara.com/island/note/abc%201%2F2");
         let b: serde_json::Value = serde_json::from_str(&start_body("DESKTOP-7Q2K", "0.1.5")).unwrap();
         assert_eq!(b, serde_json::json!({ "app": "arunika", "name": "DESKTOP-7Q2K", "version": "0.1.5" }));
         let n: serde_json::Value = serde_json::from_str(&note_body("kopi \"25rb\"", "+07:00")).unwrap();
@@ -1146,7 +1146,7 @@ mod tests {
     #[test]
     fn health_parses_the_server_shapes() {
         use crate::health::HealthSource;
-        assert_eq!(health_url(), "https://api.arunika.app/island/health");
+        assert_eq!(health_url(), "https://api.arunika.idewara.com/island/health");
         assert_eq!(HEALTH_EVERY_S, 900);
         // Off in Arunika, paused, or nothing kept.
         assert_eq!(parse_health(r#"{"health":null}"#), Some(None));

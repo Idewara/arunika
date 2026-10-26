@@ -8,7 +8,7 @@ edition = "2021"
 publish = false
 license = "MIT"
 repository = "https://github.com/Idewara/arunika"
-homepage = "https://arunika.app"
+homepage = "https://arunika.idewara.com"
 
 [workspace.dependencies]
 serde = { version = "1", features = ["derive"] }
@@ -23,7 +23,7 @@ strip = true
 # Libraries that run for moments and never in a frame, built for size instead
 # of speed (AGENTS.md, Keep it light): paired phone drop's WebRTC (str0m and
 # what it pulls in), the Japanese dictionary's tokenizer and unpacker, JSON
-# and QR codes. Poni's own code keeps opt-level 3.
+# and QR codes. Arunika's own code keeps opt-level 3.
 [profile.release.package.str0m]
 opt-level = "s"
 [profile.release.package.str0m-proto]

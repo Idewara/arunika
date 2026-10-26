@@ -65,16 +65,16 @@ function WaitFor([scriptblock]$cond, [int]$seconds) {
 }
 
 $programs = [Environment]::GetFolderPath("Programs")
-$installDir = Join-Path $env:LOCALAPPDATA "Programs\Poni"
-$exe = Join-Path $installDir "poni.exe"
-$dataDir = Join-Path $env:APPDATA "Poni"
+$installDir = Join-Path $env:LOCALAPPDATA "Programs\Arunika"
+$exe = Join-Path $installDir "arunika.exe"
+$dataDir = Join-Path $env:APPDATA "Arunika"
 $marker = Join-Path $dataDir "ci-marker.txt"
-$uninstKey = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\Poni"
+$uninstKey = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\Arunika"
 
-function PoniEntries {
+function ArunikaEntries {
     $roots = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall", "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall"
     @($roots | ForEach-Object { Get-ChildItem $_ -ErrorAction SilentlyContinue } |
-        ForEach-Object { Get-ItemProperty $_.PSPath } | Where-Object { $_.DisplayName -like "*Poni*" -or $_.DisplayName -like "*Arunika*" })
+        ForEach-Object { Get-ItemProperty $_.PSPath } | Where-Object { $_.DisplayName -like "*Arunika*" })
 }
 
 # 1. The previous release, the way people have it today.
@@ -119,13 +119,12 @@ Check "walked through the installer pages" $walked "otherwise installed with /S"
 $entry = Get-ItemProperty $uninstKey -ErrorAction SilentlyContinue
 Check "Installed apps name" ($entry.DisplayName -eq "Arunika") "$($entry.DisplayName)"
 Check "Installed apps version" ($entry.DisplayVersion -eq $Version) "$($entry.DisplayVersion)"
-$entries = PoniEntries
+$entries = ArunikaEntries
 Check "one Installed apps entry" ($entries.Count -eq 1) (($entries | ForEach-Object { $_.DisplayName }) -join ", ")
 Check "new Start menu shortcut" (Test-Path (Join-Path $programs "Arunika.lnk"))
-Check "old Start menu shortcut removed" (-not (Test-Path (Join-Path $programs "Poni.lnk")))
 $vi = (Get-Item $exe -ErrorAction SilentlyContinue).VersionInfo
-Check "poni.exe product name" ($vi.ProductName -eq "Arunika") "$($vi.ProductName)"
-Check "poni.exe version" ($vi.ProductVersion -eq $Version) "$($vi.ProductVersion)"
+Check "arunika.exe product name" ($vi.ProductName -eq "Arunika") "$($vi.ProductName)"
+Check "arunika.exe version" ($vi.ProductVersion -eq $Version) "$($vi.ProductVersion)"
 $notices = Join-Path $installDir "THIRD-PARTY-NOTICES.txt"
 Check "license notices installed" (Test-Path $notices) $notices
 if ($Previous) { Check "data kept through the upgrade" (Test-Path $marker) $marker }
@@ -134,32 +133,32 @@ try {
 } catch { Write-Host "icon extract failed: $_" }
 
 # 4. The app itself starts and stays up (launched by Finish, or started here).
-$running = WaitFor { @(Get-Process poni -ErrorAction SilentlyContinue).Count -gt 0 } 8
-if (-not $running) { Start-Process -FilePath $exe; $running = WaitFor { @(Get-Process poni -ErrorAction SilentlyContinue).Count -gt 0 } 8 }
+$running = WaitFor { @(Get-Process arunika -ErrorAction SilentlyContinue).Count -gt 0 } 8
+if (-not $running) { Start-Process -FilePath $exe; $running = WaitFor { @(Get-Process arunika -ErrorAction SilentlyContinue).Count -gt 0 } 8 }
 Start-Sleep -Seconds 4
 $screen = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
 Shot "4-island" ([System.Drawing.Rectangle]::new($screen.Left, $screen.Top, $screen.Width, [Math]::Min(240, $screen.Height)))
 Shot "5-tray" ([System.Drawing.Rectangle]::new($screen.Right - 520, $screen.Bottom - 120, 520, 120))
-Check "app running after install" (@(Get-Process poni -ErrorAction SilentlyContinue).Count -gt 0)
-Get-Process poni -ErrorAction SilentlyContinue | Stop-Process -Force
+Check "app running after install" (@(Get-Process arunika -ErrorAction SilentlyContinue).Count -gt 0)
+Get-Process arunika -ErrorAction SilentlyContinue | Stop-Process -Force
 
 # 5. The app's own update (crates/poni/src/services/update.rs): this Setup again with /S /reopen over a running
 #    copy. It closes that copy, leaves Start with Windows as it was (off here), and opens the app again: the
 #    finish page's "Launch Arunika now" never shows in silent mode.
 $runKey = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Run"
-Remove-ItemProperty -Path $runKey -Name "Poni" -ErrorAction SilentlyContinue
+Remove-ItemProperty -Path $runKey -Name "Arunika" -ErrorAction SilentlyContinue
 Start-Process -FilePath $exe
-$up = WaitFor { @(Get-Process poni -ErrorAction SilentlyContinue).Count -gt 0 } 8
+$up = WaitFor { @(Get-Process arunika -ErrorAction SilentlyContinue).Count -gt 0 } 8
 Start-Sleep -Seconds 2
-$before = @(Get-Process poni -ErrorAction SilentlyContinue | ForEach-Object { $_.Id })
+$before = @(Get-Process arunika -ErrorAction SilentlyContinue | ForEach-Object { $_.Id })
 # WaitForExit waits for the Setup alone; Start-Process -Wait would also wait for the app it reopens.
 $u = Start-Process -FilePath $Setup -ArgumentList "/S", "/reopen" -PassThru
 $u.WaitForExit()
-$reopened = WaitFor { $ids = @(Get-Process poni -ErrorAction SilentlyContinue | ForEach-Object { $_.Id }); $ids.Count -gt 0 -and -not ($ids | Where-Object { $before -contains $_ }) } 15
+$reopened = WaitFor { $ids = @(Get-Process arunika -ErrorAction SilentlyContinue | ForEach-Object { $_.Id }); $ids.Count -gt 0 -and -not ($ids | Where-Object { $before -contains $_ }) } 15
 Check "silent update closes the app and opens it again" ($up -and $reopened) "before: $($before -join ', ')"
-Check "silent update leaves Start with Windows off" ($null -eq (Get-ItemProperty -Path $runKey -Name "Poni" -ErrorAction SilentlyContinue))
+Check "silent update leaves Start with Windows off" ($null -eq (Get-ItemProperty -Path $runKey -Name "Arunika" -ErrorAction SilentlyContinue))
 if ($Previous) { Check "data kept through the silent update" (Test-Path $marker) $marker }
-Get-Process poni -ErrorAction SilentlyContinue | Stop-Process -Force
+Get-Process arunika -ErrorAction SilentlyContinue | Stop-Process -Force
 
 # 6. Uninstall: the app and shortcuts go, settings and data stay.
 Start-Process -FilePath (Join-Path $installDir "Uninstall.exe") -ArgumentList "/S" -Wait

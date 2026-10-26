@@ -1,4 +1,4 @@
-//! `poni.exe --selftest <dir>`: drive the real app through every visual state
+//! `arunika.exe --selftest <dir>`: drive the real app through every visual state
 //! with fake (original) data, save screenshots, verify pixel invariants and
 //! frame timings, and write `<dir>/report.json`.
 //!
@@ -12,21 +12,21 @@
 //! gradient, the way it looks on a desktop) and `<nn>-<name>-alpha.png` (the
 //! raw alpha channel). The exit code is 0 when every check passes, else 1.
 //!
-//! PONI_SELFTEST_THEME=glass runs every scene in the Glass theme over a page
-//! the self-test draws itself (no screen copy): PONI_SELFTEST_GLASS=light (a
+//! ARUNIKA_SELFTEST_THEME=glass runs every scene in the Glass theme over a page
+//! the self-test draws itself (no screen copy): ARUNIKA_SELFTEST_GLASS=light (a
 //! light browser page, Windows in light mode), dark (a dark video page, dark
 //! mode) or flip (the dark page in light mode: small glass turns dark, the
 //! open island stays light). Its screenshots are composited over that page.
 //!
-//! PONI_SELFTEST_THEME=pill runs every scene in the Pill theme, where the
+//! ARUNIKA_SELFTEST_THEME=pill runs every scene in the Pill theme, where the
 //! island floats below the top edge: its ground is checked inside the body,
 //! and its own checks say the gap above the body shows the screen and the
 //! shadow fades out inside the window (see `pill_checks`).
 //!
-//! PONI_SELFTEST_PRAYER_AT=HH:MM shows the Prayer page at that time of the
+//! ARUNIKA_SELFTEST_PRAYER_AT=HH:MM shows the Prayer page at that time of the
 //! day (the other Prayer scenes stay 8 minutes before Ashar).
 //!
-//! PONI_SELFTEST_ADDONS=download also downloads the Prayer times add-on's
+//! ARUNIKA_SELFTEST_ADDONS=download also downloads the Prayer times add-on's
 //! files from their release while the scenes run and checks each one
 //! (`addon-download`; Windows CI only, it needs github.com).
 
@@ -149,7 +149,7 @@ const LYRICS_LRC: &str = "\
 ";
 
 /// The same song in Japanese, Korean and Chinese (written for the test, same
-/// timings), for the pronunciation lines (PONI_SELFTEST_LYRICS=ja|ko|zh).
+/// timings), for the pronunciation lines (ARUNIKA_SELFTEST_LYRICS=ja|ko|zh).
 const LYRICS_JA: &str = "\
 [00:38.00]朝をたたんで小さな形にした
 [00:43.50]港の壁のそばで水に浮かべた
@@ -202,7 +202,7 @@ const CLIPS: [&str; 6] = [
     "Tracking number PX-2048-7731",
     "cargo build -p poni --release",
     "#5AC8FA",
-    "https://example.com/projects/poni/notes",
+    "https://example.com/projects/arunika/notes",
     "Meet at the north entrance at 6:15",
 ];
 
@@ -213,7 +213,7 @@ const PHONE_URL: &str = "HTTP://192.168.1.20:53530/K7Q2M9XWZ4R8T6YB3NPV5HJC2D/";
 
 /// The pairing link in the screenshots: the contract's test secret, so no
 /// real pair can use it.
-const PAIR_URL: &str = "https://drop.arunika.app/p#k=AAECAwQFBgcICQoLDA0ODw";
+const PAIR_URL: &str = "https://drop.arunika.idewara.com/p#k=AAECAwQFBgcICQoLDA0ODw";
 
 /// Paired phones as the pairing scenes show them (made up).
 fn fake_paired(scene: Scene, unix: i64) -> Vec<PairedPhone> {
@@ -656,7 +656,7 @@ fn fake_oyenza(st: &AppState, scene: Scene, now: f64) -> OyenzaState {
     let link = match scene {
         Scene::OyenzaSignIn | Scene::SettingsSigningIn => OyenzaLink::Connecting {
             code: "KPJX-TMNQ".into(),
-            url: "https://arunika.app/connect?code=KPJX-TMNQ".into(),
+            url: "https://arunika.idewara.com/connect?code=KPJX-TMNQ".into(),
             // Pinned on every step, so the countdown reads 9:41 in the screenshot.
             until: now + 581.0,
         },
@@ -717,9 +717,9 @@ fn seed_prayer(st: &mut AppState, scene: Scene, until: f64) {
     let site = st.prayer.site().expect("Jakarta's site");
     let today = site.local_day(st.unix);
     let ashar = poni_core::prayer::day_times(&site, today).expect("today's times").ashar;
-    // PONI_SELFTEST_PRAYER_AT=HH:MM: the Prayer page at that time of
+    // ARUNIKA_SELFTEST_PRAYER_AT=HH:MM: the Prayer page at that time of
     // Jakarta's day instead (pictures of the night side: the moon on the arc).
-    let at = std::env::var("PONI_SELFTEST_PRAYER_AT").ok().filter(|_| scene == Scene::Page(PageKind::Prayer)).and_then(|v| {
+    let at = std::env::var("ARUNIKA_SELFTEST_PRAYER_AT").ok().filter(|_| scene == Scene::Page(PageKind::Prayer)).and_then(|v| {
         let (h, m) = v.trim().split_once(':')?;
         Some(h.parse::<i64>().ok()? * 3600 + m.parse::<i64>().ok()? * 60)
     });
@@ -1206,7 +1206,7 @@ pub fn fetch_phone_page(url: &str) -> (bool, String) {
     let fetch = || -> std::io::Result<String> {
         let mut s = TcpStream::connect_timeout(&addr, Duration::from_secs(3))?;
         s.set_read_timeout(Some(Duration::from_secs(5)))?;
-        write!(s, "GET /{path} HTTP/1.1\r\nHost: {host}\r\nUser-Agent: poni-selftest\r\n\r\n")?;
+        write!(s, "GET /{path} HTTP/1.1\r\nHost: {host}\r\nUser-Agent: arunika-selftest\r\n\r\n")?;
         let mut out = String::new();
         s.read_to_string(&mut out)?;
         Ok(out)
@@ -1280,11 +1280,11 @@ struct Report {
 // ---------------------------------------------------------------- driver
 
 enum Phase {
-    /// Record one transition frame by frame (PONI_SELFTEST_ANIM=1).
+    /// Record one transition frame by frame (ARUNIKA_SELFTEST_ANIM=1).
     Anim { seq: usize },
-    /// Record the media pill playing, then paused (PONI_SELFTEST_LOOP=1).
+    /// Record the media pill playing, then paused (ARUNIKA_SELFTEST_LOOP=1).
     Loop,
-    /// Film the lyrics moving to the next line (PONI_SELFTEST_SCROLL=<Hz>).
+    /// Film the lyrics moving to the next line (ARUNIKA_SELFTEST_SCROLL=<Hz>).
     Scroll,
     Settle { i: usize, since: f64, steps: u32, stable: u32 },
     Click { i: usize },
@@ -1310,21 +1310,21 @@ pub struct SelfTest {
     writes: Vec<(String, JoinHandle<Vec<String>>)>,
     scale: f32,
     expanded_width: f32,
-    /// PONI_SELFTEST_DPI: render at this DPI instead of the monitor's.
+    /// ARUNIKA_SELFTEST_DPI: render at this DPI instead of the monitor's.
     dpi: Option<u32>,
-    /// PONI_SELFTEST_ANIM=1: after the scenes, record transitions frame by frame.
+    /// ARUNIKA_SELFTEST_ANIM=1: after the scenes, record transitions frame by frame.
     anim: bool,
-    /// PONI_SELFTEST_LOOP=1: after the scenes, record the media pill on a held
+    /// ARUNIKA_SELFTEST_LOOP=1: after the scenes, record the media pill on a held
     /// clock, frame by frame.
     media_loop: bool,
-    /// PONI_SELFTEST_SCROLL=<Hz>: after the scenes, film the lyrics moving to
+    /// ARUNIKA_SELFTEST_SCROLL=<Hz>: after the scenes, film the lyrics moving to
     /// the next line on a held clock, one frame per refresh at that rate.
     scroll_hz: Option<f64>,
     dpi_applied: bool,
-    /// PONI_SELFTEST_THEME=cream|glass|pill: run every scene in that theme
+    /// ARUNIKA_SELFTEST_THEME=cream|glass|pill: run every scene in that theme
     /// ("oyen" still reads as Cream).
     theme: Theme,
-    /// Glass: which page is under the island (PONI_SELFTEST_GLASS), the
+    /// Glass: which page is under the island (ARUNIKA_SELFTEST_GLASS), the
     /// window size its backdrop was drawn for, and the scene last seeded.
     glass: Option<GlassRun>,
     /// The frame budget the scenes were held to (for the report).
@@ -1333,17 +1333,17 @@ pub struct SelfTest {
     slow_frames: Vec<String>,
     glass_size: Cell<(i32, i32)>,
     glass_scene: Cell<Option<Scene>>,
-    /// PONI_SELFTEST_LYRICS=ja|ko|zh: the sample song in that language.
+    /// ARUNIKA_SELFTEST_LYRICS=ja|ko|zh: the sample song in that language.
     lyrics_lang: Option<String>,
     renderer: &'static str,
     /// The seeded shelf and its thumbnails (the empty-shelf scene hides
     /// them, and the page forgets thumbnails of items that left).
     shelf_items: Vec<ShelfItem>,
     shelf_thumbs: Vec<(String, Option<Image>)>,
-    /// The real add-on download (PONI_SELFTEST_ADDONS=download), running beside the scenes.
+    /// The real add-on download (ARUNIKA_SELFTEST_ADDONS=download), running beside the scenes.
     addon_fetch: Option<std::sync::mpsc::Receiver<(bool, String)>>,
-    /// Show over games' frame count, run on Poni's own frames: Windows' frame
-    /// log must deliver them (PONI_SELFTEST_FRAMES=required on Windows CI,
+    /// Show over games' frame count, run on Arunika's own frames: Windows' frame
+    /// log must deliver them (ARUNIKA_SELFTEST_FRAMES=required on Windows CI,
     /// which runs as admin).
     frames: Option<crate::services::frames::Frames>,
 }
@@ -1365,7 +1365,7 @@ const LOOP_PAUSE_S: f64 = 2.4;
 const LOOP_FPS: f64 = 30.0;
 const LOOP_ALIGN_S: f64 = 4.8;
 const LOOP_PREROLL_S: f64 = 2.4;
-/// The lyrics scroll film (PONI_SELFTEST_SCROLL): where the track starts
+/// The lyrics scroll film (ARUNIKA_SELFTEST_SCROLL): where the track starts
 /// (the next line starts 0.5 s in), unsaved lead-in, and the filmed length.
 const SCROLL_FROM_S: f64 = 65.0;
 const SCROLL_PREROLL_S: f64 = 1.0;
@@ -1389,12 +1389,12 @@ impl SelfTest {
             writes: Vec::new(),
             scale: 1.0,
             expanded_width: 0.0,
-            dpi: std::env::var("PONI_SELFTEST_DPI").ok().and_then(|v| v.trim().parse().ok()),
-            anim: std::env::var("PONI_SELFTEST_ANIM").is_ok_and(|v| v.trim() == "1"),
-            media_loop: std::env::var("PONI_SELFTEST_LOOP").is_ok_and(|v| v.trim() == "1"),
-            scroll_hz: std::env::var("PONI_SELFTEST_SCROLL").ok().and_then(|v| v.trim().parse().ok()).filter(|hz: &f64| (20.0..=500.0).contains(hz)),
+            dpi: std::env::var("ARUNIKA_SELFTEST_DPI").ok().and_then(|v| v.trim().parse().ok()),
+            anim: std::env::var("ARUNIKA_SELFTEST_ANIM").is_ok_and(|v| v.trim() == "1"),
+            media_loop: std::env::var("ARUNIKA_SELFTEST_LOOP").is_ok_and(|v| v.trim() == "1"),
+            scroll_hz: std::env::var("ARUNIKA_SELFTEST_SCROLL").ok().and_then(|v| v.trim().parse().ok()).filter(|hz: &f64| (20.0..=500.0).contains(hz)),
             dpi_applied: false,
-            theme: match std::env::var("PONI_SELFTEST_THEME").map(|v| v.trim().to_ascii_lowercase()).as_deref() {
+            theme: match std::env::var("ARUNIKA_SELFTEST_THEME").map(|v| v.trim().to_ascii_lowercase()).as_deref() {
                 // "oyen": the Cream theme's name before the rename.
                 Ok("cream") | Ok("oyen") => Theme::Cream,
                 Ok("glass") => Theme::Glass,
@@ -1406,7 +1406,7 @@ impl SelfTest {
             slow_frames: Vec::new(),
             glass_size: Cell::new((0, 0)),
             glass_scene: Cell::new(None),
-            lyrics_lang: std::env::var("PONI_SELFTEST_LYRICS").ok().map(|v| v.trim().to_ascii_lowercase()).filter(|v| !v.is_empty()),
+            lyrics_lang: std::env::var("ARUNIKA_SELFTEST_LYRICS").ok().map(|v| v.trim().to_ascii_lowercase()).filter(|v| !v.is_empty()),
             renderer: "software",
             shelf_items: Vec::new(),
             shelf_thumbs: Vec::new(),
@@ -1421,8 +1421,8 @@ impl SelfTest {
         // readings); before the scene clock starts, as it takes a moment.
         let (ok, detail) = system_readings(crate::services::sysmon::probe());
         self.checks.push(check("system-readings", ok, detail));
-        // Show over games: count Poni's own frames through the whole run.
-        let required = std::env::var("PONI_SELFTEST_FRAMES").is_ok_and(|v| v.trim().eq_ignore_ascii_case("required"));
+        // Show over games: count Arunika's own frames through the whole run.
+        let required = std::env::var("ARUNIKA_SELFTEST_FRAMES").is_ok_and(|v| v.trim().eq_ignore_ascii_case("required"));
         match crate::services::frames::Frames::start_selftest(std::process::id()) {
             Ok(f) => self.frames = Some(f),
             Err(e) if required => self.checks.push(check("frame-count", false, format!("the frame count didn't start: {e:?}"))),
@@ -1457,9 +1457,9 @@ impl SelfTest {
         let art = ImageData::new(ART_PX, ART_PX, make_art(ART_PX));
         self.art_color = Some(art.accent_color());
         self.art = Some(art);
-        // PONI_SELFTEST_LRC=<file>: a real song for a one-off check on CI
+        // ARUNIKA_SELFTEST_LRC=<file>: a real song for a one-off check on CI
         // (fetched there at run time; song lyrics never go in the repo).
-        let file = std::env::var("PONI_SELFTEST_LRC").ok().and_then(|p| fs::read_to_string(p.trim()).ok());
+        let file = std::env::var("ARUNIKA_SELFTEST_LRC").ok().and_then(|p| fs::read_to_string(p.trim()).ok());
         let lrc = match (file.as_deref(), self.lyrics_lang.as_deref()) {
             (Some(f), _) => f,
             (None, Some("ja")) => LYRICS_JA,
@@ -1479,24 +1479,24 @@ impl SelfTest {
         if let Some(pos) = lyric_scene_pos(&parsed) {
             self.lyric_pos = pos;
         }
-        // PONI_SELFTEST_ANALYZER: "required" (Windows CI) = Windows' own
+        // ARUNIKA_SELFTEST_ANALYZER: "required" (Windows CI) = Windows' own
         // analyzer must work and every line must read, kanji lines included;
         // "off" = read the song the way a PC without Windows' Japanese reading
         // data does (Arunika's own dictionary), every line too; "kana" = the
         // way 0.1.11 and older read it there (kana lines only), for
         // before/after pictures. Without it, Wine has no analyzer, so its
         // lines come from Arunika's own dictionary.
-        let analyzer = std::env::var("PONI_SELFTEST_ANALYZER").map(|v| v.trim().to_ascii_lowercase()).unwrap_or_default();
+        let analyzer = std::env::var("ARUNIKA_SELFTEST_ANALYZER").map(|v| v.trim().to_ascii_lowercase()).unwrap_or_default();
         let texts: Vec<&str> = parsed.lines.iter().map(|l| l.text.trim()).collect();
         let japanese = poni_core::romanize::song_script(&texts) == Some(poni_core::romanize::Script::Japanese);
         if analyzer == "required" {
             let works = crate::services::romanize::analyzer_works();
             self.checks.push(check("japanese-analyzer", works.is_ok(), works.err().unwrap_or_else(|| "Windows' analyzer reads Japanese".into())));
         }
-        // PONI_SELFTEST_JA_DICT=<file> (CI passes the repo's copy): Arunika's
+        // ARUNIKA_SELFTEST_JA_DICT=<file> (CI passes the repo's copy): Arunika's
         // own dictionary, put where the Japanese readings add-on keeps
         // it, so the run reads Japanese the way a PC with the add-on does.
-        if let Ok(src) = std::env::var("PONI_SELFTEST_JA_DICT") {
+        if let Ok(src) = std::env::var("ARUNIKA_SELFTEST_JA_DICT") {
             let file = &JAPANESE_READINGS.files[0];
             let to = crate::services::addons::file_path(&JAPANESE_READINGS, file.name);
             let placed = fs::read(src.trim()).map_err(|e| format!("{}: {e}", src.trim())).and_then(|b| {
@@ -1559,9 +1559,9 @@ impl SelfTest {
         };
         self.checks.push(check("start-with-windows", ok, detail));
 
-        // PONI_SELFTEST_ADDONS=download (Windows CI): fetch every add-on's files
+        // ARUNIKA_SELFTEST_ADDONS=download (Windows CI): fetch every add-on's files
         // from their releases and check each against the size and SHA-256 built in.
-        if std::env::var("PONI_SELFTEST_ADDONS").is_ok_and(|v| v.trim() == "download") {
+        if std::env::var("ARUNIKA_SELFTEST_ADDONS").is_ok_and(|v| v.trim() == "download") {
             let (tx, rx) = std::sync::mpsc::channel();
             let dir = paths::addons_dir().join("selftest-download");
             let _ = std::thread::Builder::new().name("selftest-addon".into()).spawn(move || {
@@ -2394,7 +2394,7 @@ impl SelfTest {
             }
             errors
         };
-        match std::thread::Builder::new().name("poni-selftest-png".into()).spawn(job) {
+        match std::thread::Builder::new().name("arunika-selftest-png".into()).spawn(job) {
             Ok(handle) => self.writes.push((name.to_string(), handle)),
             Err(e) => self.checks.push(check("png-writer", false, format!("{name}: could not start a writer thread: {e}"))),
         }
@@ -2447,7 +2447,7 @@ impl SelfTest {
         let mut code = if ok { 0 } else { 1 };
         let total_ms = self.t0.elapsed().as_millis() as u64;
         let report = Report {
-            app: "Poni",
+            app: "Arunika",
             version: env!("CARGO_PKG_VERSION"),
             ok,
             exit_code: code,
@@ -2983,7 +2983,7 @@ fn rgb8(c: Color) -> [u8; 3] {
 
 // ---------------------------------------------------------------- Glass backdrops
 
-/// What the Glass self-test puts under the island (PONI_SELFTEST_GLASS).
+/// What the Glass self-test puts under the island (ARUNIKA_SELFTEST_GLASS).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum GlassRun {
     /// A light browser page, Windows in light mode.
@@ -2997,7 +2997,7 @@ enum GlassRun {
 
 impl GlassRun {
     fn from_env() -> Self {
-        match std::env::var("PONI_SELFTEST_GLASS").map(|v| v.trim().to_ascii_lowercase()).as_deref() {
+        match std::env::var("ARUNIKA_SELFTEST_GLASS").map(|v| v.trim().to_ascii_lowercase()).as_deref() {
             Ok("dark") => GlassRun::Dark,
             Ok("flip") => GlassRun::Flip,
             _ => GlassRun::Light,

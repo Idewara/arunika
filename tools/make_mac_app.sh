@@ -1,5 +1,5 @@
 #!/bin/bash
-# Build "Arunika.app" and its DMG from Poni's Mac binaries. Runs on a Mac (lipo, codesign, hdiutil).
+# Build "Arunika.app" and its DMG from Arunika's Mac binaries. Runs on a Mac (lipo, codesign, hdiutil).
 #
 #   tools/make_mac_app.sh <arm64 binary> <x86_64 binary | -> <Arunika.icns | -> <out dir>
 #
@@ -20,12 +20,12 @@ mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources"
 
 # One binary for Apple Silicon and Intel Macs.
 if [ "$intel" != "-" ]; then
-  lipo -create -output "$app/Contents/MacOS/poni" "$arm" "$intel"
+  lipo -create -output "$app/Contents/MacOS/arunika" "$arm" "$intel"
 else
-  cp "$arm" "$app/Contents/MacOS/poni"
+  cp "$arm" "$app/Contents/MacOS/arunika"
 fi
-chmod +x "$app/Contents/MacOS/poni"
-lipo -info "$app/Contents/MacOS/poni"
+chmod +x "$app/Contents/MacOS/arunika"
+lipo -info "$app/Contents/MacOS/arunika"
 
 sed "s/@VERSION@/$version/g" "$root/installer/mac/Info.plist" > "$app/Contents/Info.plist"
 plutil -lint "$app/Contents/Info.plist"

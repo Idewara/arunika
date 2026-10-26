@@ -1,7 +1,7 @@
 //! Arunika page (only while signing in or signed in, see `OyenzaState`).
 //!
-//! Signing in: the 8-letter code to approve in arunika.app, "Open
-//! arunika.app" (the browser opens arunika.app/connect with the code filled
+//! Signing in: the 8-letter code to approve in arunika.idewara.com, "Open
+//! arunika.idewara.com" (the browser opens arunika.idewara.com/connect with the code filled
 //! in), Cancel, and how long the code still works.
 //!
 //! Signed in, a live view of Arunika by day: a row to note a spend ("kopi
@@ -117,9 +117,9 @@ fn draw_code(ui: &mut Ui, st: &mut AppState, area: Rect, code: &str, url: &str, 
     ui.c.text("Sign in to Arunika", Rect::new(area.x, area.y, area.w, 20.0), &TextStyle::headline());
     ui.c.text(
         if cfg!(windows) {
-            "On your phone or this PC, open arunika.app/connect and enter this code."
+            "On your phone or this PC, open arunika.idewara.com/connect and enter this code."
         } else {
-            "On your phone or this Mac, open arunika.app/connect and enter this code."
+            "On your phone or this Mac, open arunika.idewara.com/connect and enter this code."
         },
         Rect::new(area.x, area.y + 22.0, area.w, 18.0),
         &TextStyle::footnote().color(palette::TEXT_DIM),
@@ -129,9 +129,9 @@ fn draw_code(ui: &mut Ui, st: &mut AppState, area: Rect, code: &str, url: &str, 
     ui.c.text(code, code_r, &TextStyle::display().tabular().center());
 
     let y = area.y + 128.0;
-    let open_w = ui.pill_width("Open arunika.app", true, true);
+    let open_w = ui.pill_width("Open arunika.idewara.com", true, true);
     let open = Rect::new(area.x, y, open_w, PILL_SMALL);
-    if ui.pill(wid("oyenza.open-connect"), open, "Open arunika.app", Some(Icon::Open), PillStyle::Primary(ACCENT)).clicked {
+    if ui.pill(wid("oyenza.open-connect"), open, "Open arunika.idewara.com", Some(Icon::Open), PillStyle::Primary(ACCENT)).clicked {
         st.cmd(Command::OpenUrl(url.to_string()));
     }
     let cancel_w = ui.pill_width("Cancel", false, true);
@@ -252,7 +252,7 @@ fn draw_connected(ui: &mut Ui, st: &mut AppState, area: Rect) {
         }
         None => (false, "Checking Arunika…".into()),
     };
-    let open_w = ui.pill_width("Open arunika.app", true, true);
+    let open_w = ui.pill_width("Open arunika.idewara.com", true, true);
     let open = Rect::new(footer.right() - open_w, footer.y, open_w, PILL_SMALL);
     let mut text_x = footer.x;
     if live {
@@ -260,7 +260,7 @@ fn draw_connected(ui: &mut Ui, st: &mut AppState, area: Rect) {
         text_x += 14.0;
     }
     ui.c.text(&updated, Rect::new(text_x, footer.y, (open.x - text_x - 12.0).max(0.0), footer.h), &TextStyle::footnote().color(palette::TEXT_FAINT));
-    if ui.pill(wid("oyenza.open"), open, "Open arunika.app", Some(Icon::Open), PillStyle::Utility).clicked {
+    if ui.pill(wid("oyenza.open"), open, "Open arunika.idewara.com", Some(Icon::Open), PillStyle::Utility).clicked {
         st.cmd(Command::OpenUrl(oyenza::WEB.to_string()));
     }
 }
@@ -367,7 +367,7 @@ fn draw_list(ui: &mut Ui, st: &mut AppState, list: Rect, rows: &[Line], today: &
                 let time = oyenza::local_clock(&t.at, offset).map(|l| fmt_clock(&l, st.settings.use_24h)).unwrap_or_default();
                 txn_row(ui, r, t, &time, show);
             }
-            Line::More(n) => empty_row(ui, r, &format!("and {n} more in arunika.app")),
+            Line::More(n) => empty_row(ui, r, &format!("and {n} more in arunika.idewara.com")),
         }
     }
     ui.c.set_text_snap(snap_was);

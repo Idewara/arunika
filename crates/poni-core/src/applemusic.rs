@@ -2,7 +2,7 @@
 //! read through Apple's web API with the user's own Apple Music token.
 //!
 //! This is the web player's private API, not a published one, so it can
-//! change without notice; Poni then falls back to LRCLIB. HTTP lives in the
+//! change without notice; Arunika then falls back to LRCLIB. HTTP lives in the
 //! Windows crate; this module finds the web player's developer token, builds
 //! the URLs, reads the replies and picks the song.
 

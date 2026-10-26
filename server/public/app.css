@@ -58,7 +58,7 @@ img { max-width: 100%; }
   transition: width 0.55s var(--spring), height 0.55s var(--spring), border-radius 0.4s var(--ease);
   box-shadow: 0 10px 24px -14px rgba(0, 0, 0, 0.55);
 }
-/* The flared shoulders where the island meets the top edge, like Poni's notch. */
+/* The flared shoulders where the island meets the top edge, like Arunika's notch. */
 .island-wrap::before, .island-wrap::after { content: none; }
 .island[data-mode="busy"], .island[data-mode="done"] { border-radius: 0 0 30px 30px; }
 .isl-inner {

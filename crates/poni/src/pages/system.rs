@@ -19,7 +19,7 @@
 //! own sensor, which macOS doesn't split by part.
 //!
 //! The last module, Games (Windows only), holds Show over games: its switch,
-//! whether the readout stays or peeks, whether Windows lets Poni read frames
+//! whether the readout stays or peeks, whether Windows lets Arunika read frames
 //! (with the one-time OK), the frame rate's last minute and what's in front.
 
 use crate::commands::Command;
@@ -860,7 +860,7 @@ fn fps_ceiling(peak: f32) -> f32 {
     FPS_TOPS.into_iter().find(|t| peak <= *t).unwrap_or_else(|| (peak / 120.0).ceil().max(1.0) * 120.0)
 }
 
-/// Show over games: the switch and whether Windows lets Poni read frames on
+/// Show over games: the switch and whether Windows lets Arunika read frames on
 /// the left, the frame rate's minute in the middle, what's in front on the
 /// right.
 fn draw_games(ui: &mut Ui, st: &mut AppState, cols: &Cols) {
@@ -905,7 +905,7 @@ fn draw_games(ui: &mut Ui, st: &mut AppState, cols: &Cols) {
         FpsAccess::NeedsOk => ("Needs a one-time OK from Windows, as Xbox Game Bar does.".to_string(), Some(("Allow FPS", Command::AllowFps))),
         FpsAccess::Asking => ("Answer Windows' prompt to allow it.".to_string(), None),
         FpsAccess::SignOut => ("Allowed. Sign out of Windows and back in, and FPS shows.".to_string(), None),
-        // Why goes to poni.log; the page says it plainly.
+        // Why goes to arunika.log; the page says it plainly.
         FpsAccess::Failed(_) => ("Windows didn't allow it this time.".to_string(), Some(("Check again", Command::CheckFps))),
     };
     let (text_r, rest) = rest.split_top(44.0);

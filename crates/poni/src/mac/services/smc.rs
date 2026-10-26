@@ -129,7 +129,7 @@ impl Drop for Smc {
     }
 }
 
-/// `poni --smc`: what the SMC says the whole Mac draws now, for checking a
+/// `arunika --smc`: what the SMC says the whole Mac draws now, for checking a
 /// Mac by hand (the Power module shows it only on a Mac without a battery).
 pub fn report() -> i32 {
     match Smc::open() {

@@ -519,7 +519,7 @@ fn game_temp(st: &AppState) -> Option<f32> {
 }
 
 /// "144 fps | GPU 97% · 71° | CPU 38%", centred. The frame rate is a dim
-/// dash until Windows lets Poni read frames and while the game isn't
+/// dash until Windows lets Arunika read frames and while the game isn't
 /// drawing; the rest comes from the System page's readers.
 fn draw_game(ui: &mut Ui, st: &AppState, body: Rect) {
     let reading = st.system.latest.as_ref();

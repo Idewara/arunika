@@ -152,7 +152,7 @@ define_class!(
     /// Hears Core Location's answers (main thread).
     #[unsafe(super(NSObject))]
     #[thread_kind = MainThreadOnly]
-    #[name = "PoniLocationDelegate"]
+    #[name = "ArunikaLocationDelegate"]
     struct LocationDelegate;
 
     unsafe impl NSObjectProtocol for LocationDelegate {}

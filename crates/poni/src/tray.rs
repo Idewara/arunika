@@ -17,7 +17,7 @@ impl Tray {
     pub fn add(hwnd: HWND) -> Result<Tray> {
         unsafe {
             let hinst = GetModuleHandleW(None)?;
-            // Ask for the small-icon size so Windows picks poni.ico's own 16-24 px
+            // Ask for the small-icon size so Windows picks arunika.ico's own 16-24 px
             // frames; LoadIconW gives the 32 px one and shrinks it (blurry).
             let (cx, cy) = (GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON));
             let icon = LoadImageW(hinst, PCWSTR(1 as _), IMAGE_ICON, cx, cy, LR_DEFAULTCOLOR)
@@ -179,7 +179,7 @@ fn apple_music_menu() -> MenuItem {
     MenuItem::Sub { label: if on { "Apple Music lyrics: on".into() } else { "Apple Music lyrics".into() }, items }
 }
 
-/// Arunika, optional: sign in with a code from arunika.app, then what the
+/// Arunika, optional: sign in with a code from arunika.idewara.com, then what the
 /// island may show, and signing out.
 fn oyenza_menu(s: &Settings, link: &OyenzaLink) -> MenuItem {
     let items = match link {
@@ -188,7 +188,7 @@ fn oyenza_menu(s: &Settings, link: &OyenzaLink) -> MenuItem {
         OyenzaLink::Connected { account } => vec![
             MenuItem::Info { label: format!("Connected as {account}") },
             item("Show amounts on the island", MenuCmd::ToggleOyenzaAmounts, s.oyenza_show_amounts),
-            item("Open arunika.app", MenuCmd::OyenzaOpen, false),
+            item("Open arunika.idewara.com", MenuCmd::OyenzaOpen, false),
             MenuItem::Separator,
             item("Disconnect", MenuCmd::OyenzaDisconnect, false),
         ],

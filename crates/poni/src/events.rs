@@ -88,7 +88,7 @@ pub enum LyricsResult {
 pub enum OyenzaEvent {
     /// The sign-in saved on this PC was found at start (no notice).
     Restored { account: String },
-    /// A sign-in code to show, the arunika.app address that takes it, and how long it lasts.
+    /// A sign-in code to show, the arunika.idewara.com address that takes it, and how long it lasts.
     Connecting { code: String, url: String, expires_in_s: u64 },
     Connected { account: String },
     /// Signing in stopped without a key: `expired`, `denied`, `offline` or `other`.
@@ -110,7 +110,7 @@ pub enum OyenzaEvent {
     NoteFailed { text: String, code: String },
     Undone,
     UndoFailed(String),
-    /// Signed out: from the tray, or by the server (disconnected in arunika.app).
+    /// Signed out: from the tray, or by the server (disconnected in arunika.idewara.com).
     Disconnected { by_server: bool },
 }
 
@@ -149,7 +149,7 @@ pub enum AppEvent {
     /// The System page's latest reading and the minute behind it
     /// (`services::sysmon`, each second while the page is open).
     System(Box<poni_core::sysmon::Monitor>),
-    /// Show over games: whether Windows lets Poni read frames (a check, or
+    /// Show over games: whether Windows lets Arunika read frames (a check, or
     /// the one-time OK's outcome).
     FpsAccess(crate::state::FpsAccess),
     ClipboardText(String),

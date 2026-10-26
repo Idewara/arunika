@@ -1,12 +1,12 @@
 # The update file
 
-Every copy of Oyenza Studio learns that a new version is out from one small file, <https://studio.oyenza.com/latest.json>. This page says what is in it, where it is made, and how it stays trustworthy.
+Every copy of Arunika learns that a new version is out from one small file, <https://arunika.idewara.com/latest.json>. This page says what is in it, where it is made, and how it stays trustworthy.
 
 ## What's in it
 
 ```json
 {
-  "about": "Oyenza Studio's update file. …",
+  "about": "Arunika's update file. …",
   "payload": "{\"schema\":1,\"version\":\"0.2.3\",\"date\":\"2026-10-25\",\"headline\":\"Sing along from the closed island\",…}",
   "signature": "base64 of r and s, 64 bytes",
   "key": "4cb3280eaea65b50"
@@ -22,8 +22,8 @@ Every copy of Oyenza Studio learns that a new version is out from one small file
 | `date` | The day it was published (UTC), such as `2026-10-25`. |
 | `headline` | The first bold line of its release notes, at most 90 characters. The island shows it. |
 | `notes` | The release's page on GitHub. |
-| `windows` | `url`, `size` and `sha256` of `Oyenza-Studio-Setup-<version>.exe`, from that release. |
-| `mac` | The same for `Oyenza-Studio-<version>-mac.dmg`. It's left out until the DMG is on the release. |
+| `windows` | `url`, `size` and `sha256` of `Arunika-Setup-<version>.exe`, from that release. |
+| `mac` | The same for `Arunika-<version>-mac.dmg`. It's left out until the DMG is on the release. |
 
 `signature` is ECDSA P-256 over the SHA-256 of the payload's UTF-8 bytes: r and s, 32 bytes each, big-endian, then base64. `key` names the key that made it.
 
@@ -54,13 +54,13 @@ Copies from 0.2.6 on read the file; 0.2.5 and older don't, so they need one last
 
 - **When it looks:** about two minutes after start, then every 12 hours (`poni_core::update::CHECK_EVERY_S`), remembered across starts in `update.json` in the data folder, so starting the app often costs nothing. A look that comes due while nobody is at the computer (locked, display off) or on battery saver waits until someone is back. A failed look tries again in an hour.
 - **How:** one request for the file, about 1 KB, on the add-on downloader's thread (`services/update.rs`), which sleeps the rest of the time. The signature is checked with the system's own crypto (CNG on Windows; on a Mac the P-256 code phone drop already builds in), then `poni_core::update::parse_payload` refuses anything that isn't this repository's own release of that version.
-- **Windows downloads first, then tells:** once a look finds a later version, the add-on thread downloads its Setup (about 2.5 MB, once per release) into `update` in the cache folder (`%LOCALAPPDATA%\Poni\update`) and keeps it only if its size and SHA-256 match the signed file's. Older versions' Setups there are deleted, and all of them once the running version is the latest. A download that fails doesn't hold the news back: the island tells anyway, the sheet offers the release page, and the next look tries again.
+- **Windows downloads first, then tells:** once a look finds a later version, the add-on thread downloads its Setup (about 2.5 MB, once per release) into `update` in the cache folder (`%LOCALAPPDATA%\Arunika\update`) and keeps it only if its size and SHA-256 match the signed file's. Older versions' Setups there are deleted, and all of them once the running version is the latest. A download that fails doesn't hold the news back: the island tells anyway, the sheet offers the release page, and the next look tries again.
 - **The island:** a later version than the one running, with a download for this system (a Mac waits for the DMG), shows once per version as **Update available x** (the version dimmer), over the release's headline, with **Hide** (`crate::updates`). It waits until the island is closed and free, and leaves after 15 seconds. Clicking it opens the Update sheet.
-- **The Update sheet** (in Settings, in place of its rows): what's new, what gets the new version, and **See what's new in Oyenza Studio x** (the release page). **Not now** closes the island. On Windows with the Setup in, it reads **Update ready to install**, with two cards:
-  - **Install now** checks the Setup again and runs it silently (`/S /reopen`); the app quits as on any quit, saving first. The Setup replaces `poni.exe`, leaves Start with Windows as it was, and opens the new version.
+- **The Update sheet** (in Settings, in place of its rows): what's new, what gets the new version, and **See what's new in Arunika x** (the release page). **Not now** closes the island. On Windows with the Setup in, it reads **Update ready to install**, with two cards:
+  - **Install now** checks the Setup again and runs it silently (`/S /reopen`); the app quits as on any quit, saving first. The Setup replaces `arunika.exe`, leaves Start with Windows as it was, and opens the new version.
   - **Install on next start** remembers the version (`install_on_start` in `update.json`). The next start runs the Setup the same way before any window opens, once: a Setup that fails doesn't keep the app from opening.
-- **Until it is installed:** the right-click menu starts with **Update to Oyenza Studio x…**, which opens the sheet, and Settings has a last row, **Update available x**, with **Update**.
+- **Until it is installed:** the right-click menu starts with **Update to Arunika x…**, which opens the sheet, and Settings has a last row, **Update available x**, with **Update**.
 - **Without the Setup** (its download failed): the card opens the release's page on Windows. A Mac downloads the DMG.
-- **The installer's side** (`installer/poni.nsi`): in silent mode it leaves the Start with Windows component out, so the Run value stays as the person set it, and `/reopen` starts `poni.exe` once it's done (the finish page's "Launch Oyenza Studio now" never shows in silent mode). The CI installer check runs exactly this over a running copy.
+- **The installer's side** (`installer/arunika.nsi`): in silent mode it leaves the Start with Windows component out, so the Run value stays as the person set it, and `/reopen` starts `arunika.exe` once it's done (the finish page's "Launch Arunika now" never shows in silent mode). The CI installer check runs exactly this over a running copy.
 - **After updating:** the first start of a newer version says **Updated to x** once, with **What's new**.
 - A Microsoft Store copy doesn't look: the Store updates it.

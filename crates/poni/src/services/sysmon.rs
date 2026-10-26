@@ -146,7 +146,7 @@ enum Msg {
 impl SysMon {
     pub fn start(sink: EventSink, background: bool, rest: Rest) -> std::io::Result<Self> {
         let (tx, rx) = mpsc::channel();
-        let thread = std::thread::Builder::new().name("poni-sysmon".into()).spawn(move || worker(sink, rx, background, rest))?;
+        let thread = std::thread::Builder::new().name("arunika-sysmon".into()).spawn(move || worker(sink, rx, background, rest))?;
         Ok(Self { tx, thread: Some(thread) })
     }
 

@@ -329,11 +329,11 @@ mod tests {
 
     /// CI runs `tools/fake-apple-music.cs` as AppleMusic.exe: a window with a
     /// slider and a back button under Apple Music's automation ids, logging
-    /// what happens to them to `PONI_FAKE_AM_LOG`.
+    /// what happens to them to `ARUNIKA_FAKE_AM_LOG`.
     #[test]
     #[ignore = "needs the stand-in Apple Music window (tools/fake-apple-music.cs, run by CI)"]
     fn presses_apple_musics_own_controls() {
-        let log = std::env::var("PONI_FAKE_AM_LOG").expect("PONI_FAKE_AM_LOG names the stand-in's log");
+        let log = std::env::var("ARUNIKA_FAKE_AM_LOG").expect("ARUNIKA_FAKE_AM_LOG names the stand-in's log");
         wait_for(&log, "ready");
         let _ = unsafe { CoInitializeEx(None, COINIT_MULTITHREADED) };
         let mut ui = AppleMusicUi::default();

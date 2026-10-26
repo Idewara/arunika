@@ -13,7 +13,7 @@
 # check in the report says where the island sat and which points took the
 # mouse.
 #
-# Usage: tools/mac-smoke.sh "<path to the app's poni binary>"
+# Usage: tools/mac-smoke.sh "<path to the app's arunika binary>"
 # Not -e: the report must print even when a check fails.
 set +e -u
 system_profiler SPDisplaysDataType | grep -E "Resolution|Retina|Main Display" || true
@@ -21,7 +21,7 @@ bin="$1"
 # A real wallpaper behind the island (the runner's desktop is plain black),
 # so the pictures show what Glass does over a bright, busy desktop: the
 # website's own picture, set through AppKit (no permission needed).
-cat > /tmp/poni-wallpaper.js <<'JXA'
+cat > /tmp/arunika-wallpaper.js <<'JXA'
 function run(argv) {
   ObjC.import("AppKit");
   var url = $.NSURL.fileURLWithPath(argv[0]);
@@ -32,7 +32,7 @@ function run(argv) {
   return "wallpaper: " + argv[0];
 }
 JXA
-osascript -l JavaScript /tmp/poni-wallpaper.js "$(pwd)/site/assets/wall/morning.jpg" || echo "(could not set the wallpaper)"
+osascript -l JavaScript /tmp/arunika-wallpaper.js "$(pwd)/site/assets/wall/morning.jpg" || echo "(could not set the wallpaper)"
 # Glass and blur draw flat under Reduce Transparency; say whether it's on,
 # and ask for it off (a runner image may not allow it).
 echo "reduce transparency: $(defaults read com.apple.universalaccess reduceTransparency 2>&1)"
@@ -85,5 +85,5 @@ else
 fi
 echo "smoke exit code: $code ($shots screenshots)"
 echo "---- report.json"; cat smoke/report.json || echo "(missing)"
-echo "---- poni.log"; tail -80 smoke/home/poni.log || true
+echo "---- arunika.log"; tail -80 smoke/home/arunika.log || true
 exit $code

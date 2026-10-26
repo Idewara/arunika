@@ -87,9 +87,10 @@ DOWNLOAD_URL = re.compile(r"github\.com/([\w.-]+/[\w.-]+)/releases/download/([^/
 def kind(file: str) -> str:
     if file.endswith("-portable.zip"):
         return "zip"
-    # The website's and README's Download link: releases/latest/download/Oyenza-Studio-Setup.exe
-    # (Oyen-Poni-Setup.exe before the rename, which every release still carries for older links).
-    if re.fullmatch(r"(Oyen-)?Poni-Setup\.exe|Oyenza-Studio-Setup\.exe", file):
+    # The website's and README's Download link: releases/latest/download/Arunika-Setup.exe
+    # (Oyenza-Studio-Setup.exe and Oyen-Poni-Setup.exe before the renames, which older
+    # releases still carry for older links).
+    if re.fullmatch(r"Arunika-Setup\.exe|(Oyen-)?Poni-Setup\.exe|Oyenza-Studio-Setup\.exe", file):
         return "button"
     if file.endswith(".exe"):
         return "installer"
@@ -112,7 +113,7 @@ class GitHub:
             url = API + url
         if params:
             url += ("&" if "?" in url else "?") + urllib.parse.urlencode(params)
-        headers = {"Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28", "User-Agent": "oyen-poni-download-stats"}
+        headers = {"Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28", "User-Agent": "arunika-download-stats"}
         if self.token:
             headers["Authorization"] = f"Bearer {self.token}"
         for attempt in range(5):

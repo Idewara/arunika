@@ -281,7 +281,7 @@ pub(super) fn on_sta<R: Send>(f: impl FnOnce() -> R + Send) -> Option<R> {
         }
     }
     std::thread::scope(|s| {
-        let t = std::thread::Builder::new().name("poni-romaji".into()).spawn_scoped(s, || {
+        let t = std::thread::Builder::new().name("arunika-romaji".into()).spawn_scoped(s, || {
             let _com = Sta(unsafe { CoInitializeEx(None, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE) }.is_ok());
             f()
         });

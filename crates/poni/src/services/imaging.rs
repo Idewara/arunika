@@ -513,7 +513,7 @@ pub fn load_thumb_async(path: String, sink: EventSink) {
         }
     }
     let (tx, rx) = mpsc::channel();
-    match std::thread::Builder::new().name("poni-thumbs".into()).spawn(move || thumb_worker(rx)) {
+    match std::thread::Builder::new().name("arunika-thumbs".into()).spawn(move || thumb_worker(rx)) {
         Ok(_) => {
             // Cannot fail while the new worker holds `rx`; if it does, the
             // job handed back is dropped here, which answers it.

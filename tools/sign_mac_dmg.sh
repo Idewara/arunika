@@ -6,7 +6,7 @@
 #   tools/sign_mac_dmg.sh <ad-hoc .dmg> <out dir> <signing identity>
 #
 # The input is the test DMG tools/make_mac_app.sh builds (<name>-<version>-mac-unsigned.dmg). Its app is re-signed
-# with the hardened runtime, a secure timestamp and installer/mac/poni.entitlements, and goes into a new DMG with
+# with the hardened runtime, a secure timestamp and installer/mac/arunika.entitlements, and goes into a new DMG with
 # the same name minus "-unsigned" and the same installer window (tools/make_mac_dmg.sh), without the test build's
 # note on Open Anyway. The app is found as the DMG's only .app, so a renamed app needs no change here.
 #
@@ -21,7 +21,7 @@ set -euo pipefail
 
 src="$1"; out="$2"; identity="$3"
 root="$(cd "$(dirname "$0")/.." && pwd)"
-entitlements="$root/installer/mac/poni.entitlements"
+entitlements="$root/installer/mac/arunika.entitlements"
 
 work="$(mktemp -d)"
 trap 'hdiutil detach "$work/mnt" -quiet 2> /dev/null || true; rm -rf "$work"' EXIT
@@ -49,9 +49,9 @@ cat "$work/app-signature.txt"
 grep -q "flags=.*runtime" "$work/app-signature.txt" || { echo "the app isn't signed with the hardened runtime" >&2; exit 1; }
 grep -q "^Timestamp=" "$work/app-signature.txt" || { echo "the app's signature has no secure timestamp" >&2; exit 1; }
 codesign --display --entitlements - --xml "$app" 2> /dev/null | grep -q "com.apple.security.automation.apple-events" \
-  || { echo "the app's signature lacks the Apple Events entitlement (installer/mac/poni.entitlements)" >&2; exit 1; }
+  || { echo "the app's signature lacks the Apple Events entitlement (installer/mac/arunika.entitlements)" >&2; exit 1; }
 codesign --display --entitlements - --xml "$app" 2> /dev/null | grep -q "com.apple.security.personal-information.location" \
-  || { echo "the app's signature lacks the location entitlement (installer/mac/poni.entitlements)" >&2; exit 1; }
+  || { echo "the app's signature lacks the location entitlement (installer/mac/arunika.entitlements)" >&2; exit 1; }
 
 # 2. The DMG: the installer window with the signed app, signed too.
 base="$(basename "$src" .dmg)"

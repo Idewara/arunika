@@ -6,10 +6,10 @@ equalizer, as on the real island), and a white rising sun below it — arunika i
 Run: python3 tools/make_brand.py  (needs Pillow)
 
 Writes:
-  crates/poni/res/poni.ico           app, window and tray icon; every size is drawn on its own
+  crates/poni/res/arunika.ico           app, window and tray icon; every size is drawn on its own
   installer/art/wizard-small-*.png   Inno Setup header logo (WizardSmallImageFile)
   installer/art/wizard-*.png         Inno Setup welcome and finish picture (WizardImageFile)
-  installer/art/nsis-*.bmp           the same two for installer/poni.nsi
+  installer/art/nsis-*.bmp           the same two for installer/arunika.nsi
   docs/brand/arunika-logo.svg        the logo as a vector
   docs/brand/arunika-logo-512.png
 """
@@ -71,7 +71,7 @@ def flatten(d: str, steps: int = 16) -> list[list[tuple[float, float]]]:
 
 
 def island_points(cx: float, y0: float, w: float, h: float, r: float, f: float) -> str:
-    """Path data for Poni's island: flat top on the edge, flared top corners, rounded bottom corners."""
+    """Path data for Arunika's island: flat top on the edge, flared top corners, rounded bottom corners."""
     x0, x1 = cx - w / 2, cx + w / 2
     return (
         f"M{x0 - f} {y0} Q{x0} {y0} {x0} {y0 + f} L{x0} {y0 + h - r} Q{x0} {y0 + h} {x0 + r} {y0 + h} "
@@ -191,8 +191,8 @@ def wizard_image(w: int, h: int) -> Image.Image:
 def main() -> int:
     # App icon: every size drawn on its own.
     icons = {n: draw_logo(n) for n in ICO_SIZES}
-    icons[256].save(RES / "poni.ico", format="ICO", sizes=[(n, n) for n in ICO_SIZES], append_images=[icons[n] for n in ICO_SIZES[:-1]])
-    stale = RES / "poni-512.png"
+    icons[256].save(RES / "arunika.ico", format="ICO", sizes=[(n, n) for n in ICO_SIZES], append_images=[icons[n] for n in ICO_SIZES[:-1]])
+    stale = RES / "arunika-512.png"
     if stale.exists():
         stale.unlink()
 
@@ -211,7 +211,7 @@ def main() -> int:
     header.alpha_composite(draw_logo(48), (150 - 48 - 6, (57 - 48) // 2))
     header.convert("RGB").save(ART / "nsis-header.bmp")
 
-    for p in sorted([RES / "poni.ico", BRAND / "arunika-logo.svg", BRAND / "arunika-logo-512.png", *ART.iterdir()]):
+    for p in sorted([RES / "arunika.ico", BRAND / "arunika-logo.svg", BRAND / "arunika-logo-512.png", *ART.iterdir()]):
         print(f"{p.relative_to(ROOT)}  {p.stat().st_size} bytes")
     return 0
 

@@ -145,7 +145,7 @@ mod tests {
 
     #[test]
     fn numbers_duplicates() {
-        let dir = std::env::temp_dir().join(format!("poni-names-{}", std::process::id()));
+        let dir = std::env::temp_dir().join(format!("arunika-names-{}", std::process::id()));
         let _ = std::fs::remove_dir_all(&dir);
         std::fs::create_dir_all(&dir).unwrap();
         std::fs::write(dir.join("photo.jpg"), b"x").unwrap();

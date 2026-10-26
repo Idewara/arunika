@@ -60,7 +60,7 @@ pub enum LyricsResult {
 pub enum OyenzaEvent {
     /// The sign-in saved on this Mac was found at start (no notice).
     Restored { account: String },
-    /// A sign-in code to show, the arunika.app address that takes it, and how long it lasts.
+    /// A sign-in code to show, the arunika.idewara.com address that takes it, and how long it lasts.
     Connecting { code: String, url: String, expires_in_s: u64 },
     Connected { account: String },
     /// Signing in stopped without a key: `expired`, `denied`, `offline` or `other`.
@@ -82,7 +82,7 @@ pub enum OyenzaEvent {
     NoteFailed { text: String, code: String },
     Undone,
     UndoFailed(String),
-    /// Signed out: from the menu or Settings, or by the server (disconnected in arunika.app).
+    /// Signed out: from the menu or Settings, or by the server (disconnected in arunika.idewara.com).
     Disconnected { by_server: bool },
 }
 

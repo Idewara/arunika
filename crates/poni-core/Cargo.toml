@@ -5,7 +5,7 @@ edition.workspace = true
 publish.workspace = true
 license.workspace = true
 repository.workspace = true
-description = "Platform-independent models and logic for the Poni island (pure Rust, unit-tested on any OS)."
+description = "Platform-independent models and logic for the Arunika island (pure Rust, unit-tested on any OS)."
 
 [dependencies]
 serde.workspace = true
@@ -26,7 +26,7 @@ hmac = "0.12"
 # Paired phone drop: the direct link to a phone's browser (WebRTC data
 # channels; MIT OR Apache-2.0). Sans I/O, so the sockets and threads stay
 # ours. On Windows its DTLS runs on the system's own crypto (CNG), so no C
-# library is built into poni.exe; elsewhere (Linux tests) on RustCrypto.
+# library is built into arunika.exe; elsewhere (Linux tests) on RustCrypto.
 [target.'cfg(windows)'.dependencies]
 str0m = { version = "0.24.1", default-features = false, features = ["wincrypto"] }
 

@@ -6,7 +6,7 @@
 //! A real-time event tracing session listens to the DXGI and Direct3D 9
 //! runtimes' Present events and to the graphics kernel's flips, blits and
 //! frames handed to the compositor (Vulkan and OpenGL games show up only
-//! there). The kernel drops every other event id before it reaches Poni,
+//! there). The kernel drops every other event id before it reaches Arunika,
 //! and the callback keeps only the game's process; `poni_core::frames`
 //! turns what's left into a frame rate. The session runs only while the
 //! readout shows. Event ids, keywords and payloads follow PresentMon's
@@ -50,7 +50,7 @@ use windows::Win32::System::Threading::{GetCurrentProcess, GetCurrentProcessId, 
 use windows::Win32::UI::Shell::{ShellExecuteExW, SEE_MASK_NOASYNC, SEE_MASK_NOCLOSEPROCESS, SHELLEXECUTEINFOW};
 use windows::Win32::UI::WindowsAndMessaging::SW_HIDE;
 
-/// The one-time OK's command line: `poni.exe --allow-fps <account SID>`.
+/// The one-time OK's command line: `arunika.exe --allow-fps <account SID>`.
 pub const ALLOW_ARG: &str = "--allow-fps";
 
 const DXGI: GUID = GUID::from_u128(0xCA11C036_0102_4A2D_A6AD_F03CFED5D3C9);
@@ -149,7 +149,7 @@ fn start_session(name: &[u16]) -> Result<(CONTROLTRACE_HANDLE, GUID), WIN32_ERRO
     let mut props = Props::new();
     // SAFETY: `name` is NUL-terminated; `props` has room for the name it writes back.
     let mut err = unsafe { StartTraceW(&mut handle, PCWSTR(name.as_ptr()), &mut props.p) };
-    // Left running by a Poni that didn't get to stop it (a crash): stop and start again.
+    // Left running by a Arunika that didn't get to stop it (a crash): stop and start again.
     if err == ERROR_ALREADY_EXISTS {
         stop_session(CONTROLTRACE_HANDLE::default(), name);
         props = Props::new();
@@ -213,7 +213,7 @@ impl Frames {
         Self::start_named(pid, session_name("frames"))
     }
 
-    /// The self-test's own session, so it never stops a running Poni's.
+    /// The self-test's own session, so it never stops a running Arunika's.
     pub fn start_selftest(pid: u32) -> Result<Frames, StartError> {
         Self::start_named(pid, session_name("frames self-test"))
     }
@@ -245,7 +245,7 @@ impl Frames {
                 crate::pwarn!("frames: provider {provider:?} not enabled ({})", e.0);
             }
         }
-        std::thread::Builder::new().name("poni-frames".into()).spawn(move || consume(name, shared)).map_err(|e| StartError::Failed(e.to_string()))?;
+        std::thread::Builder::new().name("arunika-frames".into()).spawn(move || consume(name, shared)).map_err(|e| StartError::Failed(e.to_string()))?;
         Ok(frames)
     }
 
@@ -341,7 +341,7 @@ fn first_pointer(rec: &EVENT_RECORD) -> u64 {
     }
 }
 
-/// Stops a frame count that a Poni which crashed left running in this
+/// Stops a frame count that a Arunika which crashed left running in this
 /// sign-in session (the next one would stop it anyway; this stops it now).
 pub fn stop_stale() {
     stop_session(CONTROLTRACE_HANDLE::default(), &session_name("frames"));
@@ -372,19 +372,19 @@ pub fn check() -> FpsAccess {
 
 /// [`check`] off the UI thread; the answer arrives as `AppEvent::FpsAccess`.
 pub fn check_async(sink: EventSink) {
-    let _ = std::thread::Builder::new().name("poni-fps-check".into()).spawn(move || sink.send(AppEvent::FpsAccess(check())));
+    let _ = std::thread::Builder::new().name("arunika-fps-check".into()).spawn(move || sink.send(AppEvent::FpsAccess(check())));
 }
 
-/// The one-time OK: Windows' admin prompt for `poni.exe --allow-fps <SID>`,
+/// The one-time OK: Windows' admin prompt for `arunika.exe --allow-fps <SID>`,
 /// then the answer as `AppEvent::FpsAccess` (SignOut once the account is in
 /// the group, NeedsOk when the prompt was declined). `owner` is the island,
 /// in front for the prompt (Windows shows a background app's prompt only as
 /// a flashing taskbar button).
 pub fn request_access(sink: EventSink, owner: SendHwnd) {
-    let _ = std::thread::Builder::new().name("poni-fps-allow".into()).spawn(move || {
+    let _ = std::thread::Builder::new().name("arunika-fps-allow".into()).spawn(move || {
         let answer = match ask_windows(owner) {
             Ok(0) => {
-                // An admin running Poni elevated may read frames at once.
+                // An admin running Arunika elevated may read frames at once.
                 match check() {
                     FpsAccess::Ready => FpsAccess::Ready,
                     _ => FpsAccess::SignOut,
@@ -521,7 +521,7 @@ fn account_in_group() -> bool {
     found
 }
 
-/// `poni.exe --allow-fps <SID>`, elevated: adds that account to
+/// `arunika.exe --allow-fps <SID>`, elevated: adds that account to
 /// Performance Log Users. Exit code 0 when it's in the group (already
 /// being there counts), else Windows' error.
 pub fn allow_main(sid: &str) -> i32 {

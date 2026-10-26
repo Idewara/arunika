@@ -78,7 +78,7 @@ impl LyricsService {
         let shared = Arc::new(Shared::default());
         let worker = shared.clone();
         std::thread::Builder::new()
-            .name("poni-lyrics".into())
+            .name("arunika-lyrics".into())
             .spawn(move || worker_main(worker, sink))
             .map_err(|e| io::Error::other(format!("could not start the lyrics thread: {e}")))?;
         Ok(Self { shared })

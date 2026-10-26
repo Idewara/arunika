@@ -1,12 +1,12 @@
-Third-party notices for Oyenza Studio
+Third-party notices for Arunika
 
-Oyenza Studio's own code is under the MIT license (LICENSE). The parts below come
+Arunika's own code is under the MIT license (LICENSE). The parts below come
 from others and keep their own terms.
 
 ------------------------------------------------------------------------------
 mecab-ipadic 2.7.0-20070801
 
-Used for: Oyenza Studio's own Japanese reading dictionary,
+Used for: Arunika's own Japanese reading dictionary,
 crates/poni-core/data/ja-readings.dic.zst, which Windows downloads as the
 Japanese readings add-on (with this notice in its NOTICE.txt) and the Mac
 app carries built in. It is a modified copy, made by
@@ -211,10 +211,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 ------------------------------------------------------------------------------
-Rust crates built into poni.exe
+Rust crates built into arunika.exe
 
 Written by tools/make_notices.py from Cargo.lock. Each of these crates offers the
-MIT license (some also Apache-2.0 or the Unlicense), and Oyenza Studio uses each one
+MIT license (some also Apache-2.0 or the Unlicense), and Arunika uses each one
 under MIT, except those whose notice is written out above. Crates with the same
 license text share one copy.
 

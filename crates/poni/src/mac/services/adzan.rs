@@ -63,7 +63,7 @@ define_class!(
     /// Hears the adzan's end (main thread).
     #[unsafe(super(NSObject))]
     #[thread_kind = MainThreadOnly]
-    #[name = "PoniAdzanDelegate"]
+    #[name = "ArunikaAdzanDelegate"]
     struct AdzanDelegate;
 
     unsafe impl NSObjectProtocol for AdzanDelegate {}

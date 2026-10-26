@@ -1,4 +1,4 @@
-//! `poni --render <dir> [--theme classic|cream|glass|pill] [--notch]`: draw the island's
+//! `arunika --render <dir> [--theme classic|cream|glass|pill] [--notch]`: draw the island's
 //! states with sample data into PNGs, offscreen, through the Mac renderer.
 //! CI runs it on a Mac with no notch and no person at the screen, so this is
 //! how the Mac drawing gets looked at: every page and activity, each theme,
@@ -94,7 +94,7 @@ const CLIPS: [&str; 5] = [
     "Lunch: noodles from the corner place, then a walk by the river",
     "Tracking number PX-2048-7731",
     "#5AC8FA",
-    "https://example.com/projects/poni/notes",
+    "https://example.com/projects/arunika/notes",
     "Meet at the north entrance at 6:15",
 ];
 
@@ -272,9 +272,9 @@ pub fn run(dir: &str, args: &[String]) -> i32 {
     };
     let suffix = format!("{name}{}", if notch.is_some() { "-notch" } else { "" });
     // A home of its own, so add-ons on this Mac don't change the pictures.
-    let home = std::env::temp_dir().join("poni-render-home");
+    let home = std::env::temp_dir().join("arunika-render-home");
     let _ = std::fs::remove_dir_all(&home);
-    std::env::set_var("PONI_HOME", &home);
+    std::env::set_var("ARUNIKA_HOME", &home);
     let mut failed = 0;
     let ja = read_japanese().map_err(|e| eprintln!("render: the Japanese song: {e}")).ok();
     let mut gfx = Gfx::new(SCALE);
@@ -503,7 +503,7 @@ fn base_state(theme: Theme) -> AppState {
 
 /// Arunika for its scenes, all made up: today's and yesterday's
 /// transactions (today's newest just landed, so it glows), bills due
-/// tomorrow and later; or, signing in, the code to type in arunika.app.
+/// tomorrow and later; or, signing in, the code to type in arunika.idewara.com.
 pub(crate) fn fake_oyenza(st: &AppState, connecting: bool) -> OyenzaState {
     let iso = |t: i64| {
         let (y, m, d) = poni_core::datetime::civil_from_days(t.div_euclid(86_400));
@@ -557,7 +557,7 @@ pub(crate) fn fake_oyenza(st: &AppState, connecting: bool) -> OyenzaState {
     seen.note(&before, st.now - 120.0);
     seen.note(&days, st.now - 12.0);
     let link = if connecting {
-        OyenzaLink::Connecting { code: "KPJX-TMNQ".into(), url: "https://arunika.app/connect?code=KPJX-TMNQ".into(), until: st.now + 581.0 }
+        OyenzaLink::Connecting { code: "KPJX-TMNQ".into(), url: "https://arunika.idewara.com/connect?code=KPJX-TMNQ".into(), until: st.now + 581.0 }
     } else {
         OyenzaLink::Connected { account: "a\u{2022}\u{2022}\u{2022}@example.com".into() }
     };
@@ -704,7 +704,7 @@ fn render_scene(gfx: &mut Gfx, scene: Scene, theme: Theme, notch: Option<Notch>,
         }
         Scene::ShelfItems => {
             // Real files, with tiles from the Mac's own thumbnail code.
-            let dir = std::env::temp_dir().join("poni-render-shelf");
+            let dir = std::env::temp_dir().join("arunika-render-shelf");
             let folder = dir.join("Project assets");
             let _ = std::fs::create_dir_all(&folder);
             let notes = dir.join("Trip notes.txt");

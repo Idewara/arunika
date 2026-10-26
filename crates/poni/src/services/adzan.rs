@@ -76,8 +76,8 @@ mod tests {
     #[test]
     fn file_uris_keep_the_drive_and_encode_the_rest() {
         assert_eq!(
-            file_uri(Path::new(r"C:\Users\Luca Cada\AppData\Local\Poni\addons\sholat\addon-sholat-1\adzan.m4a")),
-            "file:///C:/Users/Luca%20Cada/AppData/Local/Poni/addons/sholat/addon-sholat-1/adzan.m4a"
+            file_uri(Path::new(r"C:\Users\Luca Cada\AppData\Local\Arunika\addons\sholat\addon-sholat-1\adzan.m4a")),
+            "file:///C:/Users/Luca%20Cada/AppData/Local/Arunika/addons/sholat/addon-sholat-1/adzan.m4a"
         );
         assert_eq!(file_uri(Path::new(r"D:\Müzik\a.m4a")), "file:///D:/M%C3%BCzik/a.m4a");
     }

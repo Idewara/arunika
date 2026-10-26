@@ -1,14 +1,14 @@
-//! Where Poni keeps its files.
+//! Where Arunika keeps its files.
 //!
-//! - Settings + data: `%APPDATA%\Poni\` (roams with the user profile)
-//! - Cache + log:     `%LOCALAPPDATA%\Poni\`
+//! - Settings + data: `%APPDATA%\Arunika\` (roams with the user profile)
+//! - Cache + log:     `%LOCALAPPDATA%\Arunika\`
 //!
-//! `PONI_HOME` overrides both (used by `--selftest` to stay isolated).
+//! `ARUNIKA_HOME` overrides both (used by `--selftest` to stay isolated).
 
 use std::path::PathBuf;
 
 fn home_override() -> Option<PathBuf> {
-    std::env::var_os("PONI_HOME").map(PathBuf::from)
+    std::env::var_os("ARUNIKA_HOME").map(PathBuf::from)
 }
 
 fn env_dir(var: &str) -> PathBuf {
@@ -19,11 +19,11 @@ fn env_dir(var: &str) -> PathBuf {
 }
 
 pub fn data_dir() -> PathBuf {
-    home_override().unwrap_or_else(|| env_dir("APPDATA").join("Poni"))
+    home_override().unwrap_or_else(|| env_dir("APPDATA").join("Arunika"))
 }
 
 pub fn cache_dir() -> PathBuf {
-    home_override().map(|h| h.join("cache")).unwrap_or_else(|| env_dir("LOCALAPPDATA").join("Poni"))
+    home_override().map(|h| h.join("cache")).unwrap_or_else(|| env_dir("LOCALAPPDATA").join("Arunika"))
 }
 
 pub fn settings_path() -> PathBuf {
@@ -35,7 +35,7 @@ pub fn store_path() -> PathBuf {
 }
 
 pub fn log_path() -> PathBuf {
-    cache_dir().join("poni.log")
+    cache_dir().join("arunika.log")
 }
 
 pub fn lyrics_cache_dir() -> PathBuf {
@@ -55,7 +55,7 @@ pub fn apple_music_web_token_path() -> PathBuf {
 
 /// Where files sent from a phone land: `Downloads\Arunika` (wherever the
 /// user moved Downloads to). Shelf items link to the files in it. Under
-/// `PONI_HOME` for the self-test.
+/// `ARUNIKA_HOME` for the self-test.
 pub fn phone_inbox_dir() -> PathBuf {
     if let Some(h) = home_override() {
         return h.join("phone-drop");

@@ -119,7 +119,7 @@ define_class!(
     /// Hears the app in front and the Space change (main thread).
     #[unsafe(super(NSObject))]
     #[thread_kind = MainThreadOnly]
-    #[name = "PoniFullScreenObserver"]
+    #[name = "ArunikaFullScreenObserver"]
     struct Observer;
 
     unsafe impl NSObjectProtocol for Observer {}
@@ -161,7 +161,7 @@ pub fn check() {
     report();
 }
 
-/// The smoke test's full-screen app (`poni --full-screen-window <seconds>`):
+/// The smoke test's full-screen app (`arunika --full-screen-window <seconds>`):
 /// a plain window that goes full screen into a Space of its own, as a video
 /// or a game does, and quits after the given seconds.
 pub fn test_window(secs: f64) -> i32 {

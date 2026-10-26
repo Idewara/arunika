@@ -4,11 +4,11 @@
 const REPO: &str = "https://github.com/Idewara/arunika";
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 /// "release" (a release tag's CI build), "test" (any other CI build) or "local".
-const KIND: &str = env!("PONI_BUILD_KIND");
+const KIND: &str = env!("ARUNIKA_BUILD_KIND");
 /// The commit a CI build was made from, 7 characters; empty for a local build.
-const COMMIT: &str = env!("PONI_BUILD_COMMIT");
+const COMMIT: &str = env!("ARUNIKA_BUILD_COMMIT");
 /// The UTC day a CI build was made, "25 Oct 2026"; empty for a local build.
-const DAY: &str = env!("PONI_BUILD_DAY");
+const DAY: &str = env!("ARUNIKA_BUILD_DAY");
 
 /// "About Arunika 0.2.3 (25 Oct 2026)"; a test build adds its commit.
 pub fn about_label() -> String {

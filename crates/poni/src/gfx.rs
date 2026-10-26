@@ -824,9 +824,9 @@ fn has_family(coll: &IDWriteFontCollection, name: &[u16]) -> bool {
     unsafe { coll.FindFamilyName(PCWSTR(name.as_ptr()), &mut index, &mut exists).is_ok() && exists.as_bool() }
 }
 
-/// `PONI_RENDERER=software` forces the software renderer (troubleshooting).
+/// `ARUNIKA_RENDERER=software` forces the software renderer (troubleshooting).
 fn gpu_wanted() -> bool {
-    !std::env::var("PONI_RENDERER").is_ok_and(|v| v.trim().eq_ignore_ascii_case("software"))
+    !std::env::var("ARUNIKA_RENDERER").is_ok_and(|v| v.trim().eq_ignore_ascii_case("software"))
 }
 
 fn setup_target(rt: &ID2D1RenderTarget) {
@@ -861,7 +861,7 @@ impl Gfx {
             let family = pick_font_family(&dwrite);
             let gpu_allowed = gpu_wanted();
             if !gpu_allowed {
-                crate::pinfo!("renderer: software (PONI_RENDERER=software)");
+                crate::pinfo!("renderer: software (ARUNIKA_RENDERER=software)");
             }
             Ok(Gfx {
                 d2d,

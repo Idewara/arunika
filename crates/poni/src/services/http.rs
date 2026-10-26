@@ -25,7 +25,7 @@ use pure::{decode_body, network_detail};
 /// Budget for one request: connect + headers + body.
 pub const DEFAULT_TIMEOUT: Duration = Duration::from_secs(8);
 
-/// Bodies larger than this are refused (nothing Poni fetches comes close).
+/// Bodies larger than this are refused (nothing Arunika fetches comes close).
 const MAX_BODY_BYTES: u64 = 8 * 1024 * 1024;
 
 /// The methods [`Client::send`] speaks.

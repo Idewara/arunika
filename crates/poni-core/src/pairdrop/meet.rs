@@ -93,7 +93,7 @@ pub enum MeetEvent {
 }
 
 pub struct MeetCfg {
-    /// The meeting server, e.g. `https://drop.arunika.app`.
+    /// The meeting server, e.g. `https://drop.arunika.idewara.com`.
     pub server: String,
     pub pc_name: String,
     pub inbox: PathBuf,

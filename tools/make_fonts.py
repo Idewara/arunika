@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the fonts Oyenza Studio ships (crates/poni/res/fonts) from Outfit.
+"""Build the fonts Arunika ships (crates/poni/res/fonts) from Outfit.
 
 Outfit (SIL Open Font License 1.1, github.com/Outfitio/Outfit-Fonts) is the
 Oyenza Studio website's typeface; the Oyen theme writes every Latin letter in it.

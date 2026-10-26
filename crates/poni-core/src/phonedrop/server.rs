@@ -683,7 +683,7 @@ mod tests {
         }
 
         fn with(name: &str, ask_timeout: Duration) -> Fixture {
-            let dir = std::env::temp_dir().join(format!("poni-phonedrop-{name}-{}", std::process::id()));
+            let dir = std::env::temp_dir().join(format!("arunika-phonedrop-{name}-{}", std::process::id()));
             let _ = fs::remove_dir_all(&dir);
             let (tx, rx) = channel();
             let tx = Mutex::new(tx);
@@ -929,7 +929,7 @@ mod tests {
 
     #[test]
     fn clears_leftovers_of_an_interrupted_send() {
-        let dir = std::env::temp_dir().join(format!("poni-phonedrop-leftover-{}", std::process::id()));
+        let dir = std::env::temp_dir().join(format!("arunika-phonedrop-leftover-{}", std::process::id()));
         let inbox = dir.join("inbox");
         fs::create_dir_all(inbox.join(".oyen-poni-incoming-3")).unwrap();
         fs::write(inbox.join(".oyen-poni-incoming-3").join("0.part"), b"half").unwrap();

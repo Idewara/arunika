@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   Microsoft Store package (MSIX) for Arunika. tools/make_msix.ps1 fills in
-  the $...$ values, adds poni.exe, the images and resources.pri, and packs it.
+  the $...$ values, adds arunika.exe, the images and resources.pri, and packs it.
   The Store signs the package after review, so the upload is unsigned.
 
   Identity Name, Publisher and PublisherDisplayName must be the values on
@@ -24,7 +24,7 @@
 
   <Dependencies>
     <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.19041.0" MaxVersionTested="10.0.26100.0" />
-    <!-- poni.exe is built with MSVC and loads vcruntime140.dll; the Store installs this framework with the app. -->
+    <!-- arunika.exe is built with MSVC and loads vcruntime140.dll; the Store installs this framework with the app. -->
     <PackageDependency Name="Microsoft.VCLibs.140.00.UWPDesktop" MinVersion="14.0.24217.0" Publisher="CN=Microsoft Corporation, O=Microsoft Corporation, L=Redmond, S=Washington, C=US" />
   </Dependencies>
 
@@ -33,7 +33,7 @@
   </Resources>
 
   <Applications>
-    <Application Id="Poni" Executable="poni.exe" EntryPoint="Windows.FullTrustApplication">
+    <Application Id="Arunika" Executable="arunika.exe" EntryPoint="Windows.FullTrustApplication">
       <uap:VisualElements
         DisplayName="Arunika"
         Description="A living notch for Windows: music with synced lyrics, a focus timer, your steps, a file shelf, tasks and clipboard history."
@@ -42,8 +42,8 @@
         Square44x44Logo="Assets\Square44x44Logo.png" />
       <Extensions>
         <!-- "Start with Windows". TaskId must match TASK_ID in crates/poni/src/autostart.rs. -->
-        <uap5:Extension Category="windows.startupTask" Executable="poni.exe" EntryPoint="Windows.FullTrustApplication">
-          <uap5:StartupTask TaskId="PoniStartup" Enabled="true" DisplayName="Arunika" />
+        <uap5:Extension Category="windows.startupTask" Executable="arunika.exe" EntryPoint="Windows.FullTrustApplication">
+          <uap5:StartupTask TaskId="ArunikaStartup" Enabled="true" DisplayName="Arunika" />
         </uap5:Extension>
       </Extensions>
     </Application>

@@ -1,6 +1,6 @@
 """Draw the Microsoft Store package images (MSIX) from the app icon.
 
-    python tools/make_msix_assets.py crates/poni/res/poni.ico <layout>/Assets
+    python tools/make_msix_assets.py crates/poni/res/arunika.ico <layout>/Assets
 
 The icon's small frames (16-48 px) are drawn pixel by pixel, so the taskbar and
 Start list sizes copy them unchanged; every other size is scaled down from the

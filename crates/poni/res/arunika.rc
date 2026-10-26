@@ -1,5 +1,5 @@
-1 ICON "poni.ico"
-1 24 "poni.manifest"
+1 ICON "arunika.ico"
+1 24 "arunika.manifest"
 
 1 VERSIONINFO
 FILEVERSION 0,2,6,0
@@ -14,9 +14,9 @@ BEGIN
       VALUE "CompanyName", "Arunika Labs\0"
       VALUE "FileDescription", "Arunika - a living notch for Windows\0"
       VALUE "FileVersion", "0.2.6\0"
-      VALUE "InternalName", "poni\0"
+      VALUE "InternalName", "arunika\0"
       VALUE "LegalCopyright", "Copyright (C) 2026 Arunika Labs\0"
-      VALUE "OriginalFilename", "poni.exe\0"
+      VALUE "OriginalFilename", "arunika.exe\0"
       VALUE "ProductName", "Arunika\0"
       VALUE "ProductVersion", "0.2.6\0"
     END

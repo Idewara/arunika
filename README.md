@@ -13,7 +13,7 @@
 </p>
 
 <p align="center">
-  <a href="https://arunika.app/"><b>Website</b></a>
+  <a href="https://arunika.idewara.com/"><b>Website</b></a>
   &nbsp;·&nbsp;
   <a href="#features">Features</a>
   &nbsp;·&nbsp;
@@ -75,7 +75,7 @@ The island is black by default, like the one on a phone. **Cream** turns it warm
 
 ### Your money, as it moves
 
-If you keep your money in [Arunika](https://arunika.app), sign in (optional) and the island tells you when money comes in or goes out, reminds you the day before a bill is due, and lists your week by day. Sums stay hidden until you click **Show**, so a shared screen shows only that much. Turn on **Show on Arunika** under your steps in Arunika's Health (Sehat) on your phone, and the **Health** page shows your daily steps too, with a notice when you reach your goal. On Windows.
+If you keep your money in [Arunika](https://arunika.idewara.com), sign in (optional) and the island tells you when money comes in or goes out, reminds you the day before a bill is due, and lists your week by day. Sums stay hidden until you click **Show**, so a shared screen shows only that much. Turn on **Show on Arunika** under your steps in Arunika's Health (Sehat) on your phone, and the **Health** page shows your daily steps too, with a notice when you reach your goal. On Windows.
 
 [How signing in works](#arunika-optional)
 
@@ -119,11 +119,11 @@ On Windows it draws on your graphics card in step with your display's refresh ra
 
 Builds aren't code-signed yet, so Windows SmartScreen may say "Windows protected your PC". Click **More info → Run anyway**.
 
-Your data lives in `%APPDATA%\Poni\`, and cache plus log in `%LOCALAPPDATA%\Poni\`. Uninstalling removes the app, cache and log, and keeps your data.
+Your data lives in `%APPDATA%\Arunika\`, and cache plus log in `%LOCALAPPDATA%\Arunika\`. Uninstalling removes the app, cache and log, and keeps your data.
 
 ### Mac
 
-macOS 14 or later, Apple silicon or Intel (one app for both): **[download Arunika-Mac.dmg](https://github.com/Idewara/arunika/releases/latest/download/Arunika-Mac.dmg)**, open it and drag Arunika into Applications. It isn't signed with an Apple Developer ID yet, so the first time macOS warns you, click **Done**, then open **System Settings → Privacy & Security** and click **Open Anyway**. What's on the Mac so far: [On a Mac](#on-a-mac). Your data lives in `~/Library/Application Support/Poni/`, the log in `~/Library/Logs/Poni/`.
+macOS 14 or later, Apple silicon or Intel (one app for both): **[download Arunika-Mac.dmg](https://github.com/Idewara/arunika/releases/latest/download/Arunika-Mac.dmg)**, open it and drag Arunika into Applications. It isn't signed with an Apple Developer ID yet, so the first time macOS warns you, click **Done**, then open **System Settings → Privacy & Security** and click **Open Anyway**. What's on the Mac so far: [On a Mac](#on-a-mac). Your data lives in `~/Library/Application Support/Arunika/`, the log in `~/Library/Logs/Arunika/`.
 
 ## FAQ
 
@@ -187,7 +187,7 @@ It sits over the middle of the top edge, so over a maximized browser it can cove
 <summary><b>Where are my files and settings?</b></summary>
 <br>
 
-On Windows in `%APPDATA%\Poni\` (cache and log in `%LOCALAPPDATA%\Poni\`); on a Mac in `~/Library/Application Support/Poni/` (log in `~/Library/Logs/Poni/`). Uninstalling keeps your data.
+On Windows in `%APPDATA%\Arunika\` (cache and log in `%LOCALAPPDATA%\Arunika\`); on a Mac in `~/Library/Application Support/Arunika/` (log in `~/Library/Logs/Arunika/`). Uninstalling keeps your data.
 
 </details>
 
@@ -248,7 +248,7 @@ On a MacBook with a camera notch, the island lives around it: what's playing sit
 
 The Mac app has the island, Music and Spotify with synced lyrics (and Apple Music's own with [your token](#apple-music-lyrics)), the focus timer, the Shelf with [Phone drop](#phone-drop) over the same Wi-Fi, tasks, clipboard history, Today with your Mac's CPU, memory, disk and battery, the System page with your Mac's CPU, graphics, memory, drives, network, battery and busiest apps, pop-ups for volume, charging and Bluetooth headphones (without the battery level; macOS shows AirPods' own when they connect), [Prayer times](#add-ons) (Location Services finds your kab/kota, or you type it), the Classic, Cream, Glass and Pill themes ([Pill](#the-pill-theme) floats just below the notch for pop-ups and the open card), hiding in full-screen apps (or staying on top of them), [Arunika sign-in](#arunika-optional) and start at login. Every option is in the menu bar, under the Arunika mark. Not on the Mac yet: paired phones and Show over games.
 
-The Mac pictures come from the Mac app itself (`poni --render <dir> --notch`, run by the `mac` workflow on a macOS runner with a MacBook's notch drawn in).
+The Mac pictures come from the Mac app itself (`arunika --render <dir> --notch`, run by the `mac` workflow on a macOS runner with a MacBook's notch drawn in).
 
 ### Apple Music lyrics
 
@@ -260,7 +260,7 @@ It needs your Apple Music token, copied once from the web player:
 2. Press F12, open **Application** → **Cookies** → `https://music.apple.com`, and copy the value of `media-user-token`.
 3. Right-click the island (or the tray icon) → **Apple Music lyrics** → **Use token from clipboard**.
 
-Arunika checks the token with Apple and says whether it worked. It stores the token encrypted for your Windows account (`%LOCALAPPDATA%\Poni\apple-music-token.bin`) and clears it from the clipboard. If Windows clipboard history (Win+V) is on, delete it there too. A token lasts for months; when Apple stops accepting it, Arunika says so and you copy a fresh one. **Remove token** in the same menu turns this off.
+Arunika checks the token with Apple and says whether it worked. It stores the token encrypted for your Windows account (`%LOCALAPPDATA%\Arunika\apple-music-token.bin`) and clears it from the clipboard. If Windows clipboard history (Win+V) is on, delete it there too. A token lasts for months; when Apple stops accepting it, Arunika says so and you copy a fresh one. **Remove token** in the same menu turns this off.
 
 With a token saved, Arunika sends each song's title and artist to Apple to find its lyrics. It uses the Apple Music web player's own API, which Apple doesn't publish for other apps, so it can stop working when Apple changes its site. LRCLIB keeps working either way.
 
@@ -287,7 +287,7 @@ This isn't AirDrop. An iPhone only AirDrops over Apple's own Wi-Fi link (AWDL), 
 
 Pair a phone once, and it finds this PC from any network, whenever Arunika runs: the same Wi-Fi, another Wi-Fi or mobile data.
 
-1. In the phone panel, click **Pair a phone** and scan the new code. The phone opens `drop.arunika.app` and says it's paired.
+1. In the phone panel, click **Pair a phone** and scan the new code. The phone opens `drop.arunika.idewara.com` and says it's paired.
 2. Keep that page: on an iPhone, tap Share › **Add to Home Screen**; on Android, install it (Chrome or Samsung Internet). Android then lists **Arunika** in the share sheet.
 3. Send from the share sheet or from the page. Files from your own paired phones go straight onto the Shelf, with a notice on the island.
 
@@ -297,14 +297,14 @@ Pair a phone once, and it finds this PC from any network, whenever Arunika runs:
 
 ![The phone page: paired, your PCs, sending, and on the Shelf](docs/screenshots/paired-phone-page.webp)
 
-The phone and PC meet through a small server (`drop.arunika.app`, code in [`server/`](server)); the files go straight between them over WebRTC, encrypted with keys made on the two devices, or through a relay that can't read them when both networks block a direct link. The server never sees a file, a file name, or the pairing secret: every message is signed with that secret, which only the QR code carries. **Paired phones** lists each phone with **Remove**. How it works: [docs/paired-drop.md](docs/paired-drop.md).
+The phone and PC meet through a small server (`drop.arunika.idewara.com`, code in [`server/`](server)); the files go straight between them over WebRTC, encrypted with keys made on the two devices, or through a relay that can't read them when both networks block a direct link. The server never sees a file, a file name, or the pairing secret: every message is signed with that secret, which only the QR code carries. **Paired phones** lists each phone with **Remove**. How it works: [docs/paired-drop.md](docs/paired-drop.md).
 
 ### Arunika (optional)
 
-If you keep your money in [Arunika](https://arunika.app), the island can show it. Signing in is optional and works like a TV: no password is typed into Arunika.
+If you keep your money in [Arunika](https://arunika.idewara.com), the island can show it. Signing in is optional and works like a TV: no password is typed into Arunika.
 
 1. Open the island, press the gear at the top right, and choose **Sign in with Arunika** (the Health page has the same button; right-click the island or the tray icon → **Arunika** → **Sign in to Arunika…** works too; on a Mac, the menu bar under the Arunika mark). The island shows an 8-letter code.
-2. Open arunika.app/connect on your phone or this computer (**Open arunika.app** fills the code in), check the computer's name, and choose **Connect**.
+2. Open arunika.idewara.com/connect on your phone or this computer (**Open arunika.idewara.com** fills the code in), check the computer's name, and choose **Connect**.
 
 Then the island shows:
 
@@ -314,11 +314,11 @@ Then the island shows:
 - **Note a spend**: type it in the **Arunika** tab ("kopi 25rb") and press Enter; it goes straight to Arunika, with Undo for 10 seconds.
 - **Your steps**: in Arunika on your iPhone or Android, turn on **Show on Arunika** under your steps in Health (Sehat), and the **Health** tab shows today's steps against your goal, the distance, active energy and your week, with a notice when you reach the goal. Arunika on the phone sends them while it's open there; numbers more than a day old stay, with a reminder to open Arunika on your phone.
 
-This PC gets a key of its own that can do only these things: it reads the last 7 days of transactions in the space where Arunika logs your bank's emails and notifications, never balances, account numbers, notes or receipts, and it can't change or delete anything else or touch your account. With **Show on Arunika** on, it also receives the daily totals of steps, distance and active energy for the last 7 days and your step goal, and keeps them in memory only, never on disk; sleep, heart rate and weight never reach the PC. The key is stored encrypted for your Windows account (`%LOCALAPPDATA%\Poni\oyenza-link.bin`); on a Mac, in a file only your Mac account can read (`~/Library/Application Support/Poni/oyenza-link.bin`). Arunika asks arunika.app once a minute while you use the PC (every 3 minutes on battery, never while it's locked or asleep), every 15 seconds while the Arunika tab is open, and for your steps every 15 minutes and when the Health tab opens. **Disconnect** in Settings (or **Arunika › Disconnect** in the menu) signs this PC out; you can also disconnect it in arunika.app under Connected apps.
+This PC gets a key of its own that can do only these things: it reads the last 7 days of transactions in the space where Arunika logs your bank's emails and notifications, never balances, account numbers, notes or receipts, and it can't change or delete anything else or touch your account. With **Show on Arunika** on, it also receives the daily totals of steps, distance and active energy for the last 7 days and your step goal, and keeps them in memory only, never on disk; sleep, heart rate and weight never reach the PC. The key is stored encrypted for your Windows account (`%LOCALAPPDATA%\Arunika\oyenza-link.bin`); on a Mac, in a file only your Mac account can read (`~/Library/Application Support/Arunika/oyenza-link.bin`). Arunika asks arunika.idewara.com once a minute while you use the PC (every 3 minutes on battery, never while it's locked or asleep), every 15 seconds while the Arunika tab is open, and for your steps every 15 minutes and when the Health tab opens. **Disconnect** in Settings (or **Arunika › Disconnect** in the menu) signs this PC out; you can also disconnect it in arunika.idewara.com under Connected apps.
 
 ### New versions
 
-Arunika looks for a new version a couple of minutes after it starts and then twice a day, by reading one small signed file from arunika.app. It doesn't look while your PC is locked, the screen is off or battery saver is on. When there is a new version, the island says **Update available** with the version, once, and **Hide** puts it away. On Windows the new version is already downloaded by then, and checked: click the notice for the Update sheet, then **Install now** (Arunika closes, updates and opens again in a few seconds, your settings and data stay) or **Install on next start**. On a Mac the sheet downloads the DMG. Until you update, the right-click menu starts with **Update to Arunika x…** and Settings has a last row with **Update**. After you update, the island says **Updated to x** once, with **What's new**. **Tell me about new versions** in Settings turns the checks off. Versions 0.2.5 and older don't look: update them by hand once. How the file is made and signed: [docs/updates.md](docs/updates.md).
+Arunika looks for a new version a couple of minutes after it starts and then twice a day, by reading one small signed file from arunika.idewara.com. It doesn't look while your PC is locked, the screen is off or battery saver is on. When there is a new version, the island says **Update available** with the version, once, and **Hide** puts it away. On Windows the new version is already downloaded by then, and checked: click the notice for the Update sheet, then **Install now** (Arunika closes, updates and opens again in a few seconds, your settings and data stay) or **Install on next start**. On a Mac the sheet downloads the DMG. Until you update, the right-click menu starts with **Update to Arunika x…** and Settings has a last row with **Update**. After you update, the island says **Updated to x** once, with **What's new**. **Tell me about new versions** in Settings turns the checks off. Versions 0.2.5 and older don't look: update them by hand once. How the file is made and signed: [docs/updates.md](docs/updates.md).
 
 ### Add-ons
 
@@ -340,42 +340,42 @@ Arunika is a Cargo workspace:
 | Crate | What |
 |---|---|
 | `crates/poni-core` | Pure logic (springs, lyrics parsing, Pomodoro, steps, tasks, settings…), Phone drop's small web server and paired phone drop (pairing, signed messages, the WebRTC link). Unit-tested on any OS. |
-| `server` | The meeting server and phone page for paired phones (`drop.arunika.app`); Node, no dependencies. |
+| `server` | The meeting server and phone page for paired phones (`drop.arunika.idewara.com`); Node, no dependencies. |
 | `crates/poni` | The app. On Windows: Win32 + Direct2D + WinRT through [windows-rs](https://github.com/microsoft/windows-rs). On a Mac (`src/mac/`): AppKit, Core Graphics and Core Text through [objc2](https://github.com/madsmtm/objc2), drawing the same pages. |
 
 On Windows, with Rust stable and the MSVC toolchain:
 
 ```
 cargo test -p poni-core
-cargo build -p poni --release        # target\release\poni.exe
+cargo build -p poni --release        # target\release\arunika.exe
 ```
 
 To cross-build from macOS or Linux, install `mingw-w64` and add the target (`rustup target add x86_64-pc-windows-gnu`):
 
 ```
 cargo wcheck                          # type-check the Windows app
-cargo wbuild                          # target/x86_64-pc-windows-gnu/release/poni.exe
+cargo wbuild                          # target/x86_64-pc-windows-gnu/release/arunika.exe
 NSIS_HOST=user@linux-box tools/package.sh   # exe + portable zip + installer into dist/
 ```
 
 On a Mac, with Rust stable:
 
 ```
-cargo build -p poni --release        # target/release/poni
-target/release/poni --render shots --notch   # every island state as a picture, with a MacBook's notch
+cargo build -p poni --release        # target/release/arunika
+target/release/arunika --render shots --notch   # every island state as a picture, with a MacBook's notch
 ```
 
 `tools/make_mac_app.sh` turns the Apple silicon and Intel builds into `Arunika.app` and its DMG (the `mac` workflow does it for every pull request, push to main and tag). From Linux or Windows, `cargo mcheck` type-checks the Mac app (`rustup target add aarch64-apple-darwin`).
 
 ### Testing without clicking around
 
-`poni.exe --selftest <dir>` runs a scripted tour of every state with fake data and writes a screenshot of each one, plus `report.json` with layout and timing checks. The exit code is non-zero on failure. On a software rasterizer, such as GitHub's runners, a slow frame is listed in `slow_frames` instead of failing the run, and a scene gets 8 s instead of 3 to settle. It also works under Wine on Linux (`tools/run-selftest-wine.sh`), which is how the pictures in this README were made, so the font is a stand-in for Segoe UI.
+`arunika.exe --selftest <dir>` runs a scripted tour of every state with fake data and writes a screenshot of each one, plus `report.json` with layout and timing checks. The exit code is non-zero on failure. On a software rasterizer, such as GitHub's runners, a slow frame is listed in `slow_frames` instead of failing the run, and a scene gets 8 s instead of 3 to settle. It also works under Wine on Linux (`tools/run-selftest-wine.sh`), which is how the pictures in this README were made, so the font is a stand-in for Segoe UI.
 
 | Variable | Effect |
 |---|---|
-| `PONI_SELFTEST_DPI=144` | Render at 150% scaling (also 120 and 192) |
-| `PONI_SELFTEST_ANIM=1` | Also record the transitions frame by frame (plus each frame's screen position in `anim-<name>.json`) |
-| `PONI_RENDERER=software` | Draw in software instead of on the GPU (also outside the self-test, for troubleshooting) |
+| `ARUNIKA_SELFTEST_DPI=144` | Render at 150% scaling (also 120 and 192) |
+| `ARUNIKA_SELFTEST_ANIM=1` | Also record the transitions frame by frame (plus each frame's screen position in `anim-<name>.json`) |
+| `ARUNIKA_RENDERER=software` | Draw in software instead of on the GPU (also outside the self-test, for troubleshooting) |
 
 ![The expand animation, frame by frame](docs/screenshots/expand-motion.png)
 
@@ -393,7 +393,7 @@ The README's feature pictures were drawn from those same screenshots by `tools/m
 
 ## Status
 
-Early, but in daily use on Windows 11. The Mac app is newer: it runs on GitHub's macOS runners on every change, and a real MacBook's notch, music apps and drag and drop are where it most needs reports. Most rough edges are in places a test machine can't fully exercise: specific media players, Bluetooth devices, and multi-monitor setups. Issues and pull requests are welcome. Please attach `%LOCALAPPDATA%\Poni\poni.log` (on a Mac, `~/Library/Logs/Poni/poni.log`) when something misbehaves.
+Early, but in daily use on Windows 11. The Mac app is newer: it runs on GitHub's macOS runners on every change, and a real MacBook's notch, music apps and drag and drop are where it most needs reports. Most rough edges are in places a test machine can't fully exercise: specific media players, Bluetooth devices, and multi-monitor setups. Issues and pull requests are welcome. Please attach `%LOCALAPPDATA%\Arunika\arunika.log` (on a Mac, `~/Library/Logs/Arunika/arunika.log`) when something misbehaves.
 
 ## Credits
 

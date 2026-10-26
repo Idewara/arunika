@@ -1,4 +1,4 @@
-//! Platform-independent models and logic for Poni.
+//! Platform-independent models and logic for Arunika.
 //!
 //! Everything here is pure Rust with no OS calls so it can be unit-tested on
 //! any machine. The Windows crate (`poni`) owns all I/O and rendering and

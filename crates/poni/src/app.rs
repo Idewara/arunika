@@ -105,10 +105,10 @@ pub fn main_entry() -> i32 {
     if let Some(dir) = &selftest_dir {
         let home = std::path::Path::new(dir).join("home");
         let _ = std::fs::remove_dir_all(&home);
-        std::env::set_var("PONI_HOME", &home);
+        std::env::set_var("ARUNIKA_HOME", &home);
     }
     crate::plog::init(paths::log_path());
-    pinfo!("Poni {} starting (args: {:?})", env!("CARGO_PKG_VERSION"), &args[1..]);
+    pinfo!("Arunika {} starting (args: {:?})", env!("CARGO_PKG_VERSION"), &args[1..]);
     std::panic::set_hook(Box::new(|info| {
         perror!("panic: {info}");
     }));
@@ -117,7 +117,7 @@ pub fn main_entry() -> i32 {
         let _ = SetProcessDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
     }
     // Single instance (the self-test may run next to a normal instance).
-    let mutex_name = if selftest_dir.is_some() { w!("Local\\Poni.Island.SelfTest") } else { w!("Local\\Poni.Island") };
+    let mutex_name = if selftest_dir.is_some() { w!("Local\\Arunika.Island.SelfTest") } else { w!("Local\\Arunika.Island") };
     let _mutex = unsafe { CreateMutexW(None, true, mutex_name) };
     if unsafe { GetLastError() } == ERROR_ALREADY_EXISTS {
         pinfo!("another instance is running; exiting");
@@ -144,7 +144,7 @@ pub fn main_entry() -> i32 {
         }
     };
     unsafe { OleUninitialize() };
-    pinfo!("Poni exiting with code {code}");
+    pinfo!("Arunika exiting with code {code}");
     code
 }
 
@@ -618,7 +618,7 @@ impl App {
             if self.st.settings.system_history {
                 self.start_sysmon();
             }
-            // A frame count left running by a Poni that crashed, and whether
+            // A frame count left running by a Arunika that crashed, and whether
             // Windows lets this sign-in read frames (the System page shows it).
             services::frames::stop_stale();
             if self.st.settings.game_stats {
@@ -649,7 +649,7 @@ impl App {
 
     fn shutdown(&mut self) -> i32 {
         self.save_now();
-        // Stops the frame count's trace session (it would outlive Poni).
+        // Stops the frame count's trace session (it would outlive Arunika).
         self.frames = None;
         self.set_peek_hotkey(false);
         self.set_script_hotkey(false);
@@ -1178,7 +1178,7 @@ impl App {
             WM_QUERYENDSESSION => Some(LRESULT(1)),
             WM_ENDSESSION => {
                 self.save_now();
-                // Windows ends Poni without shutdown(): stop the frame count's
+                // Windows ends Arunika without shutdown(): stop the frame count's
                 // trace session now, or it would outlive the sign-in.
                 if wp.0 != 0 {
                     self.frames = None;
@@ -1293,7 +1293,7 @@ impl App {
     }
 
     /// Save the Apple Music token copied from the browser (sealed with DPAPI)
-    /// and keep it off the clipboard and out of Poni's clipboard history.
+    /// and keep it off the clipboard and out of Arunika's clipboard history.
     fn use_apple_music_token(&mut self) {
         let text = services::clipboard::read_text(self.hwnd).unwrap_or_default();
         let Some(token) = poni_core::applemusic::clean_user_token(&text) else {
@@ -1302,7 +1302,7 @@ impl App {
         };
         if let Err(e) = services::secret::save(&paths::apple_music_token_path(), &token) {
             pwarn!("apple music: cannot save the token ({e})");
-            self.st.notify(Icon::Lyrics, palette::ORANGE, "Couldn't save the token", "Details in poni.log", 5.0, None);
+            self.st.notify(Icon::Lyrics, palette::ORANGE, "Couldn't save the token", "Details in arunika.log", 5.0, None);
             return;
         }
         pinfo!("apple music: token saved");
@@ -1317,7 +1317,7 @@ impl App {
     fn forget_apple_music_token(&mut self) {
         if let Err(e) = services::secret::delete(&paths::apple_music_token_path()) {
             pwarn!("apple music: cannot remove the token ({e})");
-            self.st.notify(Icon::Lyrics, palette::ORANGE, "Couldn't remove the token", "Details in poni.log", 5.0, None);
+            self.st.notify(Icon::Lyrics, palette::ORANGE, "Couldn't remove the token", "Details in arunika.log", 5.0, None);
             return;
         }
         pinfo!("apple music: token removed");
@@ -1374,7 +1374,7 @@ impl App {
             OyenzaEvent::Restored { account } => self.st.oyenza.link = OyenzaLink::Connected { account },
             OyenzaEvent::Connecting { code, url, expires_in_s } => {
                 self.st.oyenza.link = OyenzaLink::Connecting { code, url, until: now + expires_in_s as f64 };
-                // Keep the code on screen while the person goes to arunika.app.
+                // Keep the code on screen while the person goes to arunika.idewara.com.
                 if self.st.oyenza.pinned_before.is_none() {
                     self.st.oyenza.pinned_before = Some(self.st.pinned);
                 }
@@ -1446,7 +1446,7 @@ impl App {
             }
             OyenzaEvent::Undone => self.st.oyenza.flash = Some(("Taken back".into(), now + 3.0)),
             OyenzaEvent::UndoFailed(code) => {
-                let line = if code == "too_late" { "Too late to undo here. Change it in arunika.app" } else { "Couldn't undo. Change it in arunika.app" };
+                let line = if code == "too_late" { "Too late to undo here. Change it in arunika.idewara.com" } else { "Couldn't undo. Change it in arunika.idewara.com" };
                 self.st.oyenza.flash = Some((line.into(), now + 5.0));
             }
             OyenzaEvent::Disconnected { by_server } => {
@@ -1704,7 +1704,7 @@ impl App {
                     }
                     Err(e) => {
                         pwarn!("settings.json not reloaded: {e}");
-                        self.st.notify(crate::icons::Icon::Sliders, palette::ORANGE, "Settings not reloaded", "settings.json has an error; see poni.log", 5.0, None);
+                        self.st.notify(crate::icons::Icon::Sliders, palette::ORANGE, "Settings not reloaded", "settings.json has an error; see arunika.log", 5.0, None);
                     }
                 }
             }
@@ -2270,7 +2270,7 @@ impl App {
         }
     }
 
-    /// Alt+Shift+F belongs to Poni only while a game is in front.
+    /// Alt+Shift+F belongs to Arunika only while a game is in front.
     fn set_peek_hotkey(&mut self, on: bool) {
         if on == self.peek_hotkey {
             return;
@@ -2288,7 +2288,7 @@ impl App {
         }
     }
 
-    /// Alt+Shift+S belongs to Poni only while the Script page can read.
+    /// Alt+Shift+S belongs to Arunika only while the Script page can read.
     fn set_script_hotkey(&mut self, on: bool) {
         if on == self.script_hotkey {
             return;
@@ -2307,7 +2307,7 @@ impl App {
     }
 
     /// The Script page: a reading pauses while its page isn't on screen, the
-    /// island may close once nothing holds it, and the shortcut is Poni's
+    /// island may close once nothing holds it, and the shortcut is Arunika's
     /// only while there's a script to read on the page. Whether Record shows
     /// is asked as the page comes on screen.
     fn script_tick(&mut self) {
@@ -2424,7 +2424,7 @@ impl App {
         }
     }
 
-    /// Asks (off the UI thread) whether Windows lets Poni read frames.
+    /// Asks (off the UI thread) whether Windows lets Arunika read frames.
     fn check_fps(&mut self) {
         if self.selftest.is_some() || matches!(self.st.game.access, FpsAccess::Checking | FpsAccess::Asking) {
             return;

@@ -1,6 +1,6 @@
 //! The island around a MacBook's camera notch.
 //!
-//! The notch has no pixels: whatever Poni draws in its middle is never seen.
+//! The notch has no pixels: whatever Arunika draws in its middle is never seen.
 //! So on a screen with a notch each island state picks one of three fits:
 //!
 //! * **Inside**: the resting island hides inside the notch (nothing shows;

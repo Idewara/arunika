@@ -208,7 +208,7 @@ pub fn parse(d: &str) -> Result<Vec<Seg>, ParseError> {
 /// Bézier segments `[c1x, c1y, c2x, c2y, x, y]`, at most 90° each.
 ///
 /// Renderers differ in how well they draw native arcs (Wine's Direct2D, for
-/// one, draws them as straight chords), so Poni always flattens arcs into
+/// one, draws them as straight chords), so Arunika always flattens arcs into
 /// Béziers itself. Follows SVG 1.1 appendix F.6.5/F.6.6. `sweep = true` is
 /// the positive-angle direction (clockwise on a y-down screen).
 #[allow(clippy::too_many_arguments)]

@@ -13,7 +13,7 @@
 //! logged, never sent. Interruptions (the secure desktop of a UAC prompt, a
 //! display mode change or reconnect, a GPU reset) are waited out. Only what
 //! can't change gives up for good, and the island then draws smoked glass:
-//! a rotated display, or a display this PC never let Poni copy (Remote
+//! a rotated display, or a display this PC never let Arunika copy (Remote
 //! Desktop, or no adapter that shows it can copy it). A display in HDR is
 //! copied in half floats and mapped to 8-bit sRGB here (poni_core::hdr);
 //! any other display is asked for 8 bits, which Windows converts to even
@@ -86,7 +86,7 @@ impl Backdrop {
         let s = shared.clone();
         let tell = sink.clone();
         let thread = std::thread::Builder::new()
-            .name("poni-backdrop".into())
+            .name("arunika-backdrop".into())
             .spawn(move || {
                 let status = match run(&s, &sink, monitor) {
                     Ok(()) => return,

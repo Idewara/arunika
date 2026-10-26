@@ -887,7 +887,7 @@ fn draw_phone(ui: &mut Ui, st: &AppState, l: &mut Local, pd: &PhoneDrop, r: Rect
 
 /// Where pairing links point (the meeting server's host name).
 fn pairing_host() -> String {
-    let server = std::env::var("PONI_DROP_SERVER").ok().filter(|s| s.starts_with("http")).unwrap_or_else(|| poni_core::pairdrop::DEFAULT_SERVER.to_string());
+    let server = std::env::var("ARUNIKA_DROP_SERVER").ok().filter(|s| s.starts_with("http")).unwrap_or_else(|| poni_core::pairdrop::DEFAULT_SERVER.to_string());
     server.split("://").nth(1).unwrap_or(&server).trim_end_matches('/').to_string()
 }
 

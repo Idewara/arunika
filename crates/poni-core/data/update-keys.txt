@@ -1,4 +1,4 @@
-# The keys Arunika trusts for its update file, arunika.app/latest.json
+# The keys Arunika trusts for its update file, arunika.idewara.com/latest.json
 # (docs/updates.md). The app reads this file when it is built; tools/make_update_feed.py
 # refuses to sign with a key that isn't listed here.
 #

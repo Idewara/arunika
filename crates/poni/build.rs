@@ -1,11 +1,11 @@
 fn main() {
-    println!("cargo:rerun-if-changed=res/poni.rc");
-    println!("cargo:rerun-if-changed=res/poni.manifest");
-    println!("cargo:rerun-if-changed=res/poni.ico");
+    println!("cargo:rerun-if-changed=res/arunika.rc");
+    println!("cargo:rerun-if-changed=res/arunika.manifest");
+    println!("cargo:rerun-if-changed=res/arunika.ico");
     // Only Windows targets get the icon, manifest (Per-Monitor-V2 DPI) and version info.
     if std::env::var("CARGO_CFG_TARGET_OS").as_deref() == Ok("windows") {
         // Panics with a clear message if rc.exe / x86_64-w64-mingw32-windres is missing.
-        embed_resource::compile("res/poni.rc", embed_resource::NONE);
+        embed_resource::compile("res/arunika.rc", embed_resource::NONE);
         // MSVC builds: resolve statically imported non-KnownDLLs (d2d1, dwrite,
         // dwmapi, winmm) from System32 only, never from the exe's folder.
         if std::env::var("CARGO_CFG_TARGET_ENV").as_deref() == Ok("msvc") {
@@ -29,9 +29,9 @@ fn build_info() {
     let kind = if release { "release" } else if ci { "test" } else { "local" };
     let commit: String = if ci { env("GITHUB_SHA").chars().take(7).collect() } else { String::new() };
     let day = if ci { utc_day() } else { String::new() };
-    println!("cargo:rustc-env=PONI_BUILD_KIND={kind}");
-    println!("cargo:rustc-env=PONI_BUILD_COMMIT={commit}");
-    println!("cargo:rustc-env=PONI_BUILD_DAY={day}");
+    println!("cargo:rustc-env=ARUNIKA_BUILD_KIND={kind}");
+    println!("cargo:rustc-env=ARUNIKA_BUILD_COMMIT={commit}");
+    println!("cargo:rustc-env=ARUNIKA_BUILD_DAY={day}");
 }
 
 /// Today in UTC as "25 Oct 2026" (Howard Hinnant's days-to-civil).

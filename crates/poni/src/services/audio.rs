@@ -42,7 +42,7 @@ impl AudioService {
         let (done_tx, done) = mpsc::channel();
         let client_tx = tx.clone();
         let thread = std::thread::Builder::new()
-            .name("poni-audio".into())
+            .name("arunika-audio".into())
             .spawn(move || {
                 worker(sink, rx, client_tx);
                 let _ = done_tx.send(());

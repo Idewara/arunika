@@ -89,7 +89,7 @@ impl MediaService {
         let (tx, rx) = mpsc::channel();
         let worker_tx = tx.clone();
         std::thread::Builder::new()
-            .name("poni-media".into())
+            .name("arunika-media".into())
             .spawn(move || worker_main(sink, worker_tx, rx))
             .map_err(|e| windows::core::Error::new(E_FAIL, format!("media thread: {e}")))?;
         Ok(Self { tx })

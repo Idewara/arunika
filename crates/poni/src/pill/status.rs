@@ -8,7 +8,7 @@
 //! it. Nothing new is read, polled or animated for it. No Bluetooth glyph:
 //! the app keeps no list of connected devices (the service only reports
 //! changes, as pop-ups), so there is nothing true to show; and none of the
-//! reference's chevrons or bell, which Poni has nothing behind.
+//! reference's chevrons or bell, which Arunika has nothing behind.
 
 use crate::gfx::{TextStyle, Weight};
 use crate::icons::Icon;

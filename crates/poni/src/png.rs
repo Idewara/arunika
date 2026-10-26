@@ -770,7 +770,7 @@ mod tests {
         assert!(decode(&encode_rgba(0, 5, &[])).is_ok());
         let d = decode(&encode_rgba(2, 2, &[1, 2, 3])).expect("short buffer pads");
         assert_eq!(&d.pixels[..4], &[1, 2, 3, 0]);
-        assert!(save_rgba(std::env::temp_dir().join("poni-png-test-bad.png"), 2, 2, &[0; 3]).is_err());
-        assert!(save_gray(std::env::temp_dir().join("poni-png-test-empty.png"), 0, 2, &[]).is_err());
+        assert!(save_rgba(std::env::temp_dir().join("arunika-png-test-bad.png"), 2, 2, &[0; 3]).is_err());
+        assert!(save_gray(std::env::temp_dir().join("arunika-png-test-empty.png"), 0, 2, &[]).is_err());
     }
 }

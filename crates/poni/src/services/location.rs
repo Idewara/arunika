@@ -29,7 +29,7 @@ pub enum Located {
 
 /// Ask once, off the UI thread; the answer comes back as `AppEvent::Located`.
 pub fn locate(sink: EventSink) {
-    let spawned = std::thread::Builder::new().name("poni-location".into()).spawn(move || {
+    let spawned = std::thread::Builder::new().name("arunika-location".into()).spawn(move || {
         let _com = MtaGuard::new();
         let found = ask();
         crate::pinfo!(

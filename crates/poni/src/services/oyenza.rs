@@ -1,4 +1,4 @@
-//! Arunika (arunika.app), optional: signing in with a code, then asking for
+//! Arunika (arunika.idewara.com), optional: signing in with a code, then asking for
 //! money that arrived or went out by itself, the last 7 days of transactions
 //! while the Arunika page is open, bills due soon, and the steps the phone
 //! sent, and saving the spends typed in the island. Words, URLs and parsing
@@ -19,7 +19,7 @@
 //!   saver or not); a server from before steps (404) counts as none to show.
 //!   They go to the island only, never to disk or the log;
 //! - failures back off to 1, 2, 4 … 15 minutes, honouring `Retry-After`;
-//! - a 401 means the key was disconnected in arunika.app (or ran out): the key
+//! - a 401 means the key was disconnected in arunika.idewara.com (or ran out): the key
 //!   is deleted and the island says so once.
 //!
 //! The thread sleeps on a condition variable between calls, so the island's
@@ -43,7 +43,7 @@ const REFRESH_GAP: Duration = Duration::from_secs(30);
 /// A disconnect that couldn't reach the server is retried this often.
 const REVOKE_EVERY: Duration = Duration::from_secs(3600);
 
-/// What arunika.app lists this computer as: the PC's name, or the Mac's as
+/// What arunika.idewara.com lists this computer as: the PC's name, or the Mac's as
 /// System Settings › General › About shows it.
 #[cfg(windows)]
 fn computer_name() -> String {
@@ -64,7 +64,7 @@ impl OyenzaService {
         let shared = Arc::new(Shared { q: Mutex::new(Queue { activity, ..Default::default() }), cv: Condvar::new() });
         let worker = shared.clone();
         std::thread::Builder::new()
-            .name("poni-oyenza".into())
+            .name("arunika-oyenza".into())
             .spawn(move || worker_main(worker, sink))
             .map_err(|e| std::io::Error::other(format!("could not start the Arunika thread: {e}")))?;
         Ok(Self { shared })
@@ -416,7 +416,7 @@ impl Worker {
             }
             Some(Claim::Denied) => {
                 self.pending = None;
-                crate::pinfo!("oyenza: the sign-in code was refused in arunika.app");
+                crate::pinfo!("oyenza: the sign-in code was refused in arunika.idewara.com");
                 self.send(OyenzaEvent::ConnectFailed("denied".into()));
             }
             // A network hiccup or a server error: keep asking until the code runs out.
@@ -479,7 +479,7 @@ impl Worker {
         }
     }
 
-    /// The server no longer takes the key (disconnected in arunika.app, a
+    /// The server no longer takes the key (disconnected in arunika.idewara.com, a
     /// password reset, 90 days unused).
     fn signed_out_by_server(&mut self) {
         if self.link.is_none() {

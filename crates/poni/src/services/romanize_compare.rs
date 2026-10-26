@@ -6,7 +6,7 @@
 //! analyzer's data:
 //!
 //! ```text
-//! PONI_JA_COMPARE=<folder of .lrc files> PONI_JA_COMPARE_OUT=<report.md>
+//! ARUNIKA_JA_COMPARE=<folder of .lrc files> ARUNIKA_JA_COMPARE_OUT=<report.md>
 //! cargo test -p poni compare_readings -- --ignored --nocapture
 //! ```
 //!
@@ -34,9 +34,9 @@ struct Stats {
 }
 
 #[test]
-#[ignore = "needs PONI_JA_COMPARE (songs fetched at run time) and Windows' Japanese reading data"]
+#[ignore = "needs ARUNIKA_JA_COMPARE (songs fetched at run time) and Windows' Japanese reading data"]
 fn compare_readings() {
-    let dir = std::env::var("PONI_JA_COMPARE").expect("PONI_JA_COMPARE: a folder of .lrc files");
+    let dir = std::env::var("ARUNIKA_JA_COMPARE").expect("ARUNIKA_JA_COMPARE: a folder of .lrc files");
     // The repo's copy of the Japanese readings add-on's dictionary.
     let dict = JaDict::load(include_bytes!("../../../poni-core/data/ja-readings.dic.zst")).expect("Arunika's dictionary loads");
     let mut files: Vec<_> = std::fs::read_dir(&dir).expect("the folder reads").filter_map(|e| e.ok().map(|e| e.path())).filter(|p| p.extension().is_some_and(|x| x == "lrc")).collect();
@@ -80,7 +80,7 @@ fn compare_readings() {
 
     let report = report(&stats, diffs);
     println!("{report}");
-    if let Ok(out) = std::env::var("PONI_JA_COMPARE_OUT") {
+    if let Ok(out) = std::env::var("ARUNIKA_JA_COMPARE_OUT") {
         std::fs::write(&out, &report).expect("the report writes");
     }
     assert!(stats.songs > 0, "no Japanese songs in {dir}");

@@ -78,9 +78,9 @@ impl PairDropService {
     }
 }
 
-/// The meeting server: `PONI_DROP_SERVER` (for self-hosting and tests), else Arunika's.
+/// The meeting server: `ARUNIKA_DROP_SERVER` (for self-hosting and tests), else Arunika's.
 fn server() -> String {
-    std::env::var("PONI_DROP_SERVER")
+    std::env::var("ARUNIKA_DROP_SERVER")
         .ok()
         .map(|s| s.trim().trim_end_matches('/').to_string())
         .filter(|s| s.starts_with("https://") || s.starts_with("http://127.0.0.1") || s.starts_with("http://localhost"))

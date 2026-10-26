@@ -115,7 +115,7 @@ pub fn menu_items(s: &Settings, pinned: bool, login: Login, recorder: bool, oyen
     items
 }
 
-/// Arunika, optional: sign in with a code from arunika.app, then what the
+/// Arunika, optional: sign in with a code from arunika.idewara.com, then what the
 /// island may show, and signing out (as in the Windows tray).
 fn oyenza_menu(s: &Settings, link: &OyenzaLink) -> MenuItem {
     let items = match link {
@@ -124,7 +124,7 @@ fn oyenza_menu(s: &Settings, link: &OyenzaLink) -> MenuItem {
         OyenzaLink::Connected { account } => vec![
             MenuItem::Info { label: format!("Connected as {account}") },
             item("Show amounts on the island", MenuCmd::ToggleOyenzaAmounts, s.oyenza_show_amounts),
-            item("Open arunika.app", MenuCmd::OyenzaOpen, false),
+            item("Open arunika.idewara.com", MenuCmd::OyenzaOpen, false),
             MenuItem::Separator,
             item("Disconnect", MenuCmd::OyenzaDisconnect, false),
         ],
@@ -147,7 +147,7 @@ define_class!(
     /// Receives the menu's clicks; each item's tag indexes the built commands.
     #[unsafe(super(NSObject))]
     #[thread_kind = MainThreadOnly]
-    #[name = "PoniMenuTarget"]
+    #[name = "ArunikaMenuTarget"]
     pub struct MenuTarget;
 
     unsafe impl NSObjectProtocol for MenuTarget {}
@@ -192,7 +192,7 @@ impl MenuBar {
         if let Some(button) = item.button(mtm) {
             match mark_image(mtm) {
                 Some(img) => button.setImage(Some(&img)),
-                None => button.setTitle(&NSString::from_str("Poni")),
+                None => button.setTitle(&NSString::from_str("Arunika")),
             }
             button.setToolTip(Some(&NSString::from_str(&format!("Arunika {}", crate::version::VERSION))));
         }
