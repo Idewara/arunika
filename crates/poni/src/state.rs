@@ -143,7 +143,7 @@ pub enum NoticeAction {
 pub enum InlineAction {
     /// Start the idle Pomodoro phase.
     StartFocus,
-    /// Put the notice's hidden sum (and sender) in place (Oyenza).
+    /// Put the notice's hidden sum (and sender) in place (Arunika).
     ShowAmount,
     /// Stop the adzan (Prayer times).
     StopAdzan,
@@ -296,7 +296,7 @@ pub struct PageUiState {
     pub notes: crate::oyen::Notes,
 }
 
-/// Whether Windows lets Oyenza Studio read a game's frames. Its event tracing
+/// Whether Windows lets Arunika read a game's frames. Its event tracing
 /// is open to admins and to the Performance Log Users group; the one-time
 /// OK adds the account to that group, which counts from the next sign-in.
 #[derive(Clone, Debug, Default, PartialEq)]
@@ -334,17 +334,17 @@ pub struct GameState {
     pub access: FpsAccess,
 }
 
-/// Oyenza sign-in, as the island sees it.
+/// Arunika sign-in, as the island sees it.
 #[derive(Clone, Debug, Default, PartialEq)]
 pub enum OyenzaLink {
     #[default]
     Off,
-    /// A code on screen, waiting for approval in oyenza.app, until mono time `until`.
+    /// A code on screen, waiting for approval in arunika.app, until mono time `until`.
     Connecting { code: String, url: String, until: f64 },
     Connected { account: String },
 }
 
-/// What the Oyenza tab and its notices show (`pages::oyenza`). Oyen's moods
+/// What the Arunika tab and its notices show (`pages::oyenza`). Oyen's moods
 /// never read any of it: money never makes him happier or a bill sadder.
 #[derive(Clone, Debug, Default)]
 pub struct OyenzaState {
@@ -360,7 +360,7 @@ pub struct OyenzaState {
     pub bills: Vec<Bill>,
     /// The server's today for `bills` (YYYY-MM-DD).
     pub bills_today: String,
-    /// Unix time of Oyenza's last answer ("Updated 13:49").
+    /// Unix time of Arunika's last answer ("Updated 13:49").
     pub updated_unix: Option<i64>,
     /// The spend being typed.
     pub input: String,
@@ -383,7 +383,7 @@ pub struct OyenzaState {
 }
 
 impl OyenzaState {
-    /// The Oyenza tab shows while signing in and once signed in.
+    /// The Arunika tab shows while signing in and once signed in.
     pub fn tab_visible(&self) -> bool {
         self.link != OyenzaLink::Off
     }
@@ -400,7 +400,7 @@ pub enum Locate {
     Found { km: f64 },
     /// The nearest listed place is too far away to use (km).
     Far { km: f64 },
-    /// Windows' location is off, or not allowed for Oyenza Studio.
+    /// Windows' location is off, or not allowed for Arunika.
     Denied,
     /// Windows couldn't tell where the PC is.
     Unknown,
@@ -462,7 +462,7 @@ pub struct AppState {
     pub ui: PageUiState,
     /// System accent colour (falls back to blue).
     pub accent: Color,
-    /// Steps from the person's phone, sent by Oyenza (None until connected).
+    /// Steps from the person's phone, sent by Arunika (None until connected).
     pub health: Option<HealthSnapshot>,
     /// The page currently shown when expanded.
     pub page: PageKind,
@@ -497,7 +497,7 @@ pub struct AppState {
     /// Whether Windows leaves the island out of screen capture while the
     /// Script page shows (None = not asked yet, or not on Windows).
     pub script_hidden: Option<bool>,
-    /// Oyenza Studio Recorder is installed, so the Script page shows Record.
+    /// Arunika Recorder is installed, so the Script page shows Record.
     /// Asked each time the page comes on screen, never at rest.
     pub recorder: bool,
     /// Side effects requested during the frame.
@@ -732,7 +732,7 @@ mod tests {
         // Over the goal in the first numbers after start: a baseline, no notice (a restart never repeats it).
         assert_eq!(st.take_health(Some(snap(9000))), None);
         assert_eq!(st.health.as_ref().map(|h| h.steps_on("2026-10-24")), Some(9000));
-        // Off in Oyenza: nothing kept; the numbers after it are a baseline again.
+        // Off in Arunika: nothing kept; the numbers after it are a baseline again.
         assert_eq!(st.take_health(None), None);
         assert!(st.health.is_none());
         assert_eq!(st.take_health(Some(snap(7900))), None);

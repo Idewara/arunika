@@ -13,7 +13,7 @@
 //! The Windows island is left out of screen shares and recordings while this
 //! page shows (`window::exclude_from_capture`).
 //!
-//! Once Oyenza Studio Recorder is installed, Record (by Paste) has it record
+//! Once Arunika Recorder is installed, Record (by Paste) has it record
 //! the island's screen; pausing and stopping stay on the recorder's own bar.
 
 use crate::commands::Command;

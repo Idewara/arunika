@@ -1,6 +1,6 @@
 //! Where the Mac is, for the Prayer times add-on: macOS's Location Services
 //! (Core Location), asked on the main thread. macOS decides how (Wi-Fi,
-//! mostly) and whether Oyenza Studio may ask: the first time it asks the
+//! mostly) and whether Arunika may ask: the first time it asks the
 //! person itself, and System Settings › Privacy & Security › Location
 //! Services changes the answer later.
 //!
@@ -29,7 +29,7 @@ const ACCURACY_M: f64 = 3000.0;
 pub enum Located {
     /// Latitude and longitude, degrees.
     At(f64, f64),
-    /// Location Services is off, or not allowed for Oyenza Studio.
+    /// Location Services is off, or not allowed for Arunika.
     Denied,
     /// macOS couldn't tell where the Mac is (no Wi-Fi around, no answer).
     Unknown,

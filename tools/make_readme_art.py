@@ -1,5 +1,9 @@
 """Draw the README's feature pictures from tools/readme_art.html.
 
+NOTE: broken by design since the Arunika rebrand — the Oyen character art it
+composited (docs/brand/art/) is not MIT and is gone; rewrite for the new
+brand before rerunning.
+
     python3 tools/make_readme_art.py            # every picture
     python3 tools/make_readme_art.py hero music  # just these
 

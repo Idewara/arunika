@@ -55,12 +55,12 @@ pub enum LyricsResult {
     Error(String),
 }
 
-/// What the Oyenza worker reports (`services::oyenza`, shared with Windows).
+/// What the Arunika worker reports (`services::oyenza`, shared with Windows).
 #[derive(Clone, Debug)]
 pub enum OyenzaEvent {
     /// The sign-in saved on this Mac was found at start (no notice).
     Restored { account: String },
-    /// A sign-in code to show, the oyenza.app address that takes it, and how long it lasts.
+    /// A sign-in code to show, the arunika.app address that takes it, and how long it lasts.
     Connecting { code: String, url: String, expires_in_s: u64 },
     Connected { account: String },
     /// Signing in stopped without a key: `expired`, `denied`, `offline` or `other`.
@@ -68,21 +68,21 @@ pub enum OyenzaEvent {
     ConnectCancelled,
     /// Money that just arrived or went out by itself (oldest first).
     Money { arrived: Vec<Arrival> },
-    /// The last 7 days of transactions, for the Oyenza page (while it's open).
+    /// The last 7 days of transactions, for the Arunika page (while it's open).
     Activity(Activity),
     /// Asked again while the page is open: nothing changed.
     ActivityChecked,
     /// Bills due in the next 30 days, and the server's today (YYYY-MM-DD).
     Bills { today: String, bills: Vec<Bill> },
     /// The steps the phone sent, for the Health page; None: none to show (off in
-    /// Oyenza on the phone, or a server from before steps).
+    /// Arunika on the phone, or a server from before steps).
     Health(Option<HealthSnapshot>),
     NoteSaved(Vec<Saved>),
     /// The note wasn't saved; the island puts `text` back and says why (`code`).
     NoteFailed { text: String, code: String },
     Undone,
     UndoFailed(String),
-    /// Signed out: from the menu or Settings, or by the server (disconnected in oyenza.app).
+    /// Signed out: from the menu or Settings, or by the server (disconnected in arunika.app).
     Disconnected { by_server: bool },
 }
 

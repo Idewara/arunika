@@ -77,7 +77,7 @@ const WTS_SESSION_LOCK_: usize = 7;
 const WTS_SESSION_UNLOCK_: usize = 8;
 
 /// Steps for copying the Apple Music token (README).
-const APPLE_MUSIC_HELP_URL: &str = "https://github.com/lucacadalora/oyenza-studio#apple-music-lyrics";
+const APPLE_MUSIC_HELP_URL: &str = "https://github.com/Idewara/arunika#apple-music-lyrics";
 /// Phone drop closes itself after this long without a request from a phone.
 const PHONE_IDLE_S: f64 = 600.0;
 
@@ -363,7 +363,7 @@ pub struct App {
     sysmon_on: bool,
     /// What the System reader was last told about nobody being there and battery saver.
     sysmon_rest: poni_core::sysmon::Rest,
-    /// The Oyenza page is on screen: its day list stays live (`services::oyenza`).
+    /// The Arunika page is on screen: its day list stays live (`services::oyenza`).
     oyenza_watch: bool,
     /// Show over games: the game's frames, counted while the readout shows.
     frames: Option<services::frames::Frames>,
@@ -1339,16 +1339,16 @@ impl App {
         self.st.notify(Icon::Lyrics, color, title, subtitle, 6.0, None);
     }
 
-    // ------------------------------------------------------------ Oyenza
+    // ------------------------------------------------------------ Arunika
 
-    /// How the Oyenza worker should pace itself: in use (unlocked, display
+    /// How the Arunika worker should pace itself: in use (unlocked, display
     /// on) and the power source.
     fn oyenza_activity(&self) -> services::oyenza::Activity {
         let p = self.st.power;
         services::oyenza::Activity { in_use: !self.locked && !self.display_off, on_ac: p.on_ac || !p.has_battery, saver: p.saver, watching: self.oyenza_watch }
     }
 
-    /// The Oyenza page came on screen or went: the worker keeps its list live only meanwhile.
+    /// The Arunika page came on screen or went: the worker keeps its list live only meanwhile.
     fn set_oyenza_watch(&mut self, on: bool) {
         if on != self.oyenza_watch {
             self.oyenza_watch = on;
@@ -1375,7 +1375,7 @@ impl App {
             OyenzaEvent::Restored { account } => self.st.oyenza.link = OyenzaLink::Connected { account },
             OyenzaEvent::Connecting { code, url, expires_in_s } => {
                 self.st.oyenza.link = OyenzaLink::Connecting { code, url, until: now + expires_in_s as f64 };
-                // Keep the code on screen while the person goes to oyenza.app.
+                // Keep the code on screen while the person goes to arunika.app.
                 if self.st.oyenza.pinned_before.is_none() {
                     self.st.oyenza.pinned_before = Some(self.st.pinned);
                 }
@@ -1385,7 +1385,7 @@ impl App {
             }
             OyenzaEvent::Connected { account } => {
                 self.end_sign_in();
-                self.st.notify(Icon::Check, palette::GREEN, "Connected to Oyenza", format!("as {account}"), 6.0, Some(NoticeAction::OpenPage(PageKind::Oyenza)));
+                self.st.notify(Icon::Check, palette::GREEN, "Connected to Arunika", format!("as {account}"), 6.0, Some(NoticeAction::OpenPage(PageKind::Oyenza)));
                 self.st.oyenza.link = OyenzaLink::Connected { account };
             }
             OyenzaEvent::ConnectFailed(code) => {
@@ -1447,7 +1447,7 @@ impl App {
             }
             OyenzaEvent::Undone => self.st.oyenza.flash = Some(("Taken back".into(), now + 3.0)),
             OyenzaEvent::UndoFailed(code) => {
-                let line = if code == "too_late" { "Too late to undo here. Change it in oyenza.app" } else { "Couldn't undo. Change it in oyenza.app" };
+                let line = if code == "too_late" { "Too late to undo here. Change it in arunika.app" } else { "Couldn't undo. Change it in arunika.app" };
                 self.st.oyenza.flash = Some((line.into(), now + 5.0));
             }
             OyenzaEvent::Disconnected { by_server } => {
@@ -1455,11 +1455,11 @@ impl App {
                 self.st.oyenza = crate::state::OyenzaState::default();
                 self.st.health = None;
                 let (title, subtitle) =
-                    if by_server { ("Oyenza disconnected", "Sign in again in Settings") } else { ("Disconnected from Oyenza", "Sign in again any time in Settings") };
+                    if by_server { ("Arunika disconnected", "Sign in again in Settings") } else { ("Disconnected from Arunika", "Sign in again any time in Settings") };
                 self.st.notify(Icon::Unlink, palette::TEXT_DIM, title, subtitle, 6.0, None);
             }
         }
-        // The Oyenza tab came or went: the window makes room for its page (or no longer has to).
+        // The Arunika tab came or went: the window makes room for its page (or no longer has to).
         if self.st.oyenza.link != link_before {
             self.layout_surface();
         }
@@ -2060,7 +2060,7 @@ impl App {
             self.set_stats(false);
             self.set_sysmon(false);
             self.st.ui.clip_flash = None;
-            // Sums shown in the Oyenza tab hide again, and it opens on Today next time.
+            // Sums shown in the Arunika tab hide again, and it opens on Today next time.
             self.st.oyenza.reveal = false;
             self.st.oyenza.day = oyenza::DayPick::Today;
             self.st.oyenza.scroll = 0.0;
@@ -2692,7 +2692,7 @@ impl App {
         if let Some(ended) = self.st.pomodoro.tick(now) {
             pages::focus::on_phase_ended(&mut self.st, ended);
         }
-        // Signed out: the Oyenza tab is gone.
+        // Signed out: the Arunika tab is gone.
         if self.st.page == PageKind::Oyenza && !self.st.oyenza.tab_visible() {
             self.st.page = PageKind::ALL[0];
         }

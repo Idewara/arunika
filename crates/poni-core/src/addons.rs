@@ -13,7 +13,7 @@ use crate::settings::Settings;
 use crate::sha256;
 
 /// Where the files live: `<RELEASES>/<tag>/<name>`.
-pub const RELEASES: &str = "https://github.com/lucacadalora/oyenza-studio/releases/download";
+pub const RELEASES: &str = "https://github.com/Idewara/arunika/releases/download";
 
 /// One file an add-on downloads.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -85,7 +85,7 @@ pub const PRAYER_TIMES: Addon = Addon {
 /// The Japanese readings add-on's dictionary file (`romanize::JaDict`).
 pub const JA_READINGS_FILE: &str = "ja-readings.dic.zst";
 
-/// Japanese readings: Oyenza Studio's own reading dictionary, for romaji under
+/// Japanese readings: Arunika's own reading dictionary, for romaji under
 /// kanji on Macs and on PCs where Windows has no Japanese reading data (most
 /// PCs outside Japan). Only people who play Japanese songs need it: the first
 /// song whose kanji go unread switches it on ([`ja_switches_on`], once;
@@ -253,7 +253,7 @@ mod tests {
             assert!(f.matches(bytes), "{name}: size {} sha256 {}", bytes.len(), sha256::hex(&sha256::sha256(bytes)));
         }
         let ja = Addon::find("ja").unwrap();
-        assert_eq!(ja.url(&ja.files[0]), "https://github.com/lucacadalora/oyenza-studio/releases/download/addon-ja-1/ja-readings.dic.zst");
+        assert_eq!(ja.url(&ja.files[0]), "https://github.com/Idewara/arunika/releases/download/addon-ja-1/ja-readings.dic.zst");
         assert_eq!(Status::Off.line(ja, false), ja.blurb);
         assert_eq!(Status::Ready.line(ja, false), "On · 3.8 MB on this PC");
         // The Mac app has no Windows reason to give, and says Mac.
@@ -277,7 +277,7 @@ mod tests {
     #[test]
     fn files_come_from_the_release() {
         let a = Addon::find("sholat").unwrap();
-        assert_eq!(a.url(&a.files[1]), "https://github.com/lucacadalora/oyenza-studio/releases/download/addon-sholat-1/adzan.m4a");
+        assert_eq!(a.url(&a.files[1]), "https://github.com/Idewara/arunika/releases/download/addon-sholat-1/adzan.m4a");
         assert_eq!(a.size(), 1_903_069);
         assert!(Addon::find("nope").is_none());
     }

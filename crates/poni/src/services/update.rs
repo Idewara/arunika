@@ -175,8 +175,7 @@ mod tests {
         sig[10] ^= 1;
         assert!(!verify(signed.payload.as_bytes(), &sig, &signed.key));
         assert!(verify(signed.payload.as_bytes(), &signed.signature, &signed.key));
-        // The spare key didn't sign it.
-        let spare = update::trusted_key("f835f77c60bd2b7f").unwrap();
-        assert!(!verify(signed.payload.as_bytes(), &signed.signature, &spare));
+        // An unknown key id is not trusted.
+        assert!(update::trusted_key("f835f77c60bd2b7f").is_none(), "the old upstream spare key is gone");
     }
 }

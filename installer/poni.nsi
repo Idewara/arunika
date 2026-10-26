@@ -1,6 +1,6 @@
-; Oyenza Studio installer (NSIS 3). Per-user install, no admin rights needed.
+; Arunika installer (NSIS 3). Per-user install, no admin rights needed.
 ;
-; The name shown to people is "Oyenza Studio" (the 0.1.x versions from 0.1.2 on said "Oyen Poni"); the install folder,
+; The name shown to people is "Arunika"; the install folder,
 ; the uninstall key, the Run value and poni.exe keep the name "Poni", so older installs upgrade in place.
 ;
 ; Build (Linux/macOS/Windows with makensis):
@@ -11,9 +11,9 @@
 Target amd64-unicode
 SetCompressor /SOLID lzma
 
-!define APPNAME "Oyenza Studio"
+!define APPNAME "Arunika"
 !define VERSION "0.2.6"
-!define PUBLISHER "Jatevo Labs"
+!define PUBLISHER "Arunika Labs"
 !define UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\Poni"
 !define RUN_KEY "Software\Microsoft\Windows\CurrentVersion\Run"
 
@@ -25,7 +25,7 @@ SetCompressor /SOLID lzma
 !endif
 
 Name "${APPNAME}"
-OutFile "${OUTDIR}/Oyenza-Studio-Setup-${VERSION}.exe"
+OutFile "${OUTDIR}/Arunika-Setup-${VERSION}.exe"
 RequestExecutionLevel user
 InstallDir "$LOCALAPPDATA\Programs\Poni"
 InstallDirRegKey HKCU "Software\Poni" "InstallDir"
@@ -34,7 +34,7 @@ BrandingText "${APPNAME} ${VERSION}"
 VIProductVersion "0.2.6.0"
 VIAddVersionKey "ProductName" "${APPNAME}"
 VIAddVersionKey "CompanyName" "${PUBLISHER}"
-VIAddVersionKey "FileDescription" "Oyenza Studio installer"
+VIAddVersionKey "FileDescription" "Arunika installer"
 VIAddVersionKey "FileVersion" "${VERSION}"
 VIAddVersionKey "ProductVersion" "${VERSION}"
 VIAddVersionKey "LegalCopyright" "Copyright (C) 2026 ${PUBLISHER}"
@@ -74,9 +74,9 @@ VIAddVersionKey "LegalCopyright" "Copyright (C) 2026 ${PUBLISHER}"
 !define MUI_ABORTWARNING
 !define MUI_COMPONENTSPAGE_SMALLDESC
 !define MUI_FINISHPAGE_RUN "$INSTDIR\poni.exe"
-!define MUI_FINISHPAGE_RUN_TEXT "Launch Oyenza Studio now"
-!define MUI_WELCOMEPAGE_TITLE "Welcome to Oyenza Studio"
-!define MUI_WELCOMEPAGE_TEXT "Oyenza Studio puts a living notch at the top of your screen: music with synced lyrics, a focus timer, your steps, a file shelf, tasks, clipboard history and more.$\r$\n$\r$\nIt installs just for you and doesn't need administrator rights."
+!define MUI_FINISHPAGE_RUN_TEXT "Launch Arunika now"
+!define MUI_WELCOMEPAGE_TITLE "Welcome to Arunika"
+!define MUI_WELCOMEPAGE_TEXT "Arunika puts a living notch at the top of your screen: music with synced lyrics, a focus timer, your steps, a file shelf, tasks, clipboard history and more.$\r$\n$\r$\nIt installs just for you and doesn't need administrator rights."
 
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_COMPONENTS
@@ -86,7 +86,7 @@ VIAddVersionKey "LegalCopyright" "Copyright (C) 2026 ${PUBLISHER}"
 !insertmacro MUI_UNPAGE_INSTFILES
 !insertmacro MUI_LANGUAGE "English"
 
-Section "Oyenza Studio" SecMain
+Section "Arunika" SecMain
   SectionIn RO
   ; Close a running copy so the exe can be replaced.
   !insertmacro StopPoni
@@ -95,9 +95,6 @@ Section "Oyenza Studio" SecMain
   ; The licenses of what poni.exe is built from (mecab-ipadic asks for its notice in every copy).
   File "../THIRD-PARTY-NOTICES.txt"
   WriteUninstaller "$INSTDIR\Uninstall.exe"
-  ; Older shortcuts: "Poni" (0.1.0, 0.1.1) and "Oyen Poni" (0.1.2 to the last 0.1.x).
-  Delete "$SMPROGRAMS\Poni.lnk"
-  Delete "$SMPROGRAMS\Oyen Poni.lnk"
   CreateShortcut "$SMPROGRAMS\${APPNAME}.lnk" "$INSTDIR\poni.exe" "" "$INSTDIR\poni.exe" 0
   WriteRegStr HKCU "Software\Poni" "InstallDir" "$INSTDIR"
   WriteRegStr HKCU "${UNINST_KEY}" "DisplayName" "${APPNAME}"
@@ -112,7 +109,7 @@ Section "Oyenza Studio" SecMain
   WriteRegDWORD HKCU "${UNINST_KEY}" "EstimatedSize" 7680
 SectionEnd
 
-Section "Start Oyenza Studio with Windows" SecAutostart
+Section "Start Arunika with Windows" SecAutostart
   ; Same value the app's own "Start with Windows" toggle writes.
   WriteRegStr HKCU "${RUN_KEY}" "Poni" '"$INSTDIR\poni.exe"'
 SectionEnd
@@ -126,7 +123,7 @@ Function .onInit
 FunctionEnd
 
 Function .onInstSuccess
-  ; The finish page's "Launch Oyenza Studio now" never shows in silent mode: /reopen starts it.
+  ; The finish page's "Launch Arunika now" never shows in silent mode: /reopen starts it.
   ${If} ${Silent}
     ${GetParameters} $R0
     ClearErrors
@@ -138,8 +135,8 @@ Function .onInstSuccess
 FunctionEnd
 
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecMain} "The Oyenza Studio app and a Start Menu shortcut."
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecAutostart} "Open Oyenza Studio automatically when you sign in. You can change this later from its menu."
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecMain} "The Arunika app and a Start Menu shortcut."
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecAutostart} "Open Arunika automatically when you sign in. You can change this later from its menu."
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 Section "Uninstall"
@@ -149,8 +146,6 @@ Section "Uninstall"
   Delete "$INSTDIR\Uninstall.exe"
   RMDir "$INSTDIR"
   Delete "$SMPROGRAMS\${APPNAME}.lnk"
-  Delete "$SMPROGRAMS\Poni.lnk"
-  Delete "$SMPROGRAMS\Oyen Poni.lnk"
   DeleteRegValue HKCU "${RUN_KEY}" "Poni"
   DeleteRegKey HKCU "${UNINST_KEY}"
   DeleteRegKey HKCU "Software\Poni"

@@ -399,7 +399,7 @@ jobs:
           if (-not $iscc) { Write-Error "ISCC.exe not found after installing Inno Setup"; exit 1 }
           & $iscc "/DAppVersion=$env:PONI_VERSION" installer\poni.iss
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-          Get-Item "dist\Oyenza-Studio-Setup-$env:PONI_VERSION.exe" | Format-List Name, Length
+          Get-Item "dist\Arunika-Setup-$env:PONI_VERSION.exe" | Format-List Name, Length
 
       - name: Upload screenshots and logs
         if: always()
@@ -426,7 +426,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: poni-setup-inno
-          path: dist/Oyenza-Studio-Setup-${{ env.PONI_VERSION }}.exe
+          path: dist/Arunika-Setup-${{ env.PONI_VERSION }}.exe
           if-no-files-found: error
 
   # The three machines' screenshots and logs as one poni-screens download,
@@ -460,37 +460,43 @@ jobs:
           sudo apt-get install -y -qq nsis zip > /dev/null
           makensis -V2 -DEXE="$PWD/dist/poni.exe" -DOUTDIR="$PWD/dist" installer/poni.nsi
           # Portable build inside its own folder, as tools/package.sh makes it.
-          ( cd dist && mkdir Poni && cp poni.exe ../THIRD-PARTY-NOTICES.txt Poni/ && zip -qr "Oyenza-Studio-$PONI_VERSION-portable.zip" Poni && rm -rf Poni )
+          ( cd dist && mkdir Poni && cp poni.exe ../THIRD-PARTY-NOTICES.txt Poni/ && zip -qr "Arunika-$PONI_VERSION-portable.zip" Poni && rm -rf Poni )
           ls -la dist
       # The download against tools/weight-budget.json (the Windows job's smoke
       # run weighs memory, CPU and wake-ups).
       - name: Weight check, download size
-        run: tools/ci-weight-download.sh "dist/Oyenza-Studio-Setup-$PONI_VERSION.exe"
+        run: tools/ci-weight-download.sh "dist/Arunika-Setup-$PONI_VERSION.exe"
       - uses: actions/upload-artifact@v4
         with:
-          name: oyenza-studio-setup
+          name: arunika-setup
           path: |
-            dist/Oyenza-Studio-Setup-${{ env.PONI_VERSION }}.exe
-            dist/Oyenza-Studio-${{ env.PONI_VERSION }}-portable.zip
+            dist/Arunika-Setup-${{ env.PONI_VERSION }}.exe
+            dist/Arunika-${{ env.PONI_VERSION }}-portable.zip
           if-no-files-found: error
 
   install-test:
-    name: Install over 0.1.1, check and uninstall (Windows)
+    name: Install over the previous release, check and uninstall (Windows)
     needs: installer
     runs-on: windows-2025
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
-          name: oyenza-studio-setup
+          name: arunika-setup
           path: dist
       - name: Fetch the release to upgrade from
         shell: pwsh
-        # 0.1.1 is the installer people have today; the check upgrades from it.
-        run: Invoke-WebRequest -Uri "https://github.com/lucacadalora/oyenza-studio/releases/download/v0.1.1/Poni-Setup-0.1.1.exe" -OutFile previous-setup.exe
+        # Upgrade from this repository's own latest release (its fixed-name
+        # installer asset). A fresh fork has no release yet, so a 404 here is
+        # expected and tolerated: the step below then runs without -Previous,
+        # which tools/ci-installer.ps1 treats as optional.
+        continue-on-error: true
+        run: Invoke-WebRequest -Uri "https://github.com/Idewara/arunika/releases/latest/download/Arunika-Setup.exe" -OutFile previous-setup.exe
       - name: Install, check, uninstall
         shell: pwsh
-        run: ./tools/ci-installer.ps1 -Setup "dist\Oyenza-Studio-Setup-$env:PONI_VERSION.exe" -Version $env:PONI_VERSION -Previous previous-setup.exe -Out installer-out
+        run: |
+          $prev = @(); if (Test-Path previous-setup.exe) { $prev = @('-Previous', 'previous-setup.exe') }
+          ./tools/ci-installer.ps1 -Setup "dist\Arunika-Setup-$env:PONI_VERSION.exe" -Version $env:PONI_VERSION @prev -Out installer-out
       - name: Upload screenshots and results
         if: always()
         uses: actions/upload-artifact@v4
@@ -516,27 +522,25 @@ jobs:
         run: test "$GITHUB_REF_NAME" = "v$PONI_VERSION"
       - uses: actions/download-artifact@v4
         with:
-          name: oyenza-studio-setup
+          name: arunika-setup
           path: dist
-      # Oyen-Poni-Setup.exe is the fixed name before the rename (0.1.2 to the last 0.1.x). Links to it are
-      # out there (oyenza.com, shared links, old README copies), so every release keeps carrying it.
-      - name: Copy the installer to the fixed names the download links use
+      # Arunika-Setup.exe is the fixed name the website's download buttons point at, so every
+      # release carries it next to the versioned file.
+      - name: Copy the installer to the fixed name the download links use
         run: |
-          cp "dist/Oyenza-Studio-Setup-$PONI_VERSION.exe" dist/Oyenza-Studio-Setup.exe
-          cp "dist/Oyenza-Studio-Setup-$PONI_VERSION.exe" dist/Oyen-Poni-Setup.exe
+          cp "dist/Arunika-Setup-$PONI_VERSION.exe" dist/Arunika-Setup.exe
       - name: Publish as the latest release
         if: github.event_name == 'push'
         uses: softprops/action-gh-release@v2
         with:
-          name: Oyenza Studio ${{ env.PONI_VERSION }}
+          name: Arunika ${{ env.PONI_VERSION }}
           body_path: docs/release-notes/${{ github.ref_name }}.md
           prerelease: false
           make_latest: "true"
           files: |
-            dist/Oyenza-Studio-Setup-${{ env.PONI_VERSION }}.exe
-            dist/Oyenza-Studio-Setup.exe
-            dist/Oyen-Poni-Setup.exe
-            dist/Oyenza-Studio-${{ env.PONI_VERSION }}-portable.zip
+            dist/Arunika-Setup-${{ env.PONI_VERSION }}.exe
+            dist/Arunika-Setup.exe
+            dist/Arunika-${{ env.PONI_VERSION }}-portable.zip
           fail_on_unmatched_files: true
       - name: What a tag would publish (dry run, nothing is published)
         if: github.event_name != 'push'
@@ -549,10 +553,10 @@ jobs:
           {
             echo "### Release dry run: nothing was published"
             echo
-            echo "A \`v$PONI_VERSION\` tag would publish **Oyenza Studio $PONI_VERSION** as the latest release, with \`$notes\` as its text and these files:"
+            echo "A \`v$PONI_VERSION\` tag would publish **Arunika $PONI_VERSION** as the latest release, with \`$notes\` as its text and these files:"
             echo
             echo '```'
-            (cd dist && sha256sum "Oyenza-Studio-Setup-$PONI_VERSION.exe" Oyenza-Studio-Setup.exe Oyen-Poni-Setup.exe "Oyenza-Studio-$PONI_VERSION-portable.zip" && ls -l "Oyenza-Studio-Setup-$PONI_VERSION.exe" Oyenza-Studio-Setup.exe Oyen-Poni-Setup.exe "Oyenza-Studio-$PONI_VERSION-portable.zip")
+            (cd dist && sha256sum "Arunika-Setup-$PONI_VERSION.exe" Arunika-Setup.exe "Arunika-$PONI_VERSION-portable.zip" && ls -l "Arunika-Setup-$PONI_VERSION.exe" Arunika-Setup.exe "Arunika-$PONI_VERSION-portable.zip")
             echo '```'
           } | tee -a "$GITHUB_STEP_SUMMARY"
 

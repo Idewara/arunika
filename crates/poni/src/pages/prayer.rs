@@ -83,17 +83,16 @@ const FOOT_H: f32 = 28.0;
 const SEARCH_H: f32 = 32.0;
 const RESULT_H: f32 = 26.0;
 const RESULTS: usize = 8;
-const QURAN: &str = "https://quran.oyenza.com";
-/// Where location is allowed for Oyenza Studio: Windows' Settings › Privacy &
+/// Where location is allowed for Arunika: Windows' Settings › Privacy &
 /// security › Location, or the Mac's System Settings › Privacy & Security ›
 /// Location Services.
 const LOCATION_SETTINGS: &str =
     if cfg!(windows) { "ms-settings:privacy-location" } else { "x-apple.systempreferences:com.apple.preference.security?Privacy_LocationServices" };
 /// The picker's line when location is off, or when the system couldn't say.
 const DENIED_HINT: &str = if cfg!(windows) {
-    "Windows' location is off for Oyenza Studio. Turn it on to find your place, or type it."
+    "Windows' location is off for Arunika. Turn it on to find your place, or type it."
 } else {
-    "Location Services is off for Oyenza Studio. Turn it on to find your place, or type it."
+    "Location Services is off for Arunika. Turn it on to find your place, or type it."
 };
 const UNKNOWN_HINT: &str =
     if cfg!(windows) { "Windows couldn't tell where this PC is. Type your kab/kota." } else { "macOS couldn't tell where this Mac is. Type your kab/kota." };
@@ -163,7 +162,7 @@ pub fn draw(ui: &mut Ui, st: &mut AppState, area: Rect) {
     ui.c.text(&info, Rect::new(gx, area.y, arc.w, INFO_H), &TextStyle::caption().color(palette::TEXT_DIM).right());
     draw_day(ui, arc, &site, &times, day, now, next, accent);
 
-    // ---- Footer. Left: Change place, Read Quran. Right, under the arc:
+    // ---- Footer. Left: Change place. Right, under the arc:
     // what plays at prayer time, and the countdown before it.
     let fy = area.y + FOOT_Y;
     let py = fy + (FOOT_H - PILL_SMALL) / 2.0;
@@ -172,15 +171,11 @@ pub fn draw(ui: &mut Ui, st: &mut AppState, area: Rect) {
         st.prayer.picking = true;
         st.prayer.query.clear();
     }
-    let read_w = ui.pill_width("Read Quran", true, true);
-    if ui.pill(wid("prayer.quran"), Rect::new(x + change_w + 8.0, py, read_w, PILL_SMALL), "Read Quran", Some(Icon::Open), PillStyle::Utility).clicked {
-        st.cmd(Command::OpenUrl(QURAN.into()));
-    }
 
     let names = SOUNDS.map(|s| s.1);
     let sel = SOUNDS.iter().position(|s| s.0 == st.settings.prayer.sound).unwrap_or(1);
-    // Never over the two pills when the column narrows.
-    let sx = gx.max(x + change_w + 8.0 + read_w + COL_GAP);
+    // Never over the pill when the column narrows.
+    let sx = gx.max(x + change_w + COL_GAP);
     if let Some(i) = super::settings::picker(ui, "prayer.sound", sx, fy + 2.0, 24.0, &names, sel) {
         st.settings.prayer.sound = SOUNDS[i].0;
         st.cmd(Command::SaveSettings);

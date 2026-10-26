@@ -1,4 +1,4 @@
-# dmgbuild settings for Oyenza Studio's DMG: the window Finder opens when someone opens the DMG. tools/make_mac_dmg.sh
+# dmgbuild settings for Arunika's DMG: the window Finder opens when someone opens the DMG. tools/make_mac_dmg.sh
 # passes the values below with -D. The window shows the app on the left, a link to Applications on the right, and
 # the picture from tools/dmg_art.html behind them, which draws the headline, the arrow and Oyen around those two
 # spots: move an icon here and the picture has to follow.

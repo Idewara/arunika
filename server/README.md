@@ -66,5 +66,5 @@ against Oyenza Studio's real Rust PC side instead of the emulator, through the
 `cargo build -p poni-core --example pairdrop_pc`).
 
 `python3 server/make_icons.py` redraws the icons from
-`docs/brand/oyen-poni-logo-512.png` (the brand files are not MIT; see
+`docs/brand/arunika-logo-512.png` (the brand files are not MIT; see
 `docs/brand/README.md`).

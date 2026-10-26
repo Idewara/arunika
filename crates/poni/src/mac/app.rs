@@ -56,7 +56,7 @@ use std::ptr::NonNull;
 use std::sync::mpsc::{self, Receiver};
 
 /// Steps for copying the Apple Music token (README).
-const APPLE_MUSIC_HELP_URL: &str = "https://github.com/lucacadalora/oyenza-studio#apple-music-lyrics";
+const APPLE_MUSIC_HELP_URL: &str = "https://github.com/Idewara/arunika#apple-music-lyrics";
 
 /// The grow springs overshoot by about 3 %; the window leaves 5 %.
 const OVERSHOOT: f32 = 1.05;
@@ -154,12 +154,12 @@ pub fn main_entry() -> i32 {
         std::env::set_var("PONI_HOME", &home);
     }
     crate::plog::init(paths::log_path());
-    pinfo!("Oyenza Studio {} starting on macOS (args: {:?})", env!("CARGO_PKG_VERSION"), &args[1..]);
+    pinfo!("Arunika {} starting on macOS (args: {:?})", env!("CARGO_PKG_VERSION"), &args[1..]);
     std::panic::set_hook(Box::new(|info| {
         perror!("panic: {info}");
     }));
     let Some(mtm) = MainThreadMarker::new() else {
-        eprintln!("Oyenza Studio must start on the main thread");
+        eprintln!("Arunika must start on the main thread");
         return 2;
     };
     let _lock = match single_instance() {
@@ -377,10 +377,10 @@ pub struct App {
     /// A full-screen app is in front and Hide is picked: the island is closed
     /// and draws nothing until it's back (`apply_fullscreen`).
     fullscreen_hidden: bool,
-    /// Oyenza sign-in's worker: from the start when this Mac is signed in (or
+    /// Arunika sign-in's worker: from the start when this Mac is signed in (or
     /// a sign-out still has to reach the server), else from the first sign-in.
     oyenza: Option<services::oyenza::OyenzaService>,
-    /// The Oyenza page is on screen: its day list stays live (`services::oyenza`).
+    /// The Arunika page is on screen: its day list stays live (`services::oyenza`).
     oyenza_watch: bool,
     /// The Health page is on screen (it asks for the phone's steps as it opens).
     health_shown: bool,
@@ -423,7 +423,7 @@ pub struct App {
     smoke_devices: Option<(u32, Result<(), i32>)>,
     /// The smoke run's full-screen window (a second copy of the app).
     smoke_full_screen: Option<std::process::Child>,
-    /// The Oyenza step's POST through the Mac's HTTP client: (arrived and answered, what happened).
+    /// The Arunika step's POST through the Mac's HTTP client: (arrived and answered, what happened).
     smoke_post: Option<(bool, String)>,
     /// The island floated on the last frame (Pill letting go of the notch).
     was_floating: bool,
@@ -561,7 +561,7 @@ impl App {
         self.schedule_minute_timer();
         services::sysmon::watch_away(self.mtm, self.sink.clone());
         services::fullscreen::watch(self.mtm, self.sink.clone());
-        // Signed in to Oyenza (or a sign-out still to tell it): the worker says
+        // Signed in to Arunika (or a sign-out still to tell it): the worker says
         // who, then asks at its pace. Never signed in: nothing starts.
         if paths::oyenza_link_path().exists() || paths::oyenza_revoke_path().exists() {
             self.start_oyenza();
@@ -571,11 +571,11 @@ impl App {
         }
         if self.first_run && self.smoke.is_none() {
             let place = if self.screen.notch.is_some() { "Point at the notch to open it" } else { "Point at the island to open it" };
-            self.st.notify(Icon::CheckCircle, self.st.accent, "Oyenza Studio is on", place, 6.0, None);
+            self.st.notify(Icon::CheckCircle, self.st.accent, "Arunika is on", place, 6.0, None);
         }
         if self.smoke.is_none() {
             if let Some(dir) = services::trash_app_from_before_rename() {
-                self.st.notify(Icon::Trash, self.st.accent, "Oyen Poni is now Oyenza Studio", format!("The old copy in {dir} is in the Trash"), 8.0, None);
+                self.st.notify(Icon::Trash, self.st.accent, "Oyen Poni is now Arunika", format!("The old copy in {dir} is in the Trash"), 8.0, None);
             }
         }
         if self.smoke.is_some() {
@@ -589,7 +589,7 @@ impl App {
     fn quit(&mut self, code: i32) {
         self.save_now();
         self.save_settings();
-        pinfo!("Oyenza Studio exiting with code {code}");
+        pinfo!("Arunika exiting with code {code}");
         std::process::exit(code);
     }
 
@@ -971,7 +971,7 @@ impl App {
                 pinfo!("start at login: {now:?}");
                 if now == Login::NeedsApproval {
                     services::login::open_settings();
-                    self.st.notify(Icon::Sliders, palette::ORANGE, "Allow Oyenza Studio to start at login", "Turn it on in Login Items", 8.0, None);
+                    self.st.notify(Icon::Sliders, palette::ORANGE, "Allow Arunika to start at login", "Turn it on in Login Items", 8.0, None);
                 }
             }
         }
@@ -2232,16 +2232,16 @@ impl App {
         self.sync_phone_offer();
     }
 
-    // ------------------------------------------------------------ Oyenza
+    // ------------------------------------------------------------ Arunika
 
-    /// How the Oyenza worker should pace itself: in use (unlocked, displays
+    /// How the Arunika worker should pace itself: in use (unlocked, displays
     /// awake) and the power source.
     fn oyenza_activity(&self) -> services::oyenza::Activity {
         let p = self.st.power;
         services::oyenza::Activity { in_use: !self.away.0 && !self.away.1, on_ac: p.on_ac || !p.has_battery, saver: p.saver, watching: self.oyenza_watch }
     }
 
-    /// The Oyenza page came on screen or went: the worker keeps its list live only meanwhile.
+    /// The Arunika page came on screen or went: the worker keeps its list live only meanwhile.
     fn set_oyenza_watch(&mut self, on: bool) {
         if on != self.oyenza_watch {
             self.oyenza_watch = on;
@@ -2290,7 +2290,7 @@ impl App {
             OyenzaEvent::Restored { account } => self.st.oyenza.link = OyenzaLink::Connected { account },
             OyenzaEvent::Connecting { code, url, expires_in_s } => {
                 self.st.oyenza.link = OyenzaLink::Connecting { code, url, until: now + expires_in_s as f64 };
-                // Keep the code on screen while the person goes to oyenza.app.
+                // Keep the code on screen while the person goes to arunika.app.
                 if self.st.oyenza.pinned_before.is_none() {
                     self.st.oyenza.pinned_before = Some(self.st.pinned);
                 }
@@ -2300,7 +2300,7 @@ impl App {
             }
             OyenzaEvent::Connected { account } => {
                 self.end_sign_in();
-                self.st.notify(Icon::Check, palette::GREEN, "Connected to Oyenza", format!("as {account}"), 6.0, Some(NoticeAction::OpenPage(PageKind::Oyenza)));
+                self.st.notify(Icon::Check, palette::GREEN, "Connected to Arunika", format!("as {account}"), 6.0, Some(NoticeAction::OpenPage(PageKind::Oyenza)));
                 self.st.oyenza.link = OyenzaLink::Connected { account };
             }
             OyenzaEvent::ConnectFailed(code) => {
@@ -2363,7 +2363,7 @@ impl App {
             }
             OyenzaEvent::Undone => self.st.oyenza.flash = Some(("Taken back".into(), now + 3.0)),
             OyenzaEvent::UndoFailed(code) => {
-                let line = if code == "too_late" { "Too late to undo here. Change it in oyenza.app" } else { "Couldn't undo. Change it in oyenza.app" };
+                let line = if code == "too_late" { "Too late to undo here. Change it in arunika.app" } else { "Couldn't undo. Change it in arunika.app" };
                 self.st.oyenza.flash = Some((line.into(), now + 5.0));
             }
             OyenzaEvent::Disconnected { by_server } => {
@@ -2371,11 +2371,11 @@ impl App {
                 self.st.oyenza = crate::state::OyenzaState::default();
                 self.st.health = None;
                 let (title, subtitle) =
-                    if by_server { ("Oyenza disconnected", "Sign in again in Settings") } else { ("Disconnected from Oyenza", "Sign in again any time in Settings") };
+                    if by_server { ("Arunika disconnected", "Sign in again in Settings") } else { ("Disconnected from Arunika", "Sign in again any time in Settings") };
                 self.st.notify(Icon::Unlink, palette::TEXT_DIM, title, subtitle, 6.0, None);
             }
         }
-        // The Oyenza tab came or went: the menu changes with it, and the
+        // The Arunika tab came or went: the menu changes with it, and the
         // window makes room for its page (or no longer has to).
         if self.st.oyenza.link != link_before {
             self.refresh_menu();
@@ -3045,7 +3045,7 @@ impl App {
                 self.st.pomodoro.start(self.st.now);
             }
             "notice" => {
-                self.st.notify(Icon::CheckCircle, self.st.accent, "Oyenza Studio is on", "Point at the island to open it", 30.0, None);
+                self.st.notify(Icon::CheckCircle, self.st.accent, "Arunika is on", "Point at the island to open it", 30.0, None);
             }
             "volume-hud" => {
                 self.st.notice = None;
@@ -3186,7 +3186,7 @@ impl App {
                     let _ = c.wait();
                 }
             }
-            // Oyenza sign-in: its worker starts (this home has no key, so it
+            // Arunika sign-in: its worker starts (this home has no key, so it
             // asks nothing), one POST goes through the Mac's HTTP client the
             // way signing in sends it, then the island follows what the worker
             // would report: a code, a week on the page, money in, signing out.
@@ -3197,7 +3197,7 @@ impl App {
                 self.smoke_post = Some(smoke_post());
             }
             "oyenza-code" => {
-                let url = "https://oyenza.app/connect?code=KPJX-TMNQ".to_string();
+                let url = "https://arunika.app/connect?code=KPJX-TMNQ".to_string();
                 self.on_oyenza(OyenzaEvent::Connecting { code: "KPJX-TMNQ".into(), url, expires_in_s: 600 });
             }
             "oyenza-page" => {
@@ -3631,7 +3631,7 @@ impl App {
             "oyenza-off" => {
                 let tab = pages::tabs(&self.st).contains(&PageKind::Oyenza);
                 let ok = self.st.oyenza.link == OyenzaLink::Off && !tab;
-                Some(("oyenza-off", ok, format!("{:?}; Oyenza tab: {tab}", self.st.oyenza.link)))
+                Some(("oyenza-off", ok, format!("{:?}; Arunika tab: {tab}", self.st.oyenza.link)))
             }
             "ja-off" => {
                 let status = self.st.addon(JAPANESE_READINGS.id);
@@ -3646,7 +3646,7 @@ impl App {
 }
 
 /// The smoke test: one POST with a JSON body and a key through the Mac's
-/// HTTP client (what signing in to Oyenza and saving a spend send), to a
+/// HTTP client (what signing in to Arunika and saving a spend send), to a
 /// listener of its own on this Mac. Whether it arrived whole and its answer
 /// came back, and what happened.
 fn smoke_post() -> (bool, String) {
@@ -3691,11 +3691,11 @@ fn smoke_post() -> (bool, String) {
         String::from_utf8_lossy(&buf).into_owned()
     });
     let json = "{\"app\":\"poni\",\"name\":\"Smoke Mac\"}";
-    let answer = services::http::Client::new("OyenzaStudio smoke").and_then(|c| {
-        c.send(services::http::Method::Post, &format!("http://127.0.0.1:{port}/connect/start"), &[("Authorization", "Bearer oyzd_smoke")], Some(json), Duration::from_secs(5))
+    let answer = services::http::Client::new("Arunika smoke").and_then(|c| {
+        c.send(services::http::Method::Post, &format!("http://127.0.0.1:{port}/connect/start"), &[("Authorization", "Bearer arnk_smoke")], Some(json), Duration::from_secs(5))
     });
     let seen = server.join().unwrap_or_default();
-    let arrived = seen.starts_with("POST /connect/start ") && seen.contains("Bearer oyzd_smoke") && seen.to_ascii_lowercase().contains("content-type: application/json") && seen.ends_with(json);
+    let arrived = seen.starts_with("POST /connect/start ") && seen.contains("Bearer arnk_smoke") && seen.to_ascii_lowercase().contains("content-type: application/json") && seen.ends_with(json);
     match answer {
         Ok(r) => (arrived && r.status == 200 && r.body.contains("\"ok\":true"), format!("request arrived whole: {arrived}; answer {} {}", r.status, r.body)),
         Err(e) => (false, format!("request arrived whole: {arrived}; no answer ({e})")),
@@ -3965,7 +3965,7 @@ const SMOKE_TRACK: &str = "Blinding Lights";
 /// artist, album and length (tools/mac-smoke.sh sends the same).
 const SMOKE_JA_TRACK: (&str, &str, &str, u32) = ("Paper Boats", "The Lanterns", "Harbor Lights", 201);
 /// What CI copies with `pbcopy` during the clipboard step.
-const SMOKE_CLIP: &str = "Oyenza Studio smoke test";
+const SMOKE_CLIP: &str = "Arunika smoke test";
 
 #[derive(Clone, Copy, Debug)]
 enum SmokePhase {

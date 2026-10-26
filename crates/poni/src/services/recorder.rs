@@ -1,4 +1,4 @@
-//! Oyenza Studio Recorder: the separate recorder app built from Cap. The
+//! Arunika Recorder: the separate recorder app built from Cap. The
 //! island only starts it, through the recorder's own link
 //! (`poni_core::recorder`); pausing and stopping stay on the recorder's own
 //! bar. Nothing here runs at rest: [`installed`] is read when the menu opens.

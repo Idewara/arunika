@@ -1,9 +1,9 @@
-//! Steps from the person's phone, as Oyenza sends them.
+//! Steps from the person's phone, as Arunika sends them.
 //!
-//! Poni has no health data of its own: Oyenza on the person's iPhone or
+//! Poni has no health data of its own: Arunika on the person's iPhone or
 //! Android phone reads daily totals from Apple Health or Health Connect and,
-//! once the person turns on Show on Oyenza Studio there, sends the last 7
-//! days to their account, where a signed-in Oyenza Studio reads them
+//! once the person turns on Show on Arunika there, sends the last 7
+//! days to their account, where a signed-in Arunika reads them
 //! (`/island/health`). Only daily totals travel, never samples, places,
 //! sleep, heart rate or weight, and the PC keeps them in memory only.
 
@@ -16,7 +16,7 @@ use serde::{Deserialize, Serialize};
 pub enum HealthSource {
     AppleHealth,
     HealthConnect,
-    /// A health app this version doesn't know (a newer Oyenza): the numbers still show.
+    /// A health app this version doesn't know (a newer Arunika): the numbers still show.
     #[serde(other)]
     Other,
 }
@@ -31,7 +31,7 @@ impl HealthSource {
     }
 }
 
-/// Numbers the phone read longer ago than this are old: Oyenza sends them only
+/// Numbers the phone read longer ago than this are old: Arunika sends them only
 /// while it's open on the phone, so the page asks the person to open it.
 pub const STALE_AFTER_S: i64 = 24 * 3600;
 
@@ -52,10 +52,10 @@ pub struct HealthDay {
     pub active_kcal: Option<u32>,
 }
 
-/// What Oyenza last sent: the step goal and up to the last week of days.
+/// What Arunika last sent: the step goal and up to the last week of days.
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct HealthSnapshot {
-    /// Daily step goal, as set in Oyenza.
+    /// Daily step goal, as set in Arunika.
     pub goal: u32,
     pub source: HealthSource,
     /// When the phone last read the numbers (unix seconds).

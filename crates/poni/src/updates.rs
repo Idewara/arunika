@@ -330,7 +330,7 @@ mod tests {
         let next = format!("{}.99", VERSION);
         let repo = "https://github.com/lucacadalora/oyenza-studio/releases";
         let d = Download {
-            url: format!("{repo}/download/v{next}/Oyenza-Studio-Setup-{next}.exe"),
+            url: format!("{repo}/download/v{next}/Arunika-Setup-{next}.exe"),
             size: setup.len() as u64,
             sha256: poni_core::sha256::hex(&poni_core::sha256::sha256(setup)),
         };
@@ -382,10 +382,10 @@ mod tests {
     fn install_on_next_start_is_remembered_and_old_setups_go() {
         let dir = folder("next");
         let path = remembered(&dir, b"setup bytes");
-        std::fs::write(dir.join("setups/Oyenza-Studio-Setup-0.0.1.exe"), b"old").unwrap();
+        std::fs::write(dir.join("setups/Arunika-Setup-0.0.1.exe"), b"old").unwrap();
         let mut st = AppState::new(Settings::default(), Store::default());
         let mut u = Updater::open(path.clone(), dir.join("setups"), &mut st, 10);
-        assert!(!dir.join("setups/Oyenza-Studio-Setup-0.0.1.exe").exists(), "an older version's Setup goes at start");
+        assert!(!dir.join("setups/Arunika-Setup-0.0.1.exe").exists(), "an older version's Setup goes at start");
         u.install_on_next_start(&mut st);
         assert!(st.update.next_start);
         let (memory, _) = load_json::<Memory>(&path);

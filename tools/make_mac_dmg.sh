@@ -1,6 +1,6 @@
 #!/bin/bash
 # Put the Mac app in a DMG that opens as an installer window: the app on the left, an arrow, a link to
-# Applications on the right, "Drag Oyenza Studio into Applications." above them and Oyen below, with the app's
+# Applications on the right, "Drag Arunika into Applications." above them and the logo below, with the app's
 # icon as the disk's icon. Runs on a Mac (hdiutil, ditto, tiffutil, SetFile from Xcode's command line tools).
 #
 #   tools/make_mac_dmg.sh <app> <out .dmg> <test | signed>

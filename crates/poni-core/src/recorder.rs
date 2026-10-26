@@ -1,4 +1,4 @@
-//! Oyenza Studio Recorder, the screen recorder built from Cap
+//! Arunika Recorder, the screen recorder built from Cap
 //! (lucacadalora/oyen-rekam), ships as its own app. The island starts it
 //! through the recorder's own `oyenza-recorder:` links; this builds them, the
 //! same way on Windows and the Mac.

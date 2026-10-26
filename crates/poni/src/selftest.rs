@@ -213,7 +213,7 @@ const PHONE_URL: &str = "HTTP://192.168.1.20:53530/K7Q2M9XWZ4R8T6YB3NPV5HJC2D/";
 
 /// The pairing link in the screenshots: the contract's test secret, so no
 /// real pair can use it.
-const PAIR_URL: &str = "https://drop.oyenza.com/p#k=AAECAwQFBgcICQoLDA0ODw";
+const PAIR_URL: &str = "https://drop.arunika.app/p#k=AAECAwQFBgcICQoLDA0ODw";
 
 /// Paired phones as the pairing scenes show them (made up).
 fn fake_paired(scene: Scene, unix: i64) -> Vec<PairedPhone> {
@@ -576,7 +576,7 @@ fn fake_stats() -> SysStats {
     }
 }
 
-/// Oyenza, signed in as an example account (all made up): a week of
+/// Arunika, signed in as an example account (all made up): a week of
 /// transactions with today's newest just landed (it glows), and bills due
 /// tomorrow and later.
 fn fake_oyenza(st: &AppState, scene: Scene, now: f64) -> OyenzaState {
@@ -656,7 +656,7 @@ fn fake_oyenza(st: &AppState, scene: Scene, now: f64) -> OyenzaState {
     let link = match scene {
         Scene::OyenzaSignIn | Scene::SettingsSigningIn => OyenzaLink::Connecting {
             code: "KPJX-TMNQ".into(),
-            url: "https://oyenza.app/connect?code=KPJX-TMNQ".into(),
+            url: "https://arunika.app/connect?code=KPJX-TMNQ".into(),
             // Pinned on every step, so the countdown reads 9:41 in the screenshot.
             until: now + 581.0,
         },
@@ -785,25 +785,25 @@ enum Scene {
     ShelfPhoneReceive,
     /// Click the first header tab on the Today page; expect the Music page.
     TabClick,
-    /// The Health page before the person signs in with Oyenza: no numbers yet.
+    /// The Health page before the person signs in with Arunika: no numbers yet.
     HealthSignedOut,
-    /// Oyenza: money arrived, its sum hidden behind Show.
+    /// Arunika: money arrived, its sum hidden behind Show.
     OyenzaMoney,
     /// ...and after Show.
     OyenzaMoneyShown,
-    /// Oyenza: the day before a subscription renews.
+    /// Arunika: the day before a subscription renews.
     OyenzaBill,
-    /// The Oyenza tab while a sign-in code waits for approval.
+    /// The Arunika tab while a sign-in code waits for approval.
     OyenzaSignIn,
-    /// The Oyenza tab right after a spend was saved (Undo showing).
+    /// The Arunika tab right after a spend was saved (Undo showing).
     OyenzaSaved,
-    /// The Health page signed in to Oyenza, no steps from the phone (its switch is off).
+    /// The Health page signed in to Arunika, no steps from the phone (its switch is off).
     HealthSignedIn,
     /// Click the gear in the header on the Health page; expect Settings.
     GearClick,
     /// Settings while a sign-in code waits for approval.
     SettingsSigningIn,
-    /// Settings signed in to Oyenza.
+    /// Settings signed in to Arunika.
     SettingsSignedIn,
     /// System page on a desktop (no battery): Memory and its apps.
     SystemMemory,
@@ -841,11 +841,11 @@ enum Scene {
     PrayerCountdown,
     /// Prayer times: Ashar's time came, the adzan playing.
     PrayerNotice,
-    /// The Oyenza page on yesterday (a dot on Today: something new there).
+    /// The Arunika page on yesterday (a dot on Today: something new there).
     OyenzaYesterday,
-    /// The Oyenza page on tomorrow's bills.
+    /// The Arunika page on tomorrow's bills.
     OyenzaTomorrow,
-    /// Oyenza: a card charge read from the bank's email, its sum hidden.
+    /// Arunika: a card charge read from the bank's email, its sum hidden.
     OyenzaMoneyOut,
     /// Show over games: the readout over a game.
     GameStats,
@@ -871,7 +871,7 @@ enum Scene {
     ScriptReading,
     /// The Health page with steps the phone last sent three days ago.
     HealthStale,
-    /// The same reading with Oyenza Studio Recorder installed: Record shows.
+    /// The same reading with Arunika Recorder installed: Record shows.
     ScriptRecorder,
     /// System page on a desktop, Power: its power supply reports over USB.
     SystemPower,
@@ -907,12 +907,12 @@ fn fake_release() -> poni_core::update::Release {
         *last += 1;
     }
     let version = parts.iter().map(u64::to_string).collect::<Vec<_>>().join(".");
-    let repo = "https://github.com/lucacadalora/oyenza-studio/releases";
+    let repo = "https://github.com/Idewara/arunika/releases";
     poni_core::update::Release {
         date: "2026-10-26".into(),
         headline: "A smoother island, and fixes".into(),
         notes: format!("{repo}/tag/v{version}"),
-        windows: Some(poni_core::update::Download { url: format!("{repo}/download/v{version}/Oyenza-Studio-Setup-{version}.exe"), size: 2_500_000, sha256: "0".repeat(64) }),
+        windows: Some(poni_core::update::Download { url: format!("{repo}/download/v{version}/Arunika-Setup-{version}.exe"), size: 2_500_000, sha256: "0".repeat(64) }),
         mac: None,
         version,
     }
@@ -1142,8 +1142,8 @@ impl Scene {
         }
     }
 
-    /// Scenes that show something from Oyenza (every other one is signed out,
-    /// so their screenshots stay what they were before Oyenza).
+    /// Scenes that show something from Arunika (every other one is signed out,
+    /// so their screenshots stay what they were before Arunika).
     fn oyenza(self) -> bool {
         matches!(
             self,
@@ -1212,7 +1212,7 @@ pub fn fetch_phone_page(url: &str) -> (bool, String) {
         Ok(out)
     };
     match fetch() {
-        Ok(resp) if resp.starts_with("HTTP/1.1 200") && resp.contains("<title>Oyenza Studio") && resp.trim_end().ends_with("</html>") => {
+        Ok(resp) if resp.starts_with("HTTP/1.1 200") && resp.contains("<title>Arunika") && resp.trim_end().ends_with("</html>") => {
             (true, format!("served the page at {addr} ({} bytes)", resp.len()))
         }
         Ok(resp) => (false, format!("unexpected answer from {addr}: {}", resp.lines().next().unwrap_or(""))),
@@ -1480,10 +1480,10 @@ impl SelfTest {
         // PONI_SELFTEST_ANALYZER: "required" (Windows CI) = Windows' own
         // analyzer must work and every line must read, kanji lines included;
         // "off" = read the song the way a PC without Windows' Japanese reading
-        // data does (Oyenza Studio's own dictionary), every line too; "kana" = the
+        // data does (Arunika's own dictionary), every line too; "kana" = the
         // way 0.1.11 and older read it there (kana lines only), for
         // before/after pictures. Without it, Wine has no analyzer, so its
-        // lines come from Oyenza Studio's own dictionary.
+        // lines come from Arunika's own dictionary.
         let analyzer = std::env::var("PONI_SELFTEST_ANALYZER").map(|v| v.trim().to_ascii_lowercase()).unwrap_or_default();
         let texts: Vec<&str> = parsed.lines.iter().map(|l| l.text.trim()).collect();
         let japanese = poni_core::romanize::song_script(&texts) == Some(poni_core::romanize::Script::Japanese);
@@ -2424,7 +2424,7 @@ impl SelfTest {
             let n = f.total();
             drop(f);
             if self.renderer != "software" {
-                self.checks.push(check("frame-count", n > 0, format!("{n} of Oyenza Studio's own frames counted from Windows' frame log")));
+                self.checks.push(check("frame-count", n > 0, format!("{n} of Arunika's own frames counted from Windows' frame log")));
             } else {
                 crate::pinfo!("selftest: frame count saw {n} frames (the software renderer presents none)");
             }
@@ -2511,7 +2511,7 @@ fn seed_tasks(st: &mut AppState) {
     }
 }
 
-/// A week of steps as Oyenza would send it: today just over the goal.
+/// A week of steps as Arunika would send it: today just over the goal.
 fn sample_health(st: &AppState) -> HealthSnapshot {
     sample_week(st, 0)
 }

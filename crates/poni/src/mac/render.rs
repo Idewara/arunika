@@ -135,7 +135,7 @@ enum Scene {
     PrayerNotice,
     /// Bluetooth headphones connected (the headphone pop-up).
     HeadphonesHud,
-    /// Oyenza, signed in as a made-up account: its page (today's and
+    /// Arunika, signed in as a made-up account: its page (today's and
     /// yesterday's transactions, bills due), the sign-in code, a money
     /// notice with the sum held back, and Settings signed in.
     Oyenza,
@@ -205,9 +205,9 @@ const PRAYER_SCENES: [Scene; 4] = [Scene::Prayer, Scene::PrayerPicker, Scene::Pr
 const SETTINGS_SCENES: [Scene; 1] = [Scene::Page(PageKind::Settings)];
 /// The headphone pop-up, after Settings.
 const HEADPHONE_SCENES: [Scene; 1] = [Scene::HeadphonesHud];
-/// Oyenza sign-in, after the headphone pop-up.
+/// Arunika sign-in, after the headphone pop-up.
 const OYENZA_SCENES: [Scene; 4] = [Scene::Oyenza, Scene::OyenzaCode, Scene::OyenzaNotice, Scene::SettingsSignedIn];
-/// The System page's Power module on a Mac without a battery, after Oyenza.
+/// The System page's Power module on a Mac without a battery, after Arunika.
 const POWER_SCENES: [Scene; 1] = [Scene::System(Module::Power)];
 
 impl Scene {
@@ -309,7 +309,7 @@ pub fn run(dir: &str, args: &[String]) -> i32 {
             }
         }
     }
-    // The Japanese song, the Add-ons tab, Prayer times, Settings, the headphone pop-up, Oyenza and Power in every theme, after Pill's.
+    // The Japanese song, the Add-ons tab, Prayer times, Settings, the headphone pop-up, Arunika and Power in every theme, after Pill's.
     let first = SCENES.len() + SYSTEM_SCENES.len() + 2 + PILL_SCENES.len();
     for (k, scene) in JA_SCENES.into_iter().chain(ADDON_SCENES).chain(PRAYER_SCENES).chain(SETTINGS_SCENES).chain(HEADPHONE_SCENES).chain(OYENZA_SCENES).chain(POWER_SCENES).enumerate() {
         let path = out.join(format!("{:02}-{}{suffix}.png", first + k, scene.name()));
@@ -500,9 +500,9 @@ fn base_state(theme: Theme) -> AppState {
     st
 }
 
-/// Oyenza for its scenes, all made up: today's and yesterday's
+/// Arunika for its scenes, all made up: today's and yesterday's
 /// transactions (today's newest just landed, so it glows), bills due
-/// tomorrow and later; or, signing in, the code to type in oyenza.app.
+/// tomorrow and later; or, signing in, the code to type in arunika.app.
 pub(crate) fn fake_oyenza(st: &AppState, connecting: bool) -> OyenzaState {
     let iso = |t: i64| {
         let (y, m, d) = poni_core::datetime::civil_from_days(t.div_euclid(86_400));
@@ -556,7 +556,7 @@ pub(crate) fn fake_oyenza(st: &AppState, connecting: bool) -> OyenzaState {
     seen.note(&before, st.now - 120.0);
     seen.note(&days, st.now - 12.0);
     let link = if connecting {
-        OyenzaLink::Connecting { code: "KPJX-TMNQ".into(), url: "https://oyenza.app/connect?code=KPJX-TMNQ".into(), until: st.now + 581.0 }
+        OyenzaLink::Connecting { code: "KPJX-TMNQ".into(), url: "https://arunika.app/connect?code=KPJX-TMNQ".into(), until: st.now + 581.0 }
     } else {
         OyenzaLink::Connected { account: "a\u{2022}\u{2022}\u{2022}@example.com".into() }
     };

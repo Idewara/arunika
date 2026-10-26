@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<!-- Oyenza Studio.app's Info.plist. tools/make_mac_app.sh fills in @VERSION@ from Cargo.toml. -->
+<!-- Arunika.app's Info.plist. tools/make_mac_app.sh fills in @VERSION@ from Cargo.toml. -->
 <plist version="1.0">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
-	<string>Oyenza Studio</string>
+	<string>Arunika</string>
 	<key>CFBundleName</key>
-	<string>Oyenza Studio</string>
+	<string>Arunika</string>
 	<key>CFBundleExecutable</key>
 	<string>poni</string>
 	<key>CFBundleIconFile</key>
-	<string>OyenzaStudio</string>
+	<string>Arunika</string>
 	<key>CFBundleIdentifier</key>
-	<string>com.oyenza.poni</string>
+	<string>app.arunika.poni</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>
@@ -33,9 +33,9 @@
 	<true/>
 	<key>NSHighResolutionCapable</key>
 	<true/>
-	<!-- Shown when Oyenza Studio first asks Music or Spotify what's playing. -->
+	<!-- Shown when Arunika first asks Music or Spotify what's playing. -->
 	<key>NSAppleEventsUsageDescription</key>
-	<string>Oyenza Studio shows what Music and Spotify are playing, with its lyrics, and its buttons play, pause and skip.</string>
+	<string>Arunika shows what Music and Spotify are playing, with its lyrics, and its buttons play, pause and skip.</string>
 	<!-- Shown when Prayer times first asks where the Mac is (only while it follows the location). -->
 	<key>NSLocationUsageDescription</key>
 	<string>Prayer times uses your location to pick the nearest kab/kota. Your location stays on this Mac.</string>

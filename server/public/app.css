@@ -1,9 +1,9 @@
-/* Oyenza Studio phone page.
+/* Arunika phone page.
    Layout: one column on a warm cream page; the island hangs from the top and
-   grows with what's happening; Oyen stands on every screen (peeking while it
+   grows with what's happening; the mascot stands on every screen (peeking while it
    pairs, sitting on the island once paired, carrying files, napping when the
-   PC is away). Colours and type are Oyenza Studio's own Oyen theme: cream ground,
-   brown ink, Oyen orange, Outfit. */
+   PC is away). Colours and type are Arunika's own Cream theme: cream ground,
+   brown ink, warm orange, Outfit. */
 
 @font-face { font-family: "Outfit"; src: url("/outfit-400.woff2") format("woff2"); font-weight: 400; font-display: swap; }
 @font-face { font-family: "Outfit"; src: url("/outfit-500.woff2") format("woff2"); font-weight: 500; font-display: swap; }
@@ -14,7 +14,7 @@
   /* Ground and ink */
   --cream: #fff7ec; --cream-2: #fff0dc; --cream-3: #ffe6c7; --card: #ffffff;
   --ink: #2b1b10; --ink-2: #5a4232; --muted: #8b7161; --line: #f2e2cd; --line-2: #ead2b4;
-  /* Oyen orange */
+  /* Warm orange */
   --orange: #f0892e; --orange-hi: #f9a85a; --orange-deep: #c9581a; --orange-soft: #ffe9d2;
   /* States */
   --ok: #1d8049; --ok-soft: #e2f5e8; --bad: #bf3a1f; --bad-soft: #fde6df; --wait: #8a5900; --wait-soft: #fff0cc;
@@ -115,7 +115,7 @@ header.center .sub { margin-inline: auto; }
 .card.list { padding: 0; background: none; box-shadow: none; }
 label b { font-weight: 600; font-size: 16px; }
 
-/* Oyen on stage */
+/* The mascot on stage */
 .stage { margin: 4px auto -4px; width: min(300px, 80%); position: relative; }
 .stage .oyen { display: block; width: 100%; height: auto; filter: drop-shadow(0 16px 18px rgba(150, 82, 22, 0.2)); transform-origin: 50% 100%; }
 .oyen[data-pose="sit"] { width: 62%; margin-inline: auto; }
@@ -125,14 +125,14 @@ label b { font-weight: 600; font-size: 16px; }
 .oyen.pop { animation: pop 0.55s var(--spring); }
 .oyen.hop { animation: hop 0.8s var(--spring); }
 
-/* The PC view's hero: the name on the left, Oyen on the right standing on the card. */
+/* The PC view's hero: the name on the left, the mascot on the right standing on the card. */
 .hero { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 6px; margin-bottom: -34px; position: relative; z-index: 2; pointer-events: none; }
 .hero-text { padding-bottom: 42px; pointer-events: auto; min-width: 0; }
 .hero-oyen { width: 108px; height: auto; display: block; margin-right: 8px; filter: drop-shadow(0 12px 12px rgba(150, 82, 22, 0.22)); transform-origin: 50% 100%; }
 .hero-oyen[data-pose="asleep"] { width: 128px; margin-right: -2px; }
 .hero-oyen.carrying { animation: carry 0.75s ease-in-out infinite alternate; }
 .hero + * { margin-top: 0; }
-/* A note right under the hero starts below Oyen (napping Oyen lies on its island, not on the text). */
+/* A note right under the hero starts below the mascot (the napping pose lies on its island, not on the text). */
 .hero + .status { margin-top: 34px; }
 .send-card { padding-top: 22px; }
 
@@ -209,7 +209,7 @@ li.file:first-child { border-top: 0; padding-top: 2px; }
   appearance: none; border: 0; background: none; font: inherit; color: inherit; text-align: left; cursor: pointer; border-radius: 24px;
   -webkit-tap-highlight-color: transparent;
 }
-/* The PC: a tiny screen with Oyenza Studio's island hanging from its top edge. */
+/* The PC: a tiny screen with Arunika's island hanging from its top edge. */
 .pc-icon { width: 58px; height: 48px; display: grid; justify-items: center; align-content: start; gap: 0; }
 .mini-screen {
   width: 56px; height: 36px; border-radius: 9px; background: linear-gradient(180deg, #fff4e6, #ffe2c2); border: 2px solid var(--ink);

@@ -121,7 +121,7 @@ impl PageKind {
             PageKind::Today => "Today",
             PageKind::System => "System",
             PageKind::Script => "Script",
-            PageKind::Oyenza => "Oyenza",
+            PageKind::Oyenza => "Arunika",
             PageKind::Prayer => "Prayer",
             PageKind::Addons => "Add-ons",
             PageKind::Settings => "Settings",

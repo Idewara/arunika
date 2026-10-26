@@ -56,7 +56,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 API = "https://api.github.com"
 # The page's picture, copied next to the page so it never links into main.
-ART = ROOT / "docs/brand/art/oyen-poni-peek.webp"
+ART = ROOT / "docs/brand/arunika-logo-512.png"
 
 # Oyen's look (crates/poni-core/src/look.rs) on a cream card. The bars are a
 # step deeper than Oyen's orange so they keep 3:1 contrast on the cream.
@@ -489,7 +489,7 @@ def page(s: dict, days: list[tuple[date, int]], steps: dict, traffic: list[dict]
     stamp = parse_time(s["checked_at"])
     out = []
     if has_art:
-        out += [f'<p align="center"><img src="art/{ART.name}" width="260" alt="Oyen peeking over a playing island"></p>', ""]
+        out += [f'<p align="center"><img src="art/{ART.name}" width="260" alt="The Arunika logo"></p>', ""]
     out += [f'<h1 align="center">{plural(s["downloads"], "download")}</h1>', ""]
     facts = []
     if s["latest"]:

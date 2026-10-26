@@ -48,19 +48,19 @@ pub enum Icon {
     Sliders,
     Open,
     Phone,
-    /// Oyenza: show a hidden sum.
+    /// Arunika: show a hidden sum.
     Eye,
-    /// Oyenza: money that arrived.
+    /// Arunika: money that arrived.
     MoneyIn,
-    /// Oyenza: money that went out.
+    /// Arunika: money that went out.
     MoneyOut,
-    /// Oyenza: money moved between the person's own wallets.
+    /// Arunika: money moved between the person's own wallets.
     Transfer,
-    /// Oyenza: a credit card bill.
+    /// Arunika: a credit card bill.
     Card,
-    /// Oyenza: the tab.
+    /// Arunika: the tab.
     Wallet,
-    /// Oyenza: signed out.
+    /// Arunika: signed out.
     Unlink,
     /// The header's Settings button.
     Gear,
@@ -80,7 +80,7 @@ pub enum Icon {
     Stop,
     /// A new version: an arrow down into a tray.
     Download,
-    /// Record (Oyenza Studio Recorder): a dot that fits inside `Circle`.
+    /// Record (Arunika Recorder): a dot that fits inside `Circle`.
     Record,
 }
 

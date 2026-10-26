@@ -1,4 +1,4 @@
-//! Oyenza Studio Recorder on the Mac: the separate recorder app built from
+//! Arunika Recorder on the Mac: the separate recorder app built from
 //! Cap, started through its own link (`poni_core::recorder`). Pausing and
 //! stopping stay on the recorder's own bar. Nothing here runs at rest.
 

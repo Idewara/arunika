@@ -1,9 +1,7 @@
-"""Draw Oyenza Studio's brand files: the app icon, the installer pictures and the logo used in the docs.
+"""Draw Arunika's brand files: the app icon, the installer pictures and the logo used in the docs.
 
-Oyenza Studio belongs to the Oyen family. Oyen is the orange cat of the Oyenza logo; docs/brand/oyen-mark*.svg are
-that logo, copied unchanged from the brand kit. The logo is an orange tile with Poni's island hanging from its top
-edge, playing music (album cover and equalizer, as on the real island), and the white Oyen below it. The plush Oyen
-pictures in docs/brand/art are the source for the installer's welcome picture.
+The logo is a sunrise-orange tile with Arunika's island hanging from its top edge, playing music (album cover and
+equalizer, as on the real island), and a white rising sun below it — arunika is the morning sunlight.
 
 Run: python3 tools/make_brand.py  (needs Pillow)
 
@@ -12,8 +10,8 @@ Writes:
   installer/art/wizard-small-*.png   Inno Setup header logo (WizardSmallImageFile)
   installer/art/wizard-*.png         Inno Setup welcome and finish picture (WizardImageFile)
   installer/art/nsis-*.bmp           the same two for installer/poni.nsi
-  docs/brand/oyen-poni-logo.svg      the logo as a vector
-  docs/brand/oyen-poni-logo-512.png
+  docs/brand/arunika-logo.svg        the logo as a vector
+  docs/brand/arunika-logo-512.png
 """
 import re
 import sys
@@ -40,13 +38,8 @@ TILE_R = 0.2245
 ISL_W, ISL_H, ISL_R, ISL_FLARE = 0.655, 0.209, 0.075, 0.041
 EQ_BARS = (0.45, 0.85, 0.6, 1.0)
 EQ_W, EQ_GAP = 0.022, 0.016
-OYEN_W, OYEN_CY = 0.51, 0.667  # white Oyen's width and centre, below the island
-MARK_W, MARK_CY = 104.0, -11.04  # the mark's own width and vertical centre, in its units
-
-
-def mark_paths(name: str) -> list[str]:
-    svg = (BRAND / name).read_text()
-    return re.findall(r'<path d="([^"]+)"', svg)
+SUN_R, SUN_CY = 0.15, 0.60  # rising sun: radius and centre height, below the island
+RAY_W, RAY_H, RAY_GAP = 0.46, 0.030, 0.085  # horizon ray under the sun: width, thickness, gap
 
 
 def flatten(d: str, steps: int = 16) -> list[list[tuple[float, float]]]:
@@ -75,16 +68,6 @@ def flatten(d: str, steps: int = 16) -> list[list[tuple[float, float]]]:
         else:
             raise ValueError(f"unexpected path token {t!r}")
     return polys
-
-
-def evenodd(size: tuple[int, int], polys: list[list[tuple[float, float]]]) -> Image.Image:
-    """A mask filled with the even-odd rule, the way the white mark's fold and eyes cut through its head."""
-    mask = Image.new("1", size, 0)
-    for poly in polys:
-        layer = Image.new("1", size, 0)
-        ImageDraw.Draw(layer).polygon(poly, fill=1)
-        mask = ImageChops.logical_xor(mask, layer)
-    return mask.convert("L")
 
 
 def island_points(cx: float, y0: float, w: float, h: float, r: float, f: float) -> str:
@@ -153,11 +136,14 @@ def draw_logo(size: int, ss: int = 8) -> Image.Image:
             bx = L["eq_x"] + i * (L["bw"] + L["gap"])
             draw.rounded_rectangle([bx, cy - bh / 2, bx + L["bw"], cy + bh / 2], radius=L["bw"] / 2, fill=EQ)
 
-    # White Oyen: the brand kit's white mark, its fold and eyes cut out of the head.
-    k = OYEN_W * t / MARK_W
-    ox, oy = s / 2, inset + OYEN_CY * t - MARK_CY * k
-    polys = [[(ox + px * k, oy + py * k) for px, py in poly] for d in mark_paths("oyen-mark-white.svg") for poly in flatten(d)]
-    img.paste("white", (0, 0), evenodd((s, s), polys))
+    # White rising sun: a disc with a horizon ray under it.
+    draw = ImageDraw.Draw(img)
+    sr = SUN_R * t
+    sx, sy = s / 2, inset + SUN_CY * t
+    draw.ellipse([sx - sr, sy - sr, sx + sr, sy + sr], fill="white")
+    rw, rh = RAY_W * t, RAY_H * t
+    ry = sy + sr + RAY_GAP * t
+    draw.rounded_rectangle([sx - rw / 2, ry, sx + rw / 2, ry + rh], radius=rh / 2, fill="white")
     return img.resize((size, size), Image.LANCZOS)
 
 
@@ -166,17 +152,20 @@ def logo_svg() -> str:
     L = layout(s)
     inset, t = L["inset"], L["t"]
     a, x, y = L["art"], L["art_x"], L["art_y"]
-    k = OYEN_W * t / MARK_W
     stops = "".join(f'<stop offset="{u:g}" stop-color="{c}"/>' for u, c in COVER)
     bars = "".join(
         f'<rect x="{L["eq_x"] + i * (L["bw"] + L["gap"]):.1f}" y="{y + a / 2 - a * 0.45 * h:.1f}" width="{L["bw"]:.1f}" '
         f'height="{a * 0.9 * h:.1f}" rx="{L["bw"] / 2:.1f}" fill="{EQ}"/>'
         for i, h in enumerate(EQ_BARS)
     )
-    white = mark_paths("oyen-mark-white.svg")[0]
+    white_sun = (
+        f'<circle cx="{s / 2:.1f}" cy="{inset + SUN_CY * t:.1f}" r="{SUN_R * t:.1f}" fill="#fff"/>'
+        f'<rect x="{s / 2 - RAY_W * t / 2:.1f}" y="{inset + SUN_CY * t + SUN_R * t + RAY_GAP * t:.1f}" '
+        f'width="{RAY_W * t:.1f}" height="{RAY_H * t:.1f}" rx="{RAY_H * t / 2:.1f}" fill="#fff"/>'
+    )
     r = 0.15 * a
     return (
-        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {s:g} {s:g}"><title>Oyenza Studio</title>'
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {s:g} {s:g}"><title>Arunika</title>'
         f'<defs><clipPath id="tile"><rect x="{inset:.1f}" y="{inset:.1f}" width="{t:.1f}" height="{t:.1f}" rx="{TILE_R * t:.1f}"/></clipPath>'
         f'<linearGradient id="cover" x1="0" y1="0" x2="0" y2="1">{stops}</linearGradient></defs>'
         f'<g clip-path="url(#tile)"><rect x="0" y="0" width="{s:g}" height="{s:g}" fill="{ORANGE}"/>'
@@ -185,23 +174,17 @@ def logo_svg() -> str:
         f'<path d="M{x + 0.66 * a - r:.1f} {y + 0.5 * a:.1f}a{r:.1f} {r:.1f} 0 0 1 {2 * r:.1f} 0Z" fill="{SUN}"/>'
         f'<path d="M{x + 0.24 * a:.1f} {y + 0.8 * a:.1f}L{x + 0.34 * a:.1f} {y + 0.56 * a:.1f}L{x + 0.42 * a:.1f} {y + 0.8 * a:.1f}Z" fill="#fff"/>'
         f"{bars}"
-        f'<g transform="translate({s / 2:.1f} {inset + OYEN_CY * t - MARK_CY * k:.1f}) scale({k:.4f})"><path d="{white}" fill="#fff" fill-rule="evenodd"/></g>'
+        f"{white_sun}"
         "</svg>\n"
     )
 
 
-def trimmed(path: Path) -> Image.Image:
-    im = Image.open(path).convert("RGBA")
-    return im.crop(im.getchannel("A").point(lambda v: 255 if v > 32 else 0).getbbox())
-
-
-def wizard_image(w: int, h: int, oyen: Image.Image) -> Image.Image:
-    """Welcome/finish picture: Oyen on the island, playing music, on a warm cream field."""
+def wizard_image(w: int, h: int) -> Image.Image:
+    """Welcome/finish picture: the Arunika logo on a warm cream field."""
     img = gradient(w, h, [(0.0, "#FFF6EC"), (1.0, "#FFE3C4")]).convert("RGBA")
-    ow = round(w * 0.88)
-    oh = round(oyen.height * ow / oyen.width)
-    art = oyen.resize((ow, oh), Image.LANCZOS)
-    img.alpha_composite(art, ((w - ow) // 2, round(h * 0.47 - oh / 2)))
+    side = round(min(w * 0.88, h * 0.55))
+    art = draw_logo(side)
+    img.alpha_composite(art, ((w - side) // 2, round(h * 0.47 - side / 2)))
     return img
 
 
@@ -213,23 +196,22 @@ def main() -> int:
     if stale.exists():
         stale.unlink()
 
-    BRAND.joinpath("oyen-poni-logo.svg").write_text(logo_svg())
-    draw_logo(512).save(BRAND / "oyen-poni-logo-512.png", optimize=True)
+    BRAND.joinpath("arunika-logo.svg").write_text(logo_svg())
+    draw_logo(512).save(BRAND / "arunika-logo-512.png", optimize=True)
 
     ART.mkdir(exist_ok=True)
     for n in WIZARD_SMALL_SIZES:
         draw_logo(n).save(ART / f"wizard-small-{n}.png", optimize=True)
-    oyen = trimmed(BRAND / "art" / "oyen-poni-sit.webp")
     for w, h in WIZARD_SIZES:
-        wizard_image(w, h, oyen).convert("RGB").save(ART / f"wizard-{w}x{h}.png", optimize=True)
+        wizard_image(w, h).convert("RGB").save(ART / f"wizard-{w}x{h}.png", optimize=True)
 
     # NSIS (MUI2) only takes 24-bit BMPs: 164x314 welcome/finish picture, 150x57 header.
-    wizard_image(164, 314, oyen).convert("RGB").save(ART / "nsis-welcome.bmp")
+    wizard_image(164, 314).convert("RGB").save(ART / "nsis-welcome.bmp")
     header = Image.new("RGBA", (150, 57), "white")
     header.alpha_composite(draw_logo(48), (150 - 48 - 6, (57 - 48) // 2))
     header.convert("RGB").save(ART / "nsis-header.bmp")
 
-    for p in sorted([RES / "poni.ico", BRAND / "oyen-poni-logo.svg", BRAND / "oyen-poni-logo-512.png", *ART.iterdir()]):
+    for p in sorted([RES / "poni.ico", BRAND / "arunika-logo.svg", BRAND / "arunika-logo-512.png", *ART.iterdir()]):
         print(f"{p.relative_to(ROOT)}  {p.stat().st_size} bytes")
     return 0
 

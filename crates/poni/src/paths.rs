@@ -53,17 +53,15 @@ pub fn apple_music_web_token_path() -> PathBuf {
     cache_dir().join("apple-music-web.json")
 }
 
-/// Where files sent from a phone land: `Downloads\Oyenza Studio` (wherever the
-/// user moved Downloads to), or `Downloads\Oyen Poni` where an install from
-/// before the rename made it: Shelf items link to the files in it. Under
+/// Where files sent from a phone land: `Downloads\Arunika` (wherever the
+/// user moved Downloads to). Shelf items link to the files in it. Under
 /// `PONI_HOME` for the self-test.
 pub fn phone_inbox_dir() -> PathBuf {
     if let Some(h) = home_override() {
         return h.join("phone-drop");
     }
     let downloads = downloads_dir().unwrap_or_else(|| env_dir("USERPROFILE").join("Downloads"));
-    let before_rename = downloads.join("Oyen Poni");
-    if before_rename.is_dir() { before_rename } else { downloads.join("Oyenza Studio") }
+    downloads.join("Arunika")
 }
 
 fn downloads_dir() -> Option<PathBuf> {

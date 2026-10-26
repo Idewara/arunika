@@ -1,5 +1,5 @@
 //! Phone drop on the Mac: picks the Mac's Wi-Fi or wired address, makes the
-//! session secret and the inbox folder (`~/Downloads/Oyenza Studio`), and runs
+//! session secret and the inbox folder (`~/Downloads/Arunika`), and runs
 //! `poni_core::phonedrop`'s web server while the Shelf's phone panel is open
 //! (the same server the Windows app runs; only this glue differs).
 
@@ -90,7 +90,7 @@ extern "C" {
 }
 
 /// The Mac's name in System Settings > General > About (also what
-/// oyenza.app lists it as, `services::oyenza`).
+/// arunika.app lists it as, `services::oyenza`).
 pub(crate) fn computer_name() -> Option<String> {
     let raw = unsafe { SCDynamicStoreCopyComputerName(std::ptr::null(), std::ptr::null_mut()) };
     std::ptr::NonNull::new(raw as *mut CFString).map(|p| unsafe { CFRetained::from_raw(p) }.to_string()).filter(|n| !n.trim().is_empty())

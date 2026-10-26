@@ -1,19 +1,19 @@
-<p align="center"><img src="docs/brand/oyen-poni-logo.svg" width="96" alt="Oyenza Studio logo: an orange tile with the black island at the top playing music, and a white Oyen below"></p>
+<p align="center"><img src="docs/brand/arunika-logo.svg" width="96" alt="Arunika logo"></p>
 
-<h1 align="center">Oyenza Studio</h1>
+<h1 align="center">Arunika</h1>
 
 <h3 align="center">A living notch for Windows and Mac</h3>
 
 <p align="center">Like the Dynamic Island on a phone, for your computer. A small island hangs from the top of your screen, shows what's playing, counting down and arriving, and opens into quick pages when you point at it.</p>
 
 <p align="center">
-  <a href="https://github.com/lucacadalora/oyenza-studio/releases/latest/download/Oyenza-Studio-Setup.exe"><img src="https://img.shields.io/badge/Download_for_Windows-0078D4?style=for-the-badge&logo=data:image/svg%2Bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmZiI%2BPHBhdGggZD0iTTIgMmg5LjJ2OS4ySDJ6bTEwLjggMEgyMnY5LjJoLTkuMnpNMiAxMi44aDkuMlYyMkgyem0xMC44IDBIMjJWMjJoLTkuMnoiLz48L3N2Zz4=" height="34" alt="Download for Windows"></a>
+  <a href="https://github.com/Idewara/arunika/releases/latest/download/Arunika-Setup.exe"><img src="https://img.shields.io/badge/Download_for_Windows-0078D4?style=for-the-badge&logo=data:image/svg%2Bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iI2ZmZiI%2BPHBhdGggZD0iTTIgMmg5LjJ2OS4ySDJ6bTEwLjggMEgyMnY5LjJoLTkuMnpNMiAxMi44aDkuMlYyMkgyem0xMC44IDBIMjJWMjJoLTkuMnoiLz48L3N2Zz4=" height="34" alt="Download for Windows"></a>
   &nbsp;
-  <a href="https://github.com/lucacadalora/oyenza-studio/releases/latest/download/Oyenza-Studio-Mac.dmg"><img src="https://img.shields.io/badge/Download_for_Mac-333333?style=for-the-badge&logo=apple&logoColor=white" height="34" alt="Download for Mac"></a>
+  <a href="https://github.com/Idewara/arunika/releases/latest/download/Arunika-Mac.dmg"><img src="https://img.shields.io/badge/Download_for_Mac-333333?style=for-the-badge&logo=apple&logoColor=white" height="34" alt="Download for Mac"></a>
 </p>
 
 <p align="center">
-  <a href="https://studio.oyenza.com/"><b>Website</b></a>
+  <a href="https://arunika.app/"><b>Website</b></a>
   &nbsp;·&nbsp;
   <a href="#features">Features</a>
   &nbsp;·&nbsp;
@@ -25,17 +25,13 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/lucacadalora/oyenza-studio/releases/latest"><img src="https://img.shields.io/github/v/release/lucacadalora/oyenza-studio?label=latest&color=F0892E" height="20" alt="Latest release"></a>
-  <a href="https://github.com/lucacadalora/oyenza-studio/blob/metrics/README.md"><img src="https://raw.githubusercontent.com/lucacadalora/oyenza-studio/metrics/badge.svg" height="20" alt="Downloads so far"></a>
+  <a href="https://github.com/Idewara/arunika/releases/latest"><img src="https://img.shields.io/github/v/release/Idewara/arunika?label=latest&color=F0892E" height="20" alt="Latest release"></a>
+  <a href="https://github.com/Idewara/arunika/blob/metrics/README.md"><img src="https://raw.githubusercontent.com/Idewara/arunika/metrics/badge.svg" height="20" alt="Downloads so far"></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-555555" height="20" alt="MIT license"></a>
   <img src="https://img.shields.io/badge/built_with-Rust-555555?logo=rust" height="20" alt="Built with Rust">
 </p>
 
-<p align="center"><img src="docs/brand/readme/hero.webp" width="880" alt="The island hanging from the top of the screen, open on the Music page with lyrics in time, and Oyen the cat peeking over a playing island"></p>
-
 <p align="center"><sub>Free and open source &nbsp;·&nbsp; Windows 10 and 11 &nbsp;·&nbsp; macOS 14 or later &nbsp;·&nbsp; No account needed</sub></p>
-
-<p align="center"><sub>Called Oyen Poni until 0.2.0. Same app with a new name: updating keeps your settings and data.</sub></p>
 
 ## Features
 
@@ -43,21 +39,15 @@
 
 Controls for whatever is playing: Spotify, Apple Music, YouTube in your browser, or any app in Windows' media controls. The lyrics scroll in time with the song, and Korean, Japanese and Chinese lines get their reading underneath, the way Apple Music shows pronunciation. The line being sung also shows on the closed island, in every theme, with its reading in Latin letters under it, so you can sing along without opening it. Drag the bar to jump anywhere in a song.
 
-<p align="center"><img src="docs/brand/readme/music.webp" width="880" alt="The open island on the Music page: the song, its controls and a Korean lyric line with its reading underneath"></p>
-
 Lyrics come free from [LRCLIB](https://lrclib.net), or from Apple Music itself with [your Apple Music token](#apple-music-lyrics).
 
 ### What's happening, at a glance
 
 While it rests, the island is a small black pill that tells you what's going on, then gets out of the way: album art, the line being sung and a beat while music plays, your focus timer, volume and charging, headphones connecting with their battery, money coming in, your daily step goal, the next prayer.
 
-<p align="center"><img src="docs/brand/readme/glance.webp" width="880" alt="Six resting islands: music playing, a focus timer, volume, headphones connected, money in, and minutes to the next prayer"></p>
-
 ### From your phone to your PC, no app needed
 
 Open the Shelf, scan the code with your phone's camera, pick photos or files and tap **Send**. The island asks first, then they land on the Shelf. It works with iPhones and Android phones over your own Wi-Fi, and a phone you pair once can send from any network.
-
-<p align="center"><img src="docs/brand/readme/phone.webp" width="880" alt="The Shelf with three files, and a request from an iPhone to send three more, with Decline and Accept"></p>
 
 [How Phone drop works](#phone-drop) &nbsp;·&nbsp; [Paired phones](#paired-phones-send-from-any-network)
 
@@ -65,53 +55,39 @@ Open the Shelf, scan the code with your phone's camera, pick photos or files and
 
 **New in 0.1.18.** Switch on **Show over games** and, while a borderless full-screen game is in front, the island becomes a small readout: frames per second, the GPU's load and temperature and the CPU's load. It reads Windows' own log of each frame, the way PresentMon and Xbox Game Bar count them, so nothing is loaded into the game.
 
-<p align="center"><img src="docs/brand/readme/games.webp" width="880" alt="The readout over a game: 144 fps, GPU 97 % at 71 degrees, CPU 38 %; below it the System page's Games view with the frame rate chart"></p>
-
 [More on Show over games](#show-over-games)
 
 ### Your whole computer on one page
 
 CPU, GPU, memory, drives, network and battery: rings and gauges, each core's load, the last minute of history and the apps using the most. Read straight from Windows' own counters, with no drivers and no admin rights, and it never leaves your PC. On a Mac it reads macOS's own counters, the way Stats does.
 
-On a desktop, **Power** shows what the whole PC draws: split into the CPU, the graphics card and the rest. A Corsair HXi or RMi, or an MSI MEG Ai or MPG Ai…TS power supply reports the real number over its USB cable, with what it pulls from the wall, its efficiency and its temperature; Oyenza Studio only reads it, while the page is open. With any other power supply, the page estimates: the CPU's own reading, the graphics card's (NVIDIA cards report theirs through the driver), and about 40 W for the board, memory, drives and fans. On a Mac without a battery (a Mac mini, Studio, iMac or Mac Pro with Apple silicon), Power reads what the whole Mac draws from its own sensor, the number Stats shows as System total; macOS doesn't split it by part, so the CPU's and the graphics' load stand beside it. A MacBook keeps its Battery module.
-
-<p align="center"><img src="docs/brand/readme/system.webp" width="880" alt="The System page: CPU temperature, load and clock rings, usage history, each core's load and the top processes"></p>
+On a desktop, **Power** shows what the whole PC draws: split into the CPU, the graphics card and the rest. A Corsair HXi or RMi, or an MSI MEG Ai or MPG Ai…TS power supply reports the real number over its USB cable, with what it pulls from the wall, its efficiency and its temperature; Arunika only reads it, while the page is open. With any other power supply, the page estimates: the CPU's own reading, the graphics card's (NVIDIA cards report theirs through the driver), and about 40 W for the board, memory, drives and fans. On a Mac without a battery (a Mac mini, Studio, iMac or Mac Pro with Apple silicon), Power reads what the whole Mac draws from its own sensor, the number Stats shows as System total; macOS doesn't split it by part, so the CPU's and the graphics' load stand beside it. A MacBook keeps its Battery module.
 
 ### The small things, one hover away
 
 **Focus** is a Pomodoro timer that keeps counting in the island. **Tasks** is a tiny to-do list. **Clipboard** keeps your recent copied text in memory only and skips anything a password manager marks private. **Today** has the date, the month and your PC's vitals. **Shelf** keeps the files you drop on the island. Scroll over the top of the island to switch pages.
 
-<p align="center"><img src="docs/brand/readme/pages.webp" width="880" alt="Four open pages: the Focus timer, Tasks, Clipboard history and Today"></p>
+### Black, Cream, Glass or Pill
 
-### Black, Oyen, Glass or Pill
+The island is black by default, like the one on a phone. **Cream** turns it warm cream, with dark brown text and a soft orange on the controls. **Glass** bends and frosts whatever is behind it, after Apple's Liquid Glass; on a Mac it's macOS's own glass. **Pill**, new in 0.1.21, changes the shape: the island floats just below the top of the screen as a black capsule, with the time and battery at rest, the song and the line being sung while music plays, and a rounded card when it opens.
 
-The island is black by default, like the one on a phone. **Oyen** turns it warm cream, and Oyen the cat moves in: he peeks over the edge, follows your pointer and sleeps from midnight to five. **Glass** bends and frosts whatever is behind it, after Apple's Liquid Glass; on a Mac it's macOS's own glass. **Pill**, new in 0.1.21, changes the shape: the island floats just below the top of the screen as a black capsule, with the time and battery at rest, the song and the line being sung while music plays, and a rounded card when it opens.
-
-<p align="center"><img src="docs/brand/readme/themes.webp" width="880" alt="The Music page in Classic, in the Oyen theme, in the Glass theme over a light and a dark page, and in the Pill theme as a card floating below the top edge, beside Pill's capsule while music plays"></p>
-
-[The Oyen theme](#the-oyen-theme) &nbsp;·&nbsp; [The Glass theme](#the-glass-theme) &nbsp;·&nbsp; [The Pill theme](#the-pill-theme)
+[The Cream theme](#the-cream-theme) &nbsp;·&nbsp; [The Glass theme](#the-glass-theme) &nbsp;·&nbsp; [The Pill theme](#the-pill-theme)
 
 ### Your money, as it moves
 
-If you keep your money in [Oyenza](https://oyenza.app), sign in (optional) and the island tells you when money comes in or goes out, reminds you the day before a bill is due, and lists your week by day. Sums stay hidden until you click **Show**, so a shared screen shows only that much. Turn on **Show on Oyenza Studio** under your steps in Oyenza's Health (Sehat) on your phone, and the **Health** page shows your daily steps too, with a notice when you reach your goal. On Windows.
+If you keep your money in [Arunika](https://arunika.app), sign in (optional) and the island tells you when money comes in or goes out, reminds you the day before a bill is due, and lists your week by day. Sums stay hidden until you click **Show**, so a shared screen shows only that much. Turn on **Show on Arunika** under your steps in Arunika's Health (Sehat) on your phone, and the **Health** page shows your daily steps too, with a notice when you reach your goal. On Windows.
 
-<p align="center"><img src="docs/brand/readme/oyenza.webp" width="880" alt="A Money in notice from BCA with the amount hidden, and the Oyenza tab listing today's transactions with hidden sums"></p>
-
-[How signing in works](#oyenza-optional)
+[How signing in works](#arunika-optional)
 
 ### Prayer times for your city
 
 Today's times for your kab/kota as Kemenag RI publishes them, a countdown in the ten minutes before each prayer, the adzan recorded at Masjidil Haram, and the qibla. It's an add-on: 1.9 MB, downloaded only when you switch it on. On Windows and Mac.
 
-<p align="center"><img src="docs/brand/readme/prayer.webp" width="880" alt="Eight minutes to Ashar on the resting island, and the Prayer tab with today's times for Kota Jakarta"></p>
-
 [Add-ons](#add-ons)
 
 ### On a Mac, it wraps the notch
 
-On a MacBook, the island lives around the camera notch: the album art on one side, the beat on the other, and it opens downward when you point at it. Music and Spotify with lyrics, the focus timer, the Shelf and Phone drop, tasks, the clipboard, Today and the System page are all there, in the Classic, Oyen, Glass or Pill theme.
-
-<p align="center"><img src="docs/brand/readme/mac.webp" width="880" alt="On a MacBook: music playing and a focus timer either side of the notch, and the Music page opening below it"></p>
+On a MacBook, the island lives around the camera notch: the album art on one side, the beat on the other, and it opens downward when you point at it. Music and Spotify with lyrics, the focus timer, the Shelf and Phone drop, tasks, the clipboard, Today and the System page are all there, in the Classic, Cream, Glass or Pill theme.
 
 [What's on the Mac so far](#on-a-mac)
 
@@ -133,15 +109,13 @@ On Windows it draws on your graphics card in step with your display's refresh ra
 - **No account, no tracking.** Tasks, the Shelf and focus history are files in your own user folder. There are no ads and no analytics.
 - **Clipboard in memory.** Copied text is never written to disk, and anything a password manager marks private is skipped.
 - **Your files stay yours.** Phone drop asks before it takes anything and uses your own Wi-Fi. Files from paired phones are encrypted with keys made on the two devices, and the meeting server never sees them.
-- **Little goes online.** Lyrics lookups go to LRCLIB while a song plays, and twice a day the app reads one small file to see whether a new version is out. Apple Music lyrics, Oyenza, paired phones and add-ons connect only after you turn them on. [PRIVACY.md](PRIVACY.md) lists every request.
+- **Little goes online.** Lyrics lookups go to LRCLIB while a song plays, and twice a day the app reads one small file to see whether a new version is out. Apple Music lyrics, Arunika, paired phones and add-ons connect only after you turn them on. [PRIVACY.md](PRIVACY.md) lists every request.
 
 ## Install
 
-<img src="docs/brand/art/oyen-poni-peek.webp" width="260" align="right" alt="Oyen peeking over the island while it plays music">
-
 ### Windows
 
-**[Download Oyenza-Studio-Setup.exe](https://github.com/lucacadalora/oyenza-studio/releases/latest/download/Oyenza-Studio-Setup.exe)** and run it. It installs just for you and needs no admin rights. Older versions and a portable zip are on the [Releases](https://github.com/lucacadalora/oyenza-studio/releases) page.
+**[Download Arunika-Setup.exe](https://github.com/Idewara/arunika/releases/latest/download/Arunika-Setup.exe)** and run it. It installs just for you and needs no admin rights. Older versions and a portable zip are on the [Releases](https://github.com/Idewara/arunika/releases) page.
 
 Builds aren't code-signed yet, so Windows SmartScreen may say "Windows protected your PC". Click **More info → Run anyway**.
 
@@ -149,7 +123,7 @@ Your data lives in `%APPDATA%\Poni\`, and cache plus log in `%LOCALAPPDATA%\Poni
 
 ### Mac
 
-macOS 14 or later, Apple silicon or Intel (one app for both): **[download Oyenza-Studio-Mac.dmg](https://github.com/lucacadalora/oyenza-studio/releases/latest/download/Oyenza-Studio-Mac.dmg)**, open it and drag Oyenza Studio into Applications (had Oyen Poni? Quit it first; Oyenza Studio moves the old app to the Trash). It isn't signed with an Apple Developer ID yet, so the first time macOS warns you, click **Done**, then open **System Settings → Privacy & Security** and click **Open Anyway**. What's on the Mac so far: [On a Mac](#on-a-mac). Your data lives in `~/Library/Application Support/Poni/`, the log in `~/Library/Logs/Poni/`.
+macOS 14 or later, Apple silicon or Intel (one app for both): **[download Arunika-Mac.dmg](https://github.com/Idewara/arunika/releases/latest/download/Arunika-Mac.dmg)**, open it and drag Arunika into Applications. It isn't signed with an Apple Developer ID yet, so the first time macOS warns you, click **Done**, then open **System Settings → Privacy & Security** and click **Open Anyway**. What's on the Mac so far: [On a Mac](#on-a-mac). Your data lives in `~/Library/Application Support/Poni/`, the log in `~/Library/Logs/Poni/`.
 
 ## FAQ
 
@@ -157,7 +131,7 @@ macOS 14 or later, Apple silicon or Intel (one app for both): **[download Oyenza
 <summary><b>Is it free?</b></summary>
 <br>
 
-Yes. Oyenza Studio is free to download and use, and its code is open source under the [MIT license](LICENSE). Oyenza sign-in is optional.
+Yes. Arunika is free to download and use, and its code is open source under the [MIT license](LICENSE). Arunika sign-in is optional.
 
 </details>
 
@@ -189,7 +163,7 @@ Yes, on Windows 10 and 11. Glass needs Windows 10 version 2004 or later to bend 
 <summary><b>What's different on a Mac?</b></summary>
 <br>
 
-The island wraps the notch, and the Mac has music with lyrics, Focus, the Shelf with Phone drop, Tasks, Clipboard, Today, the System page, Prayer times, the Classic, Oyen, Glass and Pill themes, headphone pop-ups, hiding in full-screen apps, Oyenza sign-in and start at login. Not on the Mac yet: paired phones and Show over games. [On a Mac](#on-a-mac) has the details.
+The island wraps the notch, and the Mac has music with lyrics, Focus, the Shelf with Phone drop, Tasks, Clipboard, Today, the System page, Prayer times, the Classic, Cream, Glass and Pill themes, headphone pop-ups, hiding in full-screen apps, Arunika sign-in and start at login. Not on the Mac yet: paired phones and Show over games. [On a Mac](#on-a-mac) has the details.
 
 </details>
 
@@ -197,7 +171,7 @@ The island wraps the notch, and the Mac has music with lyrics, Focus, the Shelf 
 <summary><b>Can it hide during games and videos?</b></summary>
 <br>
 
-Yes: right-click the island › **In full-screen apps** › **Hide**. Pick **Stay on top** instead to keep it over borderless games and videos, or turn on [Show over games](#show-over-games) for a frame rate readout. On a Mac the same choice is in the menu bar under Oyen's mark (and in Settings): with **Hide**, macOS keeps the island off a full-screen app's Space until you leave it.
+Yes: right-click the island › **In full-screen apps** › **Hide**. Pick **Stay on top** instead to keep it over borderless games and videos, or turn on [Show over games](#show-over-games) for a frame rate readout. On a Mac the same choice is in the menu bar under the Arunika mark (and in Settings): with **Hide**, macOS keeps the island off a full-screen app's Space until you leave it.
 
 </details>
 
@@ -223,29 +197,29 @@ The details behind each feature.
 
 ### Settings and options
 
-The gear at the top right of the open island opens **Settings**: your Oyenza account first, then the theme, the idle look and the switches below. Right-click the island or the tray icon for every option:
-- the theme: Classic, Oyen, Glass or Pill
-- the idle look: clock, eyes (Oyen in his theme), minimal, hidden until you hover, or a status bar (in Pill; the other themes show the clock)
+The gear at the top right of the open island opens **Settings**: your Arunika account first, then the theme, the idle look and the switches below. Right-click the island or the tray icon for every option:
+- the theme: Classic, Cream, Glass or Pill
+- the idle look: clock, eyes, minimal, hidden until you hover, or a status bar (in Pill; the other themes show the clock)
 - lyrics (and the pronunciation line under Japanese, Korean and Chinese lyrics), clipboard history and sounds
 - in full-screen apps: hide, or stay on top of borderless games and videos (a game in exclusive full-screen mode still covers it), and show FPS, GPU and CPU over games
-- start with Windows, which version you have (**About Oyenza Studio**, with the build's day; it opens that version's release notes), and quit
+- start with Windows, which version you have (**About Arunika**, with the build's day; it opens that version's release notes), and quit
 - in Settings only: **Tell me about new versions** ([New versions](#new-versions))
 
-On a Mac, every option is in the menu bar, under Oyen's mark.
+On a Mac, every option is in the menu bar, under the Arunika mark.
 
-### The Oyen theme
+### The Cream theme
 
-The island stays black by default. Switch on the Oyen theme (the gear › **Theme › Oyen**, or right-click › **Theme › Oyen**) and the whole island becomes Oyen's: warm cream with dark brown text, his orange on the play button, the bars and the switches, and Outfit, the Oyenza Studio typeface. Oyen, the Oyenza cat, moves in too: he peeks over the island's edge while it rests, watches your pointer when it comes near, sits beside the clock, peeks up beside the pin when the island is open and bobs along while music plays. He sleeps from midnight to five. Where the island wraps a MacBook's notch, the theme goes black like the notch itself, with Oyen's cream type, his orange and his face on it. He is drawn from the Oyenza logo, not a picture, so he stays sharp at any scaling, and he only moves for a moment now and then, so he costs no CPU at rest.
+The island stays black by default. Switch on the Cream theme (the gear › **Theme › Cream**, or right-click › **Theme › Cream**) and the whole island turns warm cream, with dark brown text, a soft orange on the play button, the bars and the switches, and Outfit, the Arunika typeface. Where the island wraps a MacBook's notch, the theme goes black like the notch itself, with cream type and orange accents.
 
-![Classic and the Oyen theme side by side: resting, with the clock, and playing music](docs/screenshots/oyen-theme.png)
+![Classic and the Cream theme side by side: resting, with the clock, and playing music](docs/screenshots/oyen-theme.png)
 
 ### The Glass theme
 
 Glass turns the island into liquid glass, after Apple's Liquid Glass. Its rim bends and magnifies what's under it, the middle is frosted, a light runs along the edge, and the shadow under it deepens over busy pages. The collapsed island turns light or dark with what's behind it, and the open island follows Windows' light or dark mode. Its tint goes only as deep as the text needs to stay readable (4.5:1).
 
-To bend what's under it, Glass copies the part of the screen behind its window (the island and the space it opens into) whenever something there changes, and not while the island is hidden, a full-screen app is in front (there it draws smoked glass, so a game's frames aren't copied) or the PC is locked. The copy stays in your PC's memory and on its graphics card, and each new copy replaces the last; it's never saved or sent. While Glass is on, Windows leaves Oyenza Studio out of screenshots, screen recordings and screen sharing. On a display in HDR, Oyenza Studio maps the copy back to ordinary colours itself. Where it can't copy the screen (the software renderer, Windows 10 before version 2004, Remote Desktop, a laptop display that no graphics card lets it copy), Glass draws smoked glass instead: the same shape, light and shadow over a see-through tint, and it stays in screenshots.
+To bend what's under it, Glass copies the part of the screen behind its window (the island and the space it opens into) whenever something there changes, and not while the island is hidden, a full-screen app is in front (there it draws smoked glass, so a game's frames aren't copied) or the PC is locked. The copy stays in your PC's memory and on its graphics card, and each new copy replaces the last; it's never saved or sent. While Glass is on, Windows leaves Arunika out of screenshots, screen recordings and screen sharing. On a display in HDR, Arunika maps the copy back to ordinary colours itself. Where it can't copy the screen (the software renderer, Windows 10 before version 2004, Remote Desktop, a laptop display that no graphics card lets it copy), Glass draws smoked glass instead: the same shape, light and shadow over a see-through tint, and it stays in screenshots.
 
-On a Mac, Glass is macOS's own glass: Liquid Glass on macOS 26, and a dark blur on macOS 14 and 15. It's the dark kind, so white text stays readable over any wallpaper, and where the island meets the notch it keeps a black strip that fades into the glass. macOS draws the glass itself, so Oyenza Studio doesn't copy your screen for it. If Glass looks flat, turn off **Reduce transparency** in System Settings › Accessibility › Display.
+On a Mac, Glass is macOS's own glass: Liquid Glass on macOS 26, and a dark blur on macOS 14 and 15. It's the dark kind, so white text stays readable over any wallpaper, and where the island meets the notch it keeps a black strip that fades into the glass. macOS draws the glass itself, so Arunika doesn't copy your screen for it. If Glass looks flat, turn off **Reduce transparency** in System Settings › Accessibility › Display.
 
 ### The Pill theme
 
@@ -262,23 +236,23 @@ The pages and features are the same as in Classic.
 
 ### Show over games
 
-Switch on **Show over games** (System › Games, or right-click › In full-screen apps) and, while a game fills the screen in borderless full-screen, the island becomes a small readout: frames per second, the GPU's load and temperature and the CPU's load. It stays for as long as the game is in front; **Alt+Shift+F** hides it until the next game, and pressing it again brings it back. Any window over a borderless game, the island included, makes Windows combine the two before they reach the screen, which costs the game about a frame of delay. If you'd rather not pay it, pick **Readout › Peeks** in System › Games (or right-click › In full-screen apps › Only for a few seconds): the readout then shows for a few seconds when the game comes to the front, when the frame rate drops sharply and whenever you press Alt+Shift+F, then hides, and in between the game's frames go straight to the screen. Turning it on also lets the island show over full-screen apps; picking Hide there turns it off again. Alt+Shift+F belongs to Oyenza Studio only while a game is in front.
+Switch on **Show over games** (System › Games, or right-click › In full-screen apps) and, while a game fills the screen in borderless full-screen, the island becomes a small readout: frames per second, the GPU's load and temperature and the CPU's load. It stays for as long as the game is in front; **Alt+Shift+F** hides it until the next game, and pressing it again brings it back. Any window over a borderless game, the island included, makes Windows combine the two before they reach the screen, which costs the game about a frame of delay. If you'd rather not pay it, pick **Readout › Peeks** in System › Games (or right-click › In full-screen apps › Only for a few seconds): the readout then shows for a few seconds when the game comes to the front, when the frame rate drops sharply and whenever you press Alt+Shift+F, then hides, and in between the game's frames go straight to the screen. Turning it on also lets the island show over full-screen apps; picking Hide there turns it off again. Alt+Shift+F belongs to Arunika only while a game is in front.
 
-The frame rate is counted the way Intel's PresentMon and Xbox Game Bar count it: Windows logs every frame a game hands to the screen, and Oyenza Studio reads that log for the game in front. Nothing is loaded into the game, so there is nothing for anti-cheat to see. DirectX 9 to 12 games are counted from their own Present calls; Vulkan and OpenGL games from the graphics kernel's log of their frames. The GPU and CPU numbers come from the same readers as the System page. Nothing runs while no game is in front or while the readout is off.
+The frame rate is counted the way Intel's PresentMon and Xbox Game Bar count it: Windows logs every frame a game hands to the screen, and Arunika reads that log for the game in front. Nothing is loaded into the game, so there is nothing for anti-cheat to see. DirectX 9 to 12 games are counted from their own Present calls; Vulkan and OpenGL games from the graphics kernel's log of their frames. The GPU and CPU numbers come from the same readers as the System page. Nothing runs while no game is in front or while the readout is off.
 
 Windows lets only admins and the **Performance Log Users** group read that log. The first time, System › Games asks for a one-time OK: an admin prompt adds your Windows account to that group (Xbox Game Bar's FPS counter asks for the same), and Windows applies it the next time you sign in. Until then the FPS slot shows a dash and the rest works. To undo it, remove your account from Performance Log Users in Computer Management, or run `net localgroup "Performance Log Users" <your user name> /delete` as an admin. A game in exclusive full-screen mode still covers the island, as it covers every window.
 
 ### On a Mac
 
-On a MacBook with a camera notch, the island lives around it: what's playing sits either side of the camera (the album art on the left and the beat on the right, a timer's ring and its minutes the same way), and the island opens downward from the notch when you point at it. On a Mac without a notch, or on another display, it hangs from the top of the screen as it does on Windows. Around the notch, the Oyen theme goes black like the notch itself, with Oyen's cream type, his orange and his face on it.
+On a MacBook with a camera notch, the island lives around it: what's playing sits either side of the camera (the album art on the left and the beat on the right, a timer's ring and its minutes the same way), and the island opens downward from the notch when you point at it. On a Mac without a notch, or on another display, it hangs from the top of the screen as it does on Windows. Around the notch, the Cream theme goes black like the notch itself, with cream type and orange accents.
 
-The Mac app has the island, Music and Spotify with synced lyrics (and Apple Music's own with [your token](#apple-music-lyrics)), the focus timer, the Shelf with [Phone drop](#phone-drop) over the same Wi-Fi, tasks, clipboard history, Today with your Mac's CPU, memory, disk and battery, the System page with your Mac's CPU, graphics, memory, drives, network, battery and busiest apps, pop-ups for volume, charging and Bluetooth headphones (without the battery level; macOS shows AirPods' own when they connect), [Prayer times](#add-ons) (Location Services finds your kab/kota, or you type it), the Classic, Oyen, Glass and Pill themes ([Pill](#the-pill-theme) floats just below the notch for pop-ups and the open card), hiding in full-screen apps (or staying on top of them), [Oyenza sign-in](#oyenza-optional) and start at login. Every option is in the menu bar, under Oyen's mark. Not on the Mac yet: paired phones and Show over games.
+The Mac app has the island, Music and Spotify with synced lyrics (and Apple Music's own with [your token](#apple-music-lyrics)), the focus timer, the Shelf with [Phone drop](#phone-drop) over the same Wi-Fi, tasks, clipboard history, Today with your Mac's CPU, memory, disk and battery, the System page with your Mac's CPU, graphics, memory, drives, network, battery and busiest apps, pop-ups for volume, charging and Bluetooth headphones (without the battery level; macOS shows AirPods' own when they connect), [Prayer times](#add-ons) (Location Services finds your kab/kota, or you type it), the Classic, Cream, Glass and Pill themes ([Pill](#the-pill-theme) floats just below the notch for pop-ups and the open card), hiding in full-screen apps (or staying on top of them), [Arunika sign-in](#arunika-optional) and start at login. Every option is in the menu bar, under the Arunika mark. Not on the Mac yet: paired phones and Show over games.
 
 The Mac pictures come from the Mac app itself (`poni --render <dir> --notch`, run by the `mac` workflow on a macOS runner with a MacBook's notch drawn in).
 
 ### Apple Music lyrics
 
-Lyrics come from LRCLIB by default. With an Apple Music subscription, Oyenza Studio can show Apple Music's own synced lyrics instead: the ones the Apple Music app shows. This works whichever app is playing. LRCLIB stays the backup for songs Apple has no synced lyrics for.
+Lyrics come from LRCLIB by default. With an Apple Music subscription, Arunika can show Apple Music's own synced lyrics instead: the ones the Apple Music app shows. This works whichever app is playing. LRCLIB stays the backup for songs Apple has no synced lyrics for.
 
 It needs your Apple Music token, copied once from the web player:
 
@@ -286,35 +260,35 @@ It needs your Apple Music token, copied once from the web player:
 2. Press F12, open **Application** → **Cookies** → `https://music.apple.com`, and copy the value of `media-user-token`.
 3. Right-click the island (or the tray icon) → **Apple Music lyrics** → **Use token from clipboard**.
 
-Oyenza Studio checks the token with Apple and says whether it worked. It stores the token encrypted for your Windows account (`%LOCALAPPDATA%\Poni\apple-music-token.bin`) and clears it from the clipboard. If Windows clipboard history (Win+V) is on, delete it there too. A token lasts for months; when Apple stops accepting it, Oyenza Studio says so and you copy a fresh one. **Remove token** in the same menu turns this off.
+Arunika checks the token with Apple and says whether it worked. It stores the token encrypted for your Windows account (`%LOCALAPPDATA%\Poni\apple-music-token.bin`) and clears it from the clipboard. If Windows clipboard history (Win+V) is on, delete it there too. A token lasts for months; when Apple stops accepting it, Arunika says so and you copy a fresh one. **Remove token** in the same menu turns this off.
 
-With a token saved, Oyenza Studio sends each song's title and artist to Apple to find its lyrics. It uses the Apple Music web player's own API, which Apple doesn't publish for other apps, so it can stop working when Apple changes its site. LRCLIB keeps working either way.
+With a token saved, Arunika sends each song's title and artist to Apple to find its lyrics. It uses the Apple Music web player's own API, which Apple doesn't publish for other apps, so it can stop working when Apple changes its site. LRCLIB keeps working either way.
 
 ### Phone drop
 
 Send photos and files from your phone to the Shelf, or save Shelf files on your phone, over your own Wi-Fi. Nothing to install on the phone, and it works with iPhones and Android phones alike.
 
 1. Open the Shelf and click **Phone** (on an empty shelf, the **Phone drop** tile). A QR code opens under the shelf.
-2. Scan it with the phone's camera. The phone opens a small page that Oyenza Studio serves from your PC.
-3. Pick photos or files on the phone and tap **Send**. The island asks first: **Accept** or **Decline**. Accepted files go to `Downloads\Oyenza Studio` and onto the Shelf.
+2. Scan it with the phone's camera. The phone opens a small page that Arunika serves from your PC.
+3. Pick photos or files on the phone and tap **Send**. The island asks first: **Accept** or **Decline**. Accepted files go to `Downloads\Arunika` and onto the Shelf.
 4. The page also lists the files on the Shelf. Tap **Save** to keep one on the phone.
 
 | | |
 |---|---|
 | ![Phone drop open: the QR code waits for a phone](docs/screenshots/page-shelf-phone.png) | ![An iPhone asks to send three files](docs/screenshots/page-shelf-phone-ask.png) |
 
-The phone and the PC need the same Wi-Fi; guest networks often keep devices apart. The first time, Windows asks whether Oyenza Studio may use the network: allow it on private networks. If Windows treats your Wi-Fi as a public network, set it to private (Settings > Network & internet > Wi-Fi), or the phone can't reach the PC.
+The phone and the PC need the same Wi-Fi; guest networks often keep devices apart. The first time, Windows asks whether Arunika may use the network: allow it on private networks. If Windows treats your Wi-Fi as a public network, set it to private (Settings > Network & internet > Wi-Fi), or the phone can't reach the PC.
 
-Each session gets a new secret link that only the QR code carries. It stops working when you click **Done**, and after 10 minutes without a phone. Oyenza Studio reads nothing from an upload before you accept, keeps a transfer only when every file arrived, and never sends anything through the internet. Files travel over your Wi-Fi without extra encryption on top of the Wi-Fi's own, so use Phone drop on networks you trust rather than public hotspots.
+Each session gets a new secret link that only the QR code carries. It stops working when you click **Done**, and after 10 minutes without a phone. Arunika reads nothing from an upload before you accept, keeps a transfer only when every file arrived, and never sends anything through the internet. Files travel over your Wi-Fi without extra encryption on top of the Wi-Fi's own, so use Phone drop on networks you trust rather than public hotspots.
 
 This isn't AirDrop. An iPhone only AirDrops over Apple's own Wi-Fi link (AWDL), which Windows Wi-Fi drivers can't run, so Phone drop uses the phone's browser instead.
 
 #### Paired phones: send from any network
 
-Pair a phone once, and it finds this PC from any network, whenever Oyenza Studio runs: the same Wi-Fi, another Wi-Fi or mobile data.
+Pair a phone once, and it finds this PC from any network, whenever Arunika runs: the same Wi-Fi, another Wi-Fi or mobile data.
 
-1. In the phone panel, click **Pair a phone** and scan the new code. The phone opens `drop.oyenza.com` and says it's paired.
-2. Keep that page: on an iPhone, tap Share › **Add to Home Screen**; on Android, install it (Chrome or Samsung Internet). Android then lists **Oyenza Studio** in the share sheet.
+1. In the phone panel, click **Pair a phone** and scan the new code. The phone opens `drop.arunika.app` and says it's paired.
+2. Keep that page: on an iPhone, tap Share › **Add to Home Screen**; on Android, install it (Chrome or Samsung Internet). Android then lists **Arunika** in the share sheet.
 3. Send from the share sheet or from the page. Files from your own paired phones go straight onto the Shelf, with a notice on the island.
 
 | | |
@@ -323,28 +297,28 @@ Pair a phone once, and it finds this PC from any network, whenever Oyenza Studio
 
 ![The phone page: paired, your PCs, sending, and on the Shelf](docs/screenshots/paired-phone-page.webp)
 
-The phone and PC meet through a small server (`drop.oyenza.com`, code in [`server/`](server)); the files go straight between them over WebRTC, encrypted with keys made on the two devices, or through a relay that can't read them when both networks block a direct link. The server never sees a file, a file name, or the pairing secret: every message is signed with that secret, which only the QR code carries. **Paired phones** lists each phone with **Remove**. How it works: [docs/paired-drop.md](docs/paired-drop.md).
+The phone and PC meet through a small server (`drop.arunika.app`, code in [`server/`](server)); the files go straight between them over WebRTC, encrypted with keys made on the two devices, or through a relay that can't read them when both networks block a direct link. The server never sees a file, a file name, or the pairing secret: every message is signed with that secret, which only the QR code carries. **Paired phones** lists each phone with **Remove**. How it works: [docs/paired-drop.md](docs/paired-drop.md).
 
-### Oyenza (optional)
+### Arunika (optional)
 
-If you keep your money in [Oyenza](https://oyenza.app), the island can show it. Signing in is optional and works like a TV: no password is typed into Oyenza Studio.
+If you keep your money in [Arunika](https://arunika.app), the island can show it. Signing in is optional and works like a TV: no password is typed into Arunika.
 
-1. Open the island, press the gear at the top right, and choose **Sign in with Oyenza** (the Health page has the same button; right-click the island or the tray icon → **Oyenza** → **Sign in to Oyenza…** works too; on a Mac, the menu bar under Oyen's mark). The island shows an 8-letter code.
-2. Open oyenza.app/connect on your phone or this computer (**Open oyenza.app** fills the code in), check the computer's name, and choose **Connect**.
+1. Open the island, press the gear at the top right, and choose **Sign in with Arunika** (the Health page has the same button; right-click the island or the tray icon → **Arunika** → **Sign in to Arunika…** works too; on a Mac, the menu bar under the Arunika mark). The island shows an 8-letter code.
+2. Open arunika.app/connect on your phone or this computer (**Open arunika.app** fills the code in), check the computer's name, and choose **Connect**.
 
 Then the island shows:
 
-- **Your Oyenza, live, by day**: the **Oyenza** tab lists every transaction of the last 7 days, newest first, with each day's money in and out: pick Sun to Thu, Yesterday or Today on the strip of days. Something logged while you look glows for a minute. **Tomorrow** and **Later** list the subscriptions and card bills due in the next 30 days.
-- **Money in and out as it happens**: a notice when Oyenza logs money by itself from your bank's emails or notifications, "Money in · BCA" or "Money out · BCA". Sums and who stay hidden until you click **Show**, there and in the tab, so a shared screen shows only that much.
+- **Your Arunika, live, by day**: the **Arunika** tab lists every transaction of the last 7 days, newest first, with each day's money in and out: pick Sun to Thu, Yesterday or Today on the strip of days. Something logged while you look glows for a minute. **Tomorrow** and **Later** list the subscriptions and card bills due in the next 30 days.
+- **Money in and out as it happens**: a notice when Arunika logs money by itself from your bank's emails or notifications, "Money in · BCA" or "Money out · BCA". Sums and who stay hidden until you click **Show**, there and in the tab, so a shared screen shows only that much.
 - **Bills before they're due**: a reminder the day before a subscription renews or a card bill is due.
-- **Note a spend**: type it in the **Oyenza** tab ("kopi 25rb") and press Enter; it goes straight to Oyenza, with Undo for 10 seconds.
-- **Your steps**: in Oyenza on your iPhone or Android, turn on **Show on Oyenza Studio** under your steps in Health (Sehat), and the **Health** tab shows today's steps against your goal, the distance, active energy and your week, with a notice when you reach the goal. Oyenza on the phone sends them while it's open there; numbers more than a day old stay, with a reminder to open Oyenza on your phone.
+- **Note a spend**: type it in the **Arunika** tab ("kopi 25rb") and press Enter; it goes straight to Arunika, with Undo for 10 seconds.
+- **Your steps**: in Arunika on your iPhone or Android, turn on **Show on Arunika** under your steps in Health (Sehat), and the **Health** tab shows today's steps against your goal, the distance, active energy and your week, with a notice when you reach the goal. Arunika on the phone sends them while it's open there; numbers more than a day old stay, with a reminder to open Arunika on your phone.
 
-This PC gets a key of its own that can do only these things: it reads the last 7 days of transactions in the space where Oyenza logs your bank's emails and notifications, never balances, account numbers, notes or receipts, and it can't change or delete anything else or touch your account. With **Show on Oyenza Studio** on, it also receives the daily totals of steps, distance and active energy for the last 7 days and your step goal, and keeps them in memory only, never on disk; sleep, heart rate and weight never reach the PC. The key is stored encrypted for your Windows account (`%LOCALAPPDATA%\Poni\oyenza-link.bin`); on a Mac, in a file only your Mac account can read (`~/Library/Application Support/Poni/oyenza-link.bin`). Oyenza Studio asks Oyenza once a minute while you use the PC (every 3 minutes on battery, never while it's locked or asleep), every 15 seconds while the Oyenza tab is open, and for your steps every 15 minutes and when the Health tab opens. **Disconnect** in Settings (or **Oyenza › Disconnect** in the menu) signs this PC out; you can also disconnect it in oyenza.app under Connected apps.
+This PC gets a key of its own that can do only these things: it reads the last 7 days of transactions in the space where Arunika logs your bank's emails and notifications, never balances, account numbers, notes or receipts, and it can't change or delete anything else or touch your account. With **Show on Arunika** on, it also receives the daily totals of steps, distance and active energy for the last 7 days and your step goal, and keeps them in memory only, never on disk; sleep, heart rate and weight never reach the PC. The key is stored encrypted for your Windows account (`%LOCALAPPDATA%\Poni\oyenza-link.bin`); on a Mac, in a file only your Mac account can read (`~/Library/Application Support/Poni/oyenza-link.bin`). Arunika asks arunika.app once a minute while you use the PC (every 3 minutes on battery, never while it's locked or asleep), every 15 seconds while the Arunika tab is open, and for your steps every 15 minutes and when the Health tab opens. **Disconnect** in Settings (or **Arunika › Disconnect** in the menu) signs this PC out; you can also disconnect it in arunika.app under Connected apps.
 
 ### New versions
 
-Oyenza Studio looks for a new version a couple of minutes after it starts and then twice a day, by reading one small signed file from studio.oyenza.com. It doesn't look while your PC is locked, the screen is off or battery saver is on. When there is a new version, the island says **Update available** with the version, once, and **Hide** puts it away. On Windows the new version is already downloaded by then, and checked: click the notice for the Update sheet, then **Install now** (Oyenza Studio closes, updates and opens again in a few seconds, your settings and data stay) or **Install on next start**. On a Mac the sheet downloads the DMG. Until you update, the right-click menu starts with **Update to Oyenza Studio x…** and Settings has a last row with **Update**. After you update, the island says **Updated to x** once, with **What's new**. **Tell me about new versions** in Settings turns the checks off. Versions 0.2.5 and older don't look: update them by hand once. How the file is made and signed: [docs/updates.md](docs/updates.md).
+Arunika looks for a new version a couple of minutes after it starts and then twice a day, by reading one small signed file from arunika.app. It doesn't look while your PC is locked, the screen is off or battery saver is on. When there is a new version, the island says **Update available** with the version, once, and **Hide** puts it away. On Windows the new version is already downloaded by then, and checked: click the notice for the Update sheet, then **Install now** (Arunika closes, updates and opens again in a few seconds, your settings and data stay) or **Install on next start**. On a Mac the sheet downloads the DMG. Until you update, the right-click menu starts with **Update to Arunika x…** and Settings has a last row with **Update**. After you update, the island says **Updated to x** once, with **What's new**. **Tell me about new versions** in Settings turns the checks off. Versions 0.2.5 and older don't look: update them by hand once. How the file is made and signed: [docs/updates.md](docs/updates.md).
 
 ### Add-ons
 
@@ -361,12 +335,12 @@ The **+** at the end of the tabs lists features that stay off until you switch t
 
 ## Build
 
-Oyenza Studio is a Cargo workspace:
+Arunika is a Cargo workspace:
 
 | Crate | What |
 |---|---|
 | `crates/poni-core` | Pure logic (springs, lyrics parsing, Pomodoro, steps, tasks, settings…), Phone drop's small web server and paired phone drop (pairing, signed messages, the WebRTC link). Unit-tested on any OS. |
-| `server` | The meeting server and phone page for paired phones (`drop.oyenza.com`); Node, no dependencies. |
+| `server` | The meeting server and phone page for paired phones (`drop.arunika.app`); Node, no dependencies. |
 | `crates/poni` | The app. On Windows: Win32 + Direct2D + WinRT through [windows-rs](https://github.com/microsoft/windows-rs). On a Mac (`src/mac/`): AppKit, Core Graphics and Core Text through [objc2](https://github.com/madsmtm/objc2), drawing the same pages. |
 
 On Windows, with Rust stable and the MSVC toolchain:
@@ -391,7 +365,7 @@ cargo build -p poni --release        # target/release/poni
 target/release/poni --render shots --notch   # every island state as a picture, with a MacBook's notch
 ```
 
-`tools/make_mac_app.sh` turns the Apple silicon and Intel builds into `Oyenza Studio.app` and its DMG (the `mac` workflow does it for every pull request, push to main and tag). From Linux or Windows, `cargo mcheck` type-checks the Mac app (`rustup target add aarch64-apple-darwin`).
+`tools/make_mac_app.sh` turns the Apple silicon and Intel builds into `Arunika.app` and its DMG (the `mac` workflow does it for every pull request, push to main and tag). From Linux or Windows, `cargo mcheck` type-checks the Mac app (`rustup target add aarch64-apple-darwin`).
 
 ### Testing without clicking around
 
@@ -409,13 +383,13 @@ See [ARCHITECTURE.md](ARCHITECTURE.md) for how the pieces fit: threads, the rend
 
 ### Website
 
-The website is `site/index.html`, published with GitHub Pages by `.github/workflows/pages.yml` whenever `site/` or `docs/brand/` changes on main. Every release updates it too ([AGENTS.md](AGENTS.md#every-release-updates-the-website) has the checklist). A page that names a version not released yet waits until that release is published, and a release whose page wasn't updated opens an issue. Preview it with `tools/build_site.sh && python3 -m http.server -d _site 8000`. Its island screenshots come from the self-test at 200 % (Classic and Oyen, plus Pill for its own section), and its Mac pictures from the `mac` workflow's renders (`tools/site_shots.py`).
+The website is `site/index.html`, published with GitHub Pages by `.github/workflows/pages.yml` whenever `site/` or `docs/brand/` changes on main. Every release updates it too ([AGENTS.md](AGENTS.md#every-release-updates-the-website) has the checklist). A page that names a version not released yet waits until that release is published, and a release whose page wasn't updated opens an issue. Preview it with `tools/build_site.sh && python3 -m http.server -d _site 8000`. Its island screenshots come from the self-test at 200 % (Classic and Cream, plus Pill for its own section), and its Mac pictures from the `mac` workflow's renders (`tools/site_shots.py`).
 
-The README's feature pictures are drawn from those same screenshots by `tools/make_readme_art.py` (from `tools/readme_art.html`) into `docs/brand/readme/`. Rerun it after retaking the screenshots.
+The README's feature pictures were drawn from those same screenshots by `tools/make_readme_art.py` (from `tools/readme_art.html`) into `docs/brand/readme/`. That tool is broken by design until it is rewritten for the new brand: it composited the old Oyen character art, which is gone.
 
 ### Download stats
 
-[The stats page](https://github.com/lucacadalora/oyenza-studio/blob/metrics/README.md) shows downloads per release and per day. Every hour `.github/workflows/metrics.yml` reads GitHub's download counters with `tools/download_metrics.py` and keeps the history on the `metrics` branch. Downloads made by our own CI (the install test fetches the 0.1.1 installer on every push) are left out. The app itself counts nothing.
+[The stats page](https://github.com/Idewara/arunika/blob/metrics/README.md) shows downloads per release and per day. Every hour `.github/workflows/metrics.yml` reads GitHub's download counters with `tools/download_metrics.py` and keeps the history on the `metrics` branch. Downloads made by our own CI (the install test fetches the 0.1.1 installer on every push) are left out. The app itself counts nothing.
 
 ## Status
 
@@ -423,7 +397,7 @@ Early, but in daily use on Windows 11. The Mac app is newer: it runs on GitHub's
 
 ## Credits
 
-- Synced lyrics come from [LRCLIB](https://lrclib.net), a free and open lyrics database. Oyenza Studio fetches them only while a song plays and caches them on your PC.
+- Synced lyrics come from [LRCLIB](https://lrclib.net), a free and open lyrics database. Arunika fetches them only while a song plays and caches them on your PC.
 - With your token, lyrics can also come from [Apple Music](https://music.apple.com) (see [Apple Music lyrics](#apple-music-lyrics)).
 - Phone drop follows the design of [Windfall](https://github.com/UvejsGj/Windfall)'s phone page (MIT). QR codes come from [qrcodegen](https://github.com/nayuki/QR-Code-generator) (MIT).
 - Romaji under Japanese lyrics comes from Windows' own reading analyzer or, on PCs without Windows' Japanese data, from [mecab-ipadic](https://taku910.github.io/mecab/) read with [vibrato](https://github.com/daac-tools/vibrato) (MIT/Apache-2.0).
@@ -433,4 +407,4 @@ Early, but in daily use on Windows 11. The Mac app is newer: it runs on GitHub's
 
 ## License
 
-The code is [MIT](LICENSE). The Oyenza Studio name, its logo and the Oyen character (the files in `docs/brand`, `installer/art` and the app icon) are not covered by the MIT license, so please don't reuse them in other projects. The Japanese reading dictionary (`crates/poni-core/data/ja-readings.dic.zst`, the Japanese readings add-on) is derived from mecab-ipadic and keeps its own license, which the add-on's `NOTICE.txt` carries. [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt), which ships with every download, holds that license and those of the Unicode data and the Rust crates Oyenza Studio is built from.
+The code is [MIT](LICENSE). Arunika is originally based on Oyenza Studio by Jatevo Labs (MIT). The Arunika name, its logo and the character artwork (the files in `docs/brand`, `installer/art` and the app icon) are not covered by the MIT license, so please don't reuse them in other projects. The Japanese reading dictionary (`crates/poni-core/data/ja-readings.dic.zst`, the Japanese readings add-on) is derived from mecab-ipadic and keeps its own license, which the add-on's `NOTICE.txt` carries. [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt), which ships with every download, holds that license and those of the Unicode data and the Rust crates Arunika is built from.

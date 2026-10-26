@@ -281,9 +281,9 @@ fn draw_sheet(ui: &mut Ui, st: &mut AppState, area: Rect, rel: &Release) {
     text_with_dim(ui, title, &rel.version, Rect::new(x, cy - 19.0, w, 20.0), TextStyle::headline());
     let size = rel.download(cfg!(target_os = "macos")).map(|d| fmt_bytes(d.size)).unwrap_or_default();
     let line = if ready {
-        "A new version of Oyenza Studio is ready to be installed.".to_string()
+        "A new version of Arunika is ready to be installed.".to_string()
     } else {
-        format!("A new version of Oyenza Studio is ready to download ({size}).")
+        format!("A new version of Arunika is ready to download ({size}).")
     };
     ui.c.text(&line, Rect::new(x, cy + 1.0, w, 17.0), &TextStyle::footnote().color(palette::TEXT_DIM));
 
@@ -303,7 +303,7 @@ fn draw_sheet(ui: &mut Ui, st: &mut AppState, area: Rect, rel: &Release) {
         };
         vec![(Get::InstallNow, Icon::Download, "Install now".to_string(), "Closes, updates and opens again"), next]
     } else if cfg!(target_os = "macos") {
-        vec![(Get::Download, Icon::Download, format!("Download {}", rel.version), "Downloads the DMG: open it and drag Oyenza Studio to Applications.")]
+        vec![(Get::Download, Icon::Download, format!("Download {}", rel.version), "Downloads the DMG: open it and drag Arunika to Applications.")]
     } else {
         vec![(Get::Download, Icon::Download, format!("Download {}", rel.version), "Opens its release page: run the Setup there, your settings stay.")]
     };
@@ -319,7 +319,7 @@ fn draw_sheet(ui: &mut Ui, st: &mut AppState, area: Rect, rel: &Release) {
         }
     }
 
-    let notes = format!("See what's new in Oyenza Studio {}", rel.version);
+    let notes = format!("See what's new in Arunika {}", rel.version);
     let nw = ui.pill_width(&notes, true, true).min(area.w);
     let nr = Rect::new(area.x, area.y + NOTES_Y, nw, PILL_SMALL);
     if ui.pill(wid("update.notes"), nr, &notes, Some(Icon::Open), PillStyle::Utility).clicked {
@@ -398,13 +398,13 @@ fn draw_account(ui: &mut Ui, st: &mut AppState, r: Rect) {
     crate::oyen::app_icon(ui.c, Point::new(r.x + ICON / 2.0, cy), ICON);
     match st.oyenza.link.clone() {
         OyenzaLink::Off => {
-            let label = "Sign in with Oyenza";
+            let label = "Sign in with Arunika";
             let w = ui.pill_width(label, false, false);
             let b = Rect::new(r.right() - w, cy - PILL_REGULAR / 2.0, w, PILL_REGULAR);
             if ui.pill(wid("settings.sign-in"), b, label, None, PillStyle::Primary(OYENZA)).clicked {
                 st.cmd(Command::Oyenza(OyenzaCmd::SignIn));
             }
-            account_text(ui, r, b.x, "Oyenza", "Sign in to see money in and bills due here.");
+            account_text(ui, r, b.x, "Arunika", "Sign in to see money in and bills due here.");
         }
         OyenzaLink::Connecting { code, until, .. } => {
             let cancel_w = ui.pill_width("Cancel", false, true);
@@ -418,7 +418,7 @@ fn draw_account(ui: &mut Ui, st: &mut AppState, r: Rect) {
                 st.cmd(Command::SetPage(PageKind::Oyenza));
             }
             let line = format!("Code {code} · works for {}", oyenza::code_time_left(until - st.now));
-            account_text(ui, r, show.x, "Signing in to Oyenza", &line);
+            account_text(ui, r, show.x, "Signing in to Arunika", &line);
         }
         OyenzaLink::Connected { account } => {
             let dis_w = ui.pill_width("Disconnect", false, true);
@@ -435,7 +435,7 @@ fn draw_account(ui: &mut Ui, st: &mut AppState, r: Rect) {
                 st.settings.oyenza_show_amounts = !on;
                 st.cmd(Command::SaveSettings);
             }
-            account_text(ui, r, row.x - ROW_BLEED, "Oyenza", &format!("Signed in as {account}"));
+            account_text(ui, r, row.x - ROW_BLEED, "Arunika", &format!("Signed in as {account}"));
         }
     }
 }

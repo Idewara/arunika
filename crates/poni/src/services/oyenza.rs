@@ -1,6 +1,6 @@
-//! Oyenza (oyenza.app), optional: signing in with a code, then asking for
+//! Arunika (arunika.app), optional: signing in with a code, then asking for
 //! money that arrived or went out by itself, the last 7 days of transactions
-//! while the Oyenza page is open, bills due soon, and the steps the phone
+//! while the Arunika page is open, bills due soon, and the steps the phone
 //! sent, and saving the spends typed in the island. Words, URLs and parsing
 //! live in `poni_core::oyenza`; this file does the HTTP on one worker thread
 //! and keeps the key with `services::secret` at `paths::oyenza_link_path()`:
@@ -11,15 +11,15 @@
 //! - money every minute while the PC is in use on mains power, every 3
 //!   minutes on battery or battery saver, and not at all while the session is
 //!   locked or the display is off (one call as soon as it's back);
-//! - the day list every 15 seconds while the Oyenza page is on screen, and
+//! - the day list every 15 seconds while the Arunika page is on screen, and
 //!   never otherwise; an answer with nothing new is a few bytes;
-//! - bills every half hour, and all three again when the Oyenza tab opens;
+//! - bills every half hour, and all three again when the Arunika tab opens;
 //! - the steps every 15 minutes while the PC is in use and battery saver is
 //!   off, and when the Health tab opens (at most once in 30 seconds, battery
 //!   saver or not); a server from before steps (404) counts as none to show.
 //!   They go to the island only, never to disk or the log;
 //! - failures back off to 1, 2, 4 … 15 minutes, honouring `Retry-After`;
-//! - a 401 means the key was disconnected in oyenza.app (or ran out): the key
+//! - a 401 means the key was disconnected in arunika.app (or ran out): the key
 //!   is deleted and the island says so once.
 //!
 //! The thread sleeps on a condition variable between calls, so the island's
@@ -35,7 +35,7 @@ use std::collections::VecDeque;
 use std::sync::{Arc, Condvar, Mutex, MutexGuard};
 use std::time::{Duration, Instant};
 
-const USER_AGENT: &str = concat!("OyenzaStudio/", env!("CARGO_PKG_VERSION"), " (+https://github.com/lucacadalora/oyenza-studio)");
+const USER_AGENT: &str = concat!("Arunika/", env!("CARGO_PKG_VERSION"), " (+https://github.com/Idewara/arunika)");
 const TIMEOUT: Duration = Duration::from_secs(8);
 const NOTE_TIMEOUT: Duration = Duration::from_secs(30);
 /// Opening the tab again within this time asks for nothing new.
@@ -43,7 +43,7 @@ const REFRESH_GAP: Duration = Duration::from_secs(30);
 /// A disconnect that couldn't reach the server is retried this often.
 const REVOKE_EVERY: Duration = Duration::from_secs(3600);
 
-/// What oyenza.app lists this computer as: the PC's name, or the Mac's as
+/// What arunika.app lists this computer as: the PC's name, or the Mac's as
 /// System Settings › General › About shows it.
 #[cfg(windows)]
 fn computer_name() -> String {
@@ -66,7 +66,7 @@ impl OyenzaService {
         std::thread::Builder::new()
             .name("poni-oyenza".into())
             .spawn(move || worker_main(worker, sink))
-            .map_err(|e| std::io::Error::other(format!("could not start the Oyenza thread: {e}")))?;
+            .map_err(|e| std::io::Error::other(format!("could not start the Arunika thread: {e}")))?;
         Ok(Self { shared })
     }
 
@@ -103,7 +103,7 @@ pub struct Activity {
     pub in_use: bool,
     pub on_ac: bool,
     pub saver: bool,
-    /// The Oyenza page is on screen: its day list stays live.
+    /// The Arunika page is on screen: its day list stays live.
     pub watching: bool,
 }
 
@@ -416,7 +416,7 @@ impl Worker {
             }
             Some(Claim::Denied) => {
                 self.pending = None;
-                crate::pinfo!("oyenza: the sign-in code was refused in oyenza.app");
+                crate::pinfo!("oyenza: the sign-in code was refused in arunika.app");
                 self.send(OyenzaEvent::ConnectFailed("denied".into()));
             }
             // A network hiccup or a server error: keep asking until the code runs out.
@@ -442,7 +442,7 @@ impl Worker {
         let told = matches!(self.call(Method::Post, &oyenza::disconnect_url(), Some(&link.key), Some("{}"), TIMEOUT), Ok(r) if r.status == 200 || r.status == 401);
         if !told {
             // Keep the key only to tell the server later; it's no longer used for anything else.
-            crate::pwarn!("oyenza: couldn't reach Oyenza to disconnect; will retry");
+            crate::pwarn!("oyenza: couldn't reach Arunika to disconnect; will retry");
             let _ = crate::services::secret::save(&crate::paths::oyenza_revoke_path(), &link.key);
             self.revoke = Some(link.key.clone());
             self.next_revoke = Instant::now() + REVOKE_EVERY;
@@ -458,13 +458,13 @@ impl Worker {
         if done {
             let _ = crate::services::secret::delete(&crate::paths::oyenza_revoke_path());
             self.revoke = None;
-            crate::pinfo!("oyenza: the earlier disconnect reached Oyenza");
+            crate::pinfo!("oyenza: the earlier disconnect reached Arunika");
         } else {
             self.next_revoke = Instant::now() + REVOKE_EVERY;
         }
     }
 
-    /// Drop the sign-in and everything kept from Oyenza.
+    /// Drop the sign-in and everything kept from Arunika.
     fn forget(&mut self) {
         self.link = None;
         self.cursor = None;
@@ -479,13 +479,13 @@ impl Worker {
         }
     }
 
-    /// The server no longer takes the key (disconnected in oyenza.app, a
+    /// The server no longer takes the key (disconnected in arunika.app, a
     /// password reset, 90 days unused).
     fn signed_out_by_server(&mut self) {
         if self.link.is_none() {
             return;
         }
-        crate::pinfo!("oyenza: the key was disconnected in Oyenza");
+        crate::pinfo!("oyenza: the key was disconnected in Arunika");
         self.forget();
         self.send(OyenzaEvent::Disconnected { by_server: true });
     }
@@ -579,7 +579,7 @@ impl Worker {
         match self.call(Method::Get, &oyenza::health_url(), Some(&key), None, TIMEOUT) {
             Ok(r) if r.status == 200 => match oyenza::parse_health(&r.body) {
                 Some(Some(h)) => self.got_health(Some(h), "steps from the phone came in"),
-                Some(None) => self.got_health(None, "no steps to show (off in Oyenza, or none sent yet)"),
+                Some(None) => self.got_health(None, "no steps to show (off in Arunika, or none sent yet)"),
                 None => self.next_health = self.failed("steps check", "unreadable answer".into(), None),
             },
             // A server from before steps came to the PC: none to show, and nothing wrong.

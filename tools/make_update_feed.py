@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Write latest.json, the file every copy of Oyenza Studio reads to learn that
+"""Write latest.json, the file every copy of Arunika reads to learn that
 a new version is out (docs/updates.md). The Website workflow publishes it as
-https://studio.oyenza.com/latest.json with every deploy.
+https://arunika.app/latest.json with every deploy.
 
 It describes the latest GitHub release: its version and day, the first bold
 line of its notes as a headline, and the Windows installer and Mac DMG with
@@ -20,7 +20,7 @@ Usage:
     --check     build and print the payload only: no key, nothing signed
 
 Env: UPDATE_FEED_KEY (the private key, PEM), GH_TOKEN (optional: raises the
-API's rate limit), GITHUB_REPOSITORY (default lucacadalora/oyenza-studio).
+API's rate limit), GITHUB_REPOSITORY (default Idewara/arunika).
 Needs python3 (standard library only) and openssl.
 """
 
@@ -38,7 +38,7 @@ import urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 KEYS = os.path.join(ROOT, "crates", "poni-core", "data", "update-keys.txt")
-REPO = os.environ.get("GITHUB_REPOSITORY") or "lucacadalora/oyenza-studio"
+REPO = os.environ.get("GITHUB_REPOSITORY") or "Idewara/arunika"
 API = "https://api.github.com/repos/" + REPO
 SCHEMA = 1
 # The app shows the headline on the island, one line: keep it short.
@@ -52,7 +52,7 @@ def die(msg):
 
 def fetch(url, accept="application/vnd.github+json"):
     """GET with a few tries: GitHub's API hiccups now and then."""
-    headers = {"Accept": accept, "User-Agent": "oyenza-studio-update-feed"}
+    headers = {"Accept": accept, "User-Agent": "arunika-update-feed"}
     token = os.environ.get("GH_TOKEN") or os.environ.get("GITHUB_TOKEN")
     if token and url.startswith("https://api.github.com/"):
         headers["Authorization"] = "Bearer " + token
@@ -99,7 +99,7 @@ def release(released):
 def headline(notes, version):
     """The notes' first bold line ("**Sing along from the closed island.**")."""
     m = re.search(r"\*\*(.+?)\*\*", notes or "", re.S)
-    text = " ".join(m.group(1).split()).rstrip(".") if m else f"Oyenza Studio {version}"
+    text = " ".join(m.group(1).split()).rstrip(".") if m else f"Arunika {version}"
     if len(text) > HEADLINE_MAX:
         text = text[: HEADLINE_MAX - 1].rsplit(" ", 1)[0].rstrip(",;:") + "…"
     return text
@@ -132,9 +132,9 @@ def payload(released):
         die(f'the release "{rel["tag_name"]}" is not a version tag')
     if rel.get("draft") or rel.get("prerelease"):
         die(f"v{version} is a draft or a pre-release")
-    windows = asset(rel, f"Oyenza-Studio-Setup-{version}.exe", version)
+    windows = asset(rel, f"Arunika-Setup-{version}.exe", version)
     if windows is None:
-        die(f"v{version} has no Oyenza-Studio-Setup-{version}.exe")
+        die(f"v{version} has no Arunika-Setup-{version}.exe")
     p = {
         "schema": SCHEMA,
         "version": version,
@@ -146,7 +146,7 @@ def payload(released):
     # The mac workflow adds the DMG minutes after the release is up, then
     # starts the Website workflow again: until then the file says nothing to
     # Macs, so they aren't sent to a download that isn't there yet.
-    mac = asset(rel, f"Oyenza-Studio-{version}-mac.dmg", version)
+    mac = asset(rel, f"Arunika-{version}-mac.dmg", version)
     if mac is not None:
         p["mac"] = mac
     return p
@@ -234,7 +234,7 @@ def main(argv):
         return
     key_id, signature = sign(text)
     feed = {
-        "about": "Oyenza Studio's update file. payload is signed (ECDSA P-256, SHA-256) with the key named by key; see docs/updates.md.",
+        "about": "Arunika's update file. payload is signed (ECDSA P-256, SHA-256) with the key named by key; see docs/updates.md.",
         "payload": text,
         "signature": signature,
         "key": key_id,

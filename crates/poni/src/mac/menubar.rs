@@ -42,7 +42,7 @@ pub enum MenuCmd {
     OpenDataFolder,
     About,
     RecordScreen,
-    /// "Update to Oyenza Studio 0.2.5…" (`crate::updates`).
+    /// "Update to Arunika 0.2.5…" (`crate::updates`).
     Update,
     Quit,
 }
@@ -103,7 +103,7 @@ pub fn menu_items(s: &Settings, pinned: bool, login: Login, recorder: bool, oyen
         item("Open data folder", MenuCmd::OpenDataFolder, false),
         item(&crate::version::about_label(), MenuCmd::About, false),
         MenuItem::Separator,
-        MenuItem::Item { label: "Quit Oyenza Studio".into(), cmd: MenuCmd::Quit, checked: false, key: "q" },
+        MenuItem::Item { label: "Quit Arunika".into(), cmd: MenuCmd::Quit, checked: false, key: "q" },
     ];
     // Only once the separate recorder app is installed: until then the
     // island doesn't mention recording at all.
@@ -112,26 +112,26 @@ pub fn menu_items(s: &Settings, pinned: bool, login: Login, recorder: bool, oyen
     }
     // A new version first, until it is installed.
     if let Some(v) = update {
-        items.splice(0..0, [item(&format!("Update to Oyenza Studio {v}…"), MenuCmd::Update, false), MenuItem::Separator]);
+        items.splice(0..0, [item(&format!("Update to Arunika {v}…"), MenuCmd::Update, false), MenuItem::Separator]);
     }
     items
 }
 
-/// Oyenza, optional: sign in with a code from oyenza.app, then what the
+/// Arunika, optional: sign in with a code from arunika.app, then what the
 /// island may show, and signing out (as in the Windows tray).
 fn oyenza_menu(s: &Settings, link: &OyenzaLink) -> MenuItem {
     let items = match link {
-        OyenzaLink::Off => vec![item("Sign in to Oyenza…", MenuCmd::OyenzaSignIn, false)],
+        OyenzaLink::Off => vec![item("Sign in to Arunika…", MenuCmd::OyenzaSignIn, false)],
         OyenzaLink::Connecting { .. } => vec![item("Cancel sign-in", MenuCmd::OyenzaCancel, false)],
         OyenzaLink::Connected { account } => vec![
             MenuItem::Info { label: format!("Connected as {account}") },
             item("Show amounts on the island", MenuCmd::ToggleOyenzaAmounts, s.oyenza_show_amounts),
-            item("Open oyenza.app", MenuCmd::OyenzaOpen, false),
+            item("Open arunika.app", MenuCmd::OyenzaOpen, false),
             MenuItem::Separator,
             item("Disconnect", MenuCmd::OyenzaDisconnect, false),
         ],
     };
-    MenuItem::Sub { label: "Oyenza".into(), items }
+    MenuItem::Sub { label: "Arunika".into(), items }
 }
 
 /// Opt-in lyrics from Apple Music with the person's own token.
@@ -196,7 +196,7 @@ impl MenuBar {
                 Some(img) => button.setImage(Some(&img)),
                 None => button.setTitle(&NSString::from_str("Poni")),
             }
-            button.setToolTip(Some(&NSString::from_str(&format!("Oyenza Studio {}", crate::version::VERSION))));
+            button.setToolTip(Some(&NSString::from_str(&format!("Arunika {}", crate::version::VERSION))));
         }
         let target: Retained<MenuTarget> = unsafe { objc2::msg_send![MenuTarget::alloc(mtm), init] };
         let menu = build(mtm, &target, &menu_items(s, pinned, login, crate::services::recorder::installed(), oyenza, update));

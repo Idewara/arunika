@@ -46,7 +46,7 @@ pub enum PairCmd {
     Remove(String),
 }
 
-/// Requests for the Oyenza worker (`services::oyenza`).
+/// Requests for the Arunika worker (`services::oyenza`).
 #[derive(Clone, Debug, PartialEq)]
 pub enum OyenzaCmd {
     /// Ask for a sign-in code to show.
@@ -59,7 +59,7 @@ pub enum OyenzaCmd {
     Note(String),
     /// Take back a spend just saved (its id).
     Undo(String),
-    /// The Oyenza tab opened: today's money and the bills, now.
+    /// The Arunika tab opened: today's money and the bills, now.
     Refresh,
     /// The Health tab opened: the steps from the phone, now (unless just asked for).
     RefreshHealth,
@@ -83,7 +83,7 @@ pub enum Command {
     /// The Script page's Paste: the clipboard's text, line breaks kept,
     /// becomes the script.
     ScriptPaste,
-    /// The Script page's Record: Oyenza Studio Recorder records the screen
+    /// The Script page's Record: Arunika Recorder records the screen
     /// the island is on (`services::recorder`).
     RecordScreen,
     /// Drop keyboard focus.

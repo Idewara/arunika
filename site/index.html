@@ -3,31 +3,31 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Oyenza Studio · A living notch for Windows and Mac</title>
-<meta name="description" content="Oyenza Studio is a free, open-source living notch for Windows 10 and 11 and macOS 14 or later: music with synced lyrics, a focus timer, a file shelf your phone can drop into, tasks and your clipboard, one hover away at the top of your screen.">
-<link rel="canonical" href="https://studio.oyenza.com/">
+<title>Arunika · A living notch for Windows and Mac</title>
+<meta name="description" content="Arunika is a free, open-source living notch for Windows 10 and 11 and macOS 14 or later: music with synced lyrics, a focus timer, a file shelf your phone can drop into, tasks and your clipboard, one hover away at the top of your screen.">
+<link rel="canonical" href="https://arunika.app/">
 <!-- Link previews (WhatsApp, X, LinkedIn, Facebook, Slack, Discord...). URLs are
      absolute because the networks read these tags without loading the page. The
      card is drawn by tools/make_share_card.py; bump its ?v= whenever it changes,
      since every network caches a preview image by its URL. -->
 <meta property="og:type" content="website">
-<meta property="og:site_name" content="Oyenza Studio">
+<meta property="og:site_name" content="Arunika">
 <meta property="og:locale" content="en_US">
-<meta property="og:url" content="https://studio.oyenza.com/">
-<meta property="og:title" content="Oyenza Studio · A living notch for Windows and Mac">
+<meta property="og:url" content="https://arunika.app/">
+<meta property="og:title" content="Arunika · A living notch for Windows and Mac">
 <meta property="og:description" content="A free, open-source island at the top of your screen, on Windows and Mac: music with synced lyrics, a focus timer, a file shelf your phone can drop into, tasks and your clipboard, one hover away.">
-<meta property="og:image" content="https://studio.oyenza.com/assets/share/oyenza-studio-share.jpg?v=1">
+<meta property="og:image" content="https://arunika.app/assets/share/arunika-share.jpg?v=1">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="The Oyenza Studio island hanging from the top of the screen, open on the Music page with synced lyrics, and Oyen the cat peeking over the island.">
+<meta property="og:image:alt" content="The Arunika island hanging from the top of the screen, open on the Music page with synced lyrics.">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Oyenza Studio · A living notch for Windows and Mac">
+<meta name="twitter:title" content="Arunika · A living notch for Windows and Mac">
 <meta name="twitter:description" content="A free, open-source island at the top of your screen, on Windows and Mac: music with synced lyrics, a focus timer, a file shelf your phone can drop into, tasks and your clipboard, one hover away.">
-<meta name="twitter:image" content="https://studio.oyenza.com/assets/share/oyenza-studio-share.jpg?v=1">
-<meta name="twitter:image:alt" content="The Oyenza Studio island hanging from the top of the screen, open on the Music page with synced lyrics, and Oyen the cat peeking over the island.">
+<meta name="twitter:image" content="https://arunika.app/assets/share/arunika-share.jpg?v=1">
+<meta name="twitter:image:alt" content="The Arunika island hanging from the top of the screen, open on the Music page with synced lyrics.">
 <meta name="theme-color" content="#ffffff">
-<link rel="icon" href="brand/oyen-poni-logo.svg" type="image/svg+xml">
+<link rel="icon" href="brand/arunika-logo.svg" type="image/svg+xml">
 <!-- Apple devices draw the page in their own system font (SF Pro). Elsewhere the
      page uses Inter, the closest open typeface, which loads only where it's used. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -100,7 +100,7 @@ button { font: inherit; color: inherit; letter-spacing: inherit; }
 .skip:focus { top: 12px; }
 .ico { width: 18px; height: 18px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
-/* Every island picture comes in Classic and Oyen; the sidebar switches them. */
+/* Every island picture comes in Classic and Cream; the sidebar switches them. */
 .look-oyen { display: none !important; }
 html[data-look="oyen"] .look-oyen { display: block !important; }
 html[data-look="oyen"] .look-classic { display: none !important; }
@@ -424,14 +424,14 @@ main { container-type: inline-size; }
 .cmp .yes svg { width: 20px; height: 20px; display: inline-block; vertical-align: middle; fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 .cmp .no { font: 400 14px/1 var(--font-text); color: var(--gray-2); }
 
-/* ---------- Oyenza: a dark tile inside the light page */
+/* ---------- The account: a dark tile inside the light page */
 .dark { background: #000; color: #f5f5f7; border-radius: var(--r); overflow: hidden; }
-.oyenza { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); gap: 40px; align-items: center; padding: 64px; }
-.oyenza .t-label { color: var(--orange); }
-.oyenza .t-intro { color: #86868b; }
-.oyenza .t-intro b { color: #f5f5f7; }
-.oyenza .t-intro a { color: #2997ff; text-decoration: none; }
-.oyenza img { width: min(100%, 340px); margin-inline: auto; }
+.account { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); gap: 40px; align-items: center; padding: 64px; }
+.account .t-label { color: var(--orange); }
+.account .t-intro { color: #86868b; }
+.account .t-intro b { color: #f5f5f7; }
+.account .t-intro a { color: #2997ff; text-decoration: none; }
+.account img { width: min(100%, 340px); margin-inline: auto; }
 
 /* ---------- privacy and specs */
 .privacy-mark { width: 64px; height: 64px; margin: 0 auto 26px; color: var(--ink); stroke-width: 1.4; }
@@ -485,7 +485,7 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
   .split { grid-template-columns: minmax(0, 1fr); gap: 36px; }
   .news { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .rest-pin { grid-template-columns: minmax(0, 290px) minmax(0, 1fr); gap: 28px; }
-  .oyenza { grid-template-columns: minmax(0, 1fr); padding: 48px; }
+  .account { grid-template-columns: minmax(0, 1fr); padding: 48px; }
   .specs { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .stat > b { font-size: 40px; }
 }
@@ -514,7 +514,7 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
   .tile-pose { width: 60px; height: 60px; }
   .tile-shot { margin: 0 10px 10px; }
   .gcard p { padding: 26px 24px 0; font-size: 14px; line-height: 1.28577; letter-spacing: -0.016em; }
-  .oyenza { padding: 36px 26px; }
+  .account { padding: 36px 26px; }
   .pose { max-width: 34%; }
   .ruby { padding: 10px 12px 8px; border-radius: 14px; }
   .ruby b { font-size: 20px; }
@@ -619,7 +619,7 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
      lists conversations. It follows the scroll; search filters it. -->
 <aside class="side" id="side" aria-label="Every feature" tabindex="-1">
   <div class="side-top">
-    <a class="side-brand" href="#top"><img src="brand/oyen-poni-logo.svg" alt="" width="24" height="24">Oyenza Studio</a>
+    <a class="side-brand" href="#top"><img src="brand/arunika-logo.svg" alt="" width="24" height="24">Arunika</a>
     <button class="icon-btn side-close" type="button" id="sideClose" aria-controls="side" aria-label="Close the sidebar" title="Close the sidebar"><svg class="ico"><use href="#i-side"/></svg></button>
   </div>
   <div class="side-actions">
@@ -627,12 +627,12 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
   </div>
   <nav class="side-list" id="sideList" aria-label="Chapters">
     <div class="side-sec">
-      <a class="side-item side-dl" data-download="bar" href="https://github.com/lucacadalora/oyenza-studio/releases/latest/download/Oyenza-Studio-Setup.exe" data-nospy><i class="ic"><svg class="ico"><use href="#i-download"/></svg></i><span data-download-label>Download for Windows</span></a>
+      <a class="side-item side-dl" data-download="bar" href="https://github.com/Idewara/arunika/releases/latest/download/Arunika-Setup.exe" data-nospy><i class="ic"><svg class="ico"><use href="#i-download"/></svg></i><span data-download-label>Download for Windows</span></a>
     </div>
     <div class="side-sec">
       <p class="side-group">Overview</p>
       <a class="side-item" href="#top" data-k="home start download hero notch island"><i class="ic" style="--c:#1d1d1f"><svg class="ico"><use href="#i-screen"/></svg></i><span>A living notch</span></a>
-      <a class="side-item" href="#new" data-k="new release 0.2.6 latest changes update available new version install now next start updater mac installer dmg window steps health oyenza sign in mac headphones full screen power island stays maximized windows sing along romaji lyrics mac prayer script reader teleprompter games power"><i class="ic" style="--c:#bf4800"><svg class="ico"><use href="#i-spark"/></svg></i><span>New in 0.2.6</span></a>
+      <a class="side-item" href="#new" data-k="new release 0.2.6 latest changes update available new version install now next start updater mac installer dmg window steps health arunika sign in mac headphones full screen power island stays maximized windows sing along romaji lyrics mac prayer script reader teleprompter games power"><i class="ic" style="--c:#bf4800"><svg class="ico"><use href="#i-spark"/></svg></i><span>New in 0.2.6</span></a>
       <a class="side-item" href="#highlights" data-k="best gallery overview"><i class="ic" style="--c:#ff9f0a"><svg class="ico"><use href="#i-spark"/></svg></i><span>Highlights</span></a>
       <a class="side-item" href="#features" data-k="rest idle music timer volume charging headphones bluetooth money clock eyes prayer countdown"><i class="ic" style="--c:#636366"><svg class="ico"><use href="#i-island"/></svg></i><span>While it rests</span></a>
     </div>
@@ -662,7 +662,7 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
     <div class="side-sec">
       <p class="side-group">Looks</p>
       <a class="side-item" href="#looks" data-k="themes looks classic colours colors"><i class="ic" style="--c:#bf5af2"><svg class="ico"><use href="#i-palette"/></svg></i><span>Four looks</span></a>
-      <a class="side-item" href="#oyen" data-k="oyen theme cat cream orange"><i class="ic" style="--c:#f0892e"><img src="brand/oyen-mark-white.svg" alt="" width="14" height="14"></i><span>Oyen</span></a>
+      <a class="side-item" href="#cream" data-k="cream theme warm orange"><i class="ic" style="--c:#f0892e"><img src="brand/arunika-logo.svg" alt="" width="14" height="14"></i><span>Cream</span></a>
       <a class="side-item" href="#glass" data-k="glass liquid theme frosted"><i class="ic" style="--c:#64d2ff"><svg class="ico"><use href="#i-drop"/></svg></i><span>Glass</span></a>
       <a class="side-item" href="#pill" data-k="pill capsule floating theme"><i class="ic" style="--c:#1d1d1f"><svg class="ico"><use href="#i-pill"/></svg></i><span>Pill</span></a>
     </div>
@@ -670,12 +670,12 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
       <p class="side-group">Mac and account</p>
       <a class="side-item" href="#mac" data-k="mac macos macbook notch apple"><i class="ic" style="--c:#8e8e93"><svg class="ico"><use href="#i-laptop"/></svg></i><span>On a Mac</span></a>
       <a class="side-item" href="#compare" data-k="compare windows mac which features"><i class="ic" style="--c:#007aff"><svg class="ico"><use href="#i-columns"/></svg></i><span>Windows and Mac</span></a>
-      <a class="side-item" href="#oyenza" data-k="oyenza account sign in money bills transactions"><i class="ic" style="--c:#f0892e"><svg class="ico"><use href="#i-wallet"/></svg></i><span>Oyenza account</span></a>
+      <a class="side-item" href="#account" data-k="arunika account sign in money bills transactions"><i class="ic" style="--c:#f0892e"><svg class="ico"><use href="#i-wallet"/></svg></i><span>Arunika account</span></a>
     </div>
     <div class="side-sec">
       <p class="side-group">Get it</p>
       <a class="side-item" href="#privacy" data-k="privacy data light fast size open source mit"><i class="ic" style="--c:#007aff"><svg class="ico"><use href="#i-lock"/></svg></i><span>Privacy</span></a>
-      <a class="side-item" href="#get" data-k="install download setup smartscreen dmg get"><i class="ic" style="--c:#0071e3"><svg class="ico"><use href="#i-download"/></svg></i><span>Get Oyenza Studio</span></a>
+      <a class="side-item" href="#get" data-k="install download setup smartscreen dmg get"><i class="ic" style="--c:#0071e3"><svg class="ico"><use href="#i-download"/></svg></i><span>Get Arunika</span></a>
     </div>
     <p class="side-empty" id="sideEmpty" hidden>No feature by that name. Try "lyrics" or "files".</p>
   </nav>
@@ -683,10 +683,10 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
     <p class="side-label">Pictures show the island in</p>
     <div class="look-switch" role="group" aria-label="Island look in the pictures">
       <button type="button" data-look="classic" aria-pressed="true"><span class="dot"></span>Classic</button>
-      <button type="button" data-look="oyen" aria-pressed="false"><span class="dot dot-oyen"></span>Oyen</button>
+      <button type="button" data-look="oyen" aria-pressed="false"><span class="dot dot-oyen"></span>Cream</button>
     </div>
-    <a class="side-me" data-release="notes" href="https://github.com/lucacadalora/oyenza-studio/releases/latest">
-      <img src="brand/oyen-poni-logo.svg" alt="" width="30" height="30">
+    <a class="side-me" data-release="notes" href="https://github.com/Idewara/arunika/releases/latest">
+      <img src="brand/arunika-logo.svg" alt="" width="30" height="30">
       <span><b>Version <span data-release-copy="version">0.2.1</span></b><small>What's new on GitHub</small></span>
     </a>
   </div>
@@ -697,12 +697,12 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
 <header class="top">
   <button class="icon-btn top-open" type="button" id="sideOpen" aria-controls="side" aria-label="Open the sidebar" title="Open the sidebar"><svg class="ico"><use href="#i-side"/></svg></button>
   <button class="icon-btn top-menu" type="button" id="drawerOpen" aria-controls="side" aria-expanded="false" aria-label="Every feature"><svg class="ico"><use href="#i-menu"/></svg></button>
-  <a class="top-title" href="#top">Oyenza Studio</a>
+  <a class="top-title" href="#top">Arunika</a>
   <nav class="top-links" aria-label="Page">
     <a href="#top">Overview</a>
     <a href="#compare">Compare</a>
     <a href="#get">Install</a>
-    <a class="btn btn-sm top-dl" data-download="bar" href="https://github.com/lucacadalora/oyenza-studio/releases/latest/download/Oyenza-Studio-Setup.exe">Download</a>
+    <a class="btn btn-sm top-dl" data-download="bar" href="https://github.com/Idewara/arunika/releases/latest/download/Arunika-Setup.exe">Download</a>
   </nav>
 </header>
 
@@ -710,7 +710,7 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
   <!-- Hero: a strip of the top of a screen. The island hangs from its top edge
        and opens into the Music page as the page scrolls (or right away, with
        reduced motion). -->
-  <section class="hero" id="top" aria-label="Oyenza Studio">
+  <section class="hero" id="top" aria-label="Arunika">
     <div class="hero-track" data-scene="hero">
       <div class="hero-pin">
         <div class="hero-stage">
@@ -718,24 +718,23 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
           <div class="hero-island">
             <div class="hi closed">
               <img class="look-classic" src="assets/shots/classic/media-activity.webp" srcset="assets/shots/classic/media-activity.webp 1x, assets/shots/zoom/classic/media-activity.webp 2x" alt="The island while music plays: album art and a little equalizer" width="135" height="32">
-              <img class="look-oyen" src="assets/shots/oyen/media-activity.webp" srcset="assets/shots/oyen/media-activity.webp 1x, assets/shots/zoom/oyen/media-activity.webp 2x" alt="The cream island of the Oyen theme: album art, and Oyen swaying as music notes float up" width="135" height="32">
+              <img class="look-oyen" src="assets/shots/oyen/media-activity.webp" srcset="assets/shots/oyen/media-activity.webp 1x, assets/shots/zoom/oyen/media-activity.webp 2x" alt="The cream island of the Cream theme: album art, and music notes floating up" width="135" height="32">
             </div>
             <div class="hi open">
               <img class="look-classic" src="assets/shots/classic/page-media.webp" alt="The open island: the Music page with synced lyrics" width="660" height="227">
-              <img class="look-oyen" src="assets/shots/oyen/page-media.webp" alt="The open island in the Oyen theme: the Music page with synced lyrics" width="660" height="227">
+              <img class="look-oyen" src="assets/shots/oyen/page-media.webp" alt="The open island in the Cream theme: the Music page with synced lyrics" width="660" height="227">
             </div>
           </div>
           <div class="hero-copy">
-            <h1 class="t-hero-eyebrow">Oyenza Studio</h1>
+            <h1 class="t-hero-eyebrow">Arunika</h1>
             <p class="t-hero">A living notch.</p>
             <a class="t-avail" href="#new">New in 0.2.6: the island tells you when a new version is out, and installs it on Windows.</a>
             <div class="buybox">
-              <div><b>Free for Windows and Mac</b><span class="fine">Open source · Windows <span data-release="size">2.5&nbsp;MB</span> · Mac <span data-release="mac-size">3.9&nbsp;MB</span> · <a class="notes" data-release="notes" href="https://github.com/lucacadalora/oyenza-studio/releases/latest">What's new in <span data-release="version">0.2.6</span></a></span></div>
-              <a class="btn dl-primary" href="https://github.com/lucacadalora/oyenza-studio/releases/latest/download/Oyenza-Studio-Setup.exe">Download</a>
+              <div><b>Free for Windows and Mac</b><span class="fine">Open source · Windows <span data-release="size">2.5&nbsp;MB</span> · Mac <span data-release="mac-size">3.9&nbsp;MB</span> · <a class="notes" data-release="notes" href="https://github.com/Idewara/arunika/releases/latest">What's new in <span data-release="version">0.2.6</span></a></span></div>
+              <a class="btn dl-primary" href="https://github.com/Idewara/arunika/releases/latest/download/Arunika-Setup.exe">Download</a>
             </div>
-            <a class="link hero-other dl-other" data-release="mac-link" href="https://github.com/lucacadalora/oyenza-studio/releases/latest/download/Oyenza-Studio-Mac.dmg">Download for Mac</a>
+            <a class="link hero-other dl-other" data-release="mac-link" href="https://github.com/Idewara/arunika/releases/latest/download/Arunika-Mac.dmg">Download for Mac</a>
           </div>
-          <img class="hero-oyen" src="brand/art/oyen-poni-peek.webp" alt="Oyen, an orange plush cat, peeking over the island while a song plays" width="1200" height="661">
         </div>
       </div>
     </div>
@@ -754,9 +753,9 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
       <a class="news-tile rv" href="#on-top"><p class="t-card">The island stays</p><p class="t-tile">Over a maximized window it stays on screen again, in every theme. Want the top edge clear? Idle look › Hidden until hover.</p></a>
       <a class="news-tile rv" href="#settings"><p class="t-card">New versions, told</p><p class="t-tile">The island says when a new version is out. Hide it, or open the Update sheet to see what's new.</p></a>
       <a class="news-tile rv" href="#settings"><p class="t-card">Install from the island</p><p class="t-tile">On Windows, the new version downloads first. Then Install now, or Install on next start.</p></a>
-      <a class="news-tile rv" href="#get"><p class="t-card">A Mac installer</p><p class="t-tile">The Mac download opens as a window: drag Oyenza Studio into Applications.</p></a>
-      <a class="news-tile rv" href="#health"><p class="t-card">Your steps</p><p class="t-tile">Turn on Show on Oyenza Studio in Oyenza on your phone, and your week's steps show on the Health page.</p></a>
-      <a class="news-tile rv" href="#oyenza"><p class="t-card">Oyenza on the Mac</p><p class="t-tile">Sign in on a Mac too: money notices, bills due and your last 7 days, as on Windows.</p></a>
+      <a class="news-tile rv" href="#get"><p class="t-card">A Mac installer</p><p class="t-tile">The Mac download opens as a window: drag Arunika into Applications.</p></a>
+      <a class="news-tile rv" href="#health"><p class="t-card">Your steps</p><p class="t-tile">Turn on Show on Arunika in the Arunika app on your phone, and your week's steps show on the Health page.</p></a>
+      <a class="news-tile rv" href="#account"><p class="t-card">Arunika on the Mac</p><p class="t-tile">Sign in on a Mac too: money notices, bills due and your last 7 days, as on Windows.</p></a>
       <a class="news-tile rv" href="#mac"><p class="t-card">More of Windows on the Mac</p><p class="t-tile">Headphone pop-ups, out of the way in full-screen apps, and Power on a Mac mini, Studio or iMac.</p></a>
       <a class="news-tile rv" href="#features"><p class="t-card">Lyrics on the island</p><p class="t-tile">The line being sung shows on the closed island in every look, as it does in Pill.</p></a>
       <a class="news-tile rv" href="#read-along"><p class="t-card">Sing along</p><p class="t-tile">Japanese, Korean and Chinese lines show their reading in Latin letters on the closed island, right under the line.</p></a>
@@ -775,53 +774,49 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
         <p>Script reader: a teleprompter under your webcam, a line at a time.</p>
         <div class="gsky"><div class="sky-fill"></div>
           <img class="look-classic" src="assets/shots/classic/page-script-reading.webp" alt="The Script page reading a script: the line to say bright, the next ones dim, 140 words a minute, and Hidden from screen shares" width="638" height="269" loading="lazy">
-          <img class="look-oyen" src="assets/shots/oyen/page-script-reading.webp" alt="The Script page reading a script, in the Oyen theme" width="638" height="269" loading="lazy">
+          <img class="look-oyen" src="assets/shots/oyen/page-script-reading.webp" alt="The Script page reading a script, in the Cream theme" width="638" height="269" loading="lazy">
         </div>
       </a>
       <a class="gcard" href="#music">
         <p>Lyrics scroll in time with whatever is playing: Spotify, Apple Music or YouTube.</p>
         <div class="gsky"><div class="sky-fill"></div>
           <img class="look-classic" src="assets/shots/classic/page-media.webp" alt="The Music page: controls and time-synced lyrics" width="660" height="227" loading="lazy">
-          <img class="look-oyen" src="assets/shots/oyen/page-media.webp" alt="The Music page in the Oyen theme" width="660" height="227" loading="lazy">
+          <img class="look-oyen" src="assets/shots/oyen/page-media.webp" alt="The Music page in the Cream theme" width="660" height="227" loading="lazy">
         </div>
       </a>
       <a class="gcard" href="#read-along">
         <p>Korean, Japanese and Chinese lines show each word's reading underneath.</p>
         <div class="gsky"><div class="sky-fill"></div>
           <img class="look-classic" src="assets/shots/classic/page-media-ko.webp" alt="The Music page with Korean lyrics, each word's reading in Latin letters set small underneath" width="660" height="227" loading="lazy">
-          <img class="look-oyen" src="assets/shots/oyen/page-media-ko.webp" alt="The same Korean lyrics and readings in the Oyen theme" width="660" height="227" loading="lazy">
+          <img class="look-oyen" src="assets/shots/oyen/page-media-ko.webp" alt="The same Korean lyrics and readings in the Cream theme" width="660" height="227" loading="lazy">
         </div>
       </a>
       <a class="gcard" href="#phone-drop">
         <p>Send photos and files from your phone straight onto the Shelf.</p>
         <div class="gsky"><div class="sky-fill"></div>
           <img class="look-classic" src="assets/shots/classic/page-shelf-phone-ask.webp" alt="The Shelf with Phone drop open: iPhone wants to send 3 files, with Decline and Accept" width="660" height="393" loading="lazy">
-          <img class="look-oyen" src="assets/shots/oyen/page-shelf-phone-ask.webp" alt="Phone drop asking to accept 3 files from an iPhone, in the Oyen theme" width="660" height="393" loading="lazy">
+          <img class="look-oyen" src="assets/shots/oyen/page-shelf-phone-ask.webp" alt="Phone drop asking to accept 3 files from an iPhone, in the Cream theme" width="660" height="393" loading="lazy">
         </div>
       </a>
       <a class="gcard" href="#system">
         <p>CPU, GPU, memory, drives, network and battery, at a glance.</p>
         <div class="gsky"><div class="sky-fill"></div>
           <img class="look-classic" src="assets/shots/classic/page-system.webp" alt="The System page: a strip of every part's live value, the CPU's rings and details, a minute of history, each core's load and the processes using the most" width="660" height="335" loading="lazy">
-          <img class="look-oyen" src="assets/shots/oyen/page-system.webp" alt="The System page in the Oyen theme" width="660" height="335" loading="lazy">
+          <img class="look-oyen" src="assets/shots/oyen/page-system.webp" alt="The System page in the Cream theme" width="660" height="335" loading="lazy">
         </div>
-      </a>
-      <a class="gcard" href="#looks">
-        <p>Four looks: Classic, Oyen, Glass and Pill.</p>
-        <div class="gsky pad"><img class="whole" src="brand/readme/themes.webp" alt="The Music page in each look: Classic, Oyen, Glass light, Glass dark, Pill, and Pill while a lyric line plays" width="880" height="548" loading="lazy"></div>
       </a>
       <a class="gcard" href="#prayer">
         <p>Prayer times for your kab/kota, as Kemenag RI publishes them.</p>
         <div class="gsky"><div class="sky-fill"></div>
           <img class="look-classic" src="assets/shots/classic/page-prayer.webp" alt="The Prayer page: Ashar at 14:52, counting down from 00:08:00, Kota Jakarta, today's five prayers on an arc with Ashar lit, Imsak, Terbit and the qibla, and Adzan, Tone or Silent" width="660" height="225" loading="lazy">
-          <img class="look-oyen" src="assets/shots/oyen/page-prayer.webp" alt="The Prayer page in the Oyen theme" width="660" height="225" loading="lazy">
+          <img class="look-oyen" src="assets/shots/oyen/page-prayer.webp" alt="The Prayer page in the Cream theme" width="660" height="225" loading="lazy">
         </div>
       </a>
       <a class="gcard" href="#games">
         <p>FPS, GPU and CPU, right over your games.</p>
         <div class="gsky"><div class="sky-fill"></div>
           <img class="look-classic" src="assets/shots/classic/page-system-games.webp" alt="System › Games: the Show over games switch, Readout set to Stays or Peeks, the frame rate's last minute, frame times and the game in front" width="660" height="335" loading="lazy">
-          <img class="look-oyen" src="assets/shots/oyen/page-system-games.webp" alt="System › Games in the Oyen theme" width="660" height="335" loading="lazy">
+          <img class="look-oyen" src="assets/shots/oyen/page-system-games.webp" alt="System › Games in the Cream theme" width="660" height="335" loading="lazy">
         </div>
       </a>
     </div>
@@ -846,42 +841,42 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
           <li><button type="button" data-i="3">Volume and charging</button><p><span>A clean pop-up when you change the volume or plug in.</span></p></li>
           <li><button type="button" data-i="4">Headphones</button><p><span>Bluetooth headsets say hello, with their battery level.</span></p></li>
           <li><button type="button" data-i="5">Prayer countdown</button><p><span>The ten minutes before each prayer, with the add-on.</span></p></li>
-          <li><button type="button" data-i="6">Money in</button><p><span>With Oyenza. The amount stays hidden until you click Show.</span></p></li>
+          <li><button type="button" data-i="6">Money in</button><p><span>With Arunika. The amount stays hidden until you click Show.</span></p></li>
           <li><button type="button" data-i="7">Resting</button><p><span>A clock, a pair of eyes, or nothing until you point.</span></p></li>
         </ol>
         <div class="rest-stage">
           <div class="sky-fill"></div>
           <figure class="on" data-i="0">
             <img class="look-classic" style="--w:135" src="assets/shots/classic/media-activity.webp" srcset="assets/shots/classic/media-activity.webp 1x, assets/shots/zoom/classic/media-activity.webp 2x" alt="Album art and an equalizer" width="135" height="32" loading="lazy">
-            <img class="look-oyen" style="--w:135" src="assets/shots/oyen/media-activity.webp" srcset="assets/shots/oyen/media-activity.webp 1x, assets/shots/zoom/oyen/media-activity.webp 2x" alt="Album art, and Oyen swaying as music notes float up" width="135" height="32" loading="lazy">
+            <img class="look-oyen" style="--w:135" src="assets/shots/oyen/media-activity.webp" srcset="assets/shots/oyen/media-activity.webp 1x, assets/shots/zoom/oyen/media-activity.webp 2x" alt="Album art, and music notes floating up" width="135" height="32" loading="lazy">
           </figure>
           <figure data-i="1">
             <img class="look-classic" style="--w:351" src="assets/shots/classic/media-lyric.webp" srcset="assets/shots/classic/media-lyric.webp 1x, assets/shots/zoom/classic/media-lyric.webp 2x" alt="The closed island singing along: album art, the line being sung and an equalizer" width="351" height="32" loading="lazy">
-            <img class="look-oyen" style="--w:327" src="assets/shots/oyen/media-lyric.webp" srcset="assets/shots/oyen/media-lyric.webp 1x, assets/shots/zoom/oyen/media-lyric.webp 2x" alt="The line being sung on the closed island, in the Oyen theme" width="327" height="32" loading="lazy">
+            <img class="look-oyen" style="--w:327" src="assets/shots/oyen/media-lyric.webp" srcset="assets/shots/oyen/media-lyric.webp 1x, assets/shots/zoom/oyen/media-lyric.webp 2x" alt="The line being sung on the closed island, in the Cream theme" width="327" height="32" loading="lazy">
           </figure>
           <figure data-i="2">
             <img class="look-classic" style="--w:111" src="assets/shots/classic/timer-activity.webp" srcset="assets/shots/classic/timer-activity.webp 1x, assets/shots/zoom/classic/timer-activity.webp 2x" alt="A focus countdown with a progress ring" width="111" height="32" loading="lazy">
-            <img class="look-oyen" style="--w:111" src="assets/shots/oyen/timer-activity.webp" srcset="assets/shots/oyen/timer-activity.webp 1x, assets/shots/zoom/oyen/timer-activity.webp 2x" alt="A focus countdown with a progress ring, in the Oyen theme" width="111" height="32" loading="lazy">
+            <img class="look-oyen" style="--w:111" src="assets/shots/oyen/timer-activity.webp" srcset="assets/shots/oyen/timer-activity.webp 1x, assets/shots/zoom/oyen/timer-activity.webp 2x" alt="A focus countdown with a progress ring, in the Cream theme" width="111" height="32" loading="lazy">
           </figure>
           <figure data-i="3">
             <img class="look-classic" style="--w:331" src="assets/shots/classic/volume-hud.webp" srcset="assets/shots/classic/volume-hud.webp 1x, assets/shots/zoom/classic/volume-hud.webp 2x" alt="The volume level" width="331" height="40" loading="lazy">
-            <img class="look-oyen" style="--w:331" src="assets/shots/oyen/volume-hud.webp" srcset="assets/shots/oyen/volume-hud.webp 1x, assets/shots/zoom/oyen/volume-hud.webp 2x" alt="The volume level, in the Oyen theme" width="331" height="40" loading="lazy">
+            <img class="look-oyen" style="--w:331" src="assets/shots/oyen/volume-hud.webp" srcset="assets/shots/oyen/volume-hud.webp 1x, assets/shots/zoom/oyen/volume-hud.webp 2x" alt="The volume level, in the Cream theme" width="331" height="40" loading="lazy">
           </figure>
           <figure data-i="4">
             <img class="look-classic" style="--w:351" src="assets/shots/classic/bluetooth-hud.webp" srcset="assets/shots/classic/bluetooth-hud.webp 1x, assets/shots/zoom/classic/bluetooth-hud.webp 2x" alt="Headphones connected, with battery level" width="351" height="46" loading="lazy">
-            <img class="look-oyen" style="--w:351" src="assets/shots/oyen/bluetooth-hud.webp" srcset="assets/shots/oyen/bluetooth-hud.webp 1x, assets/shots/zoom/oyen/bluetooth-hud.webp 2x" alt="Headphones connected, with battery level, in the Oyen theme" width="351" height="46" loading="lazy">
+            <img class="look-oyen" style="--w:351" src="assets/shots/oyen/bluetooth-hud.webp" srcset="assets/shots/oyen/bluetooth-hud.webp 1x, assets/shots/zoom/oyen/bluetooth-hud.webp 2x" alt="Headphones connected, with battery level, in the Cream theme" width="351" height="46" loading="lazy">
           </figure>
           <figure data-i="5">
             <img class="look-classic" style="--w:183" src="assets/shots/classic/prayer-countdown.webp" srcset="assets/shots/classic/prayer-countdown.webp 1x, assets/shots/zoom/classic/prayer-countdown.webp 2x" alt="The island counting down to the next prayer" width="183" height="32" loading="lazy">
-            <img class="look-oyen" style="--w:183" src="assets/shots/oyen/prayer-countdown.webp" srcset="assets/shots/oyen/prayer-countdown.webp 1x, assets/shots/zoom/oyen/prayer-countdown.webp 2x" alt="The prayer countdown in the Oyen theme" width="183" height="32" loading="lazy">
+            <img class="look-oyen" style="--w:183" src="assets/shots/oyen/prayer-countdown.webp" srcset="assets/shots/oyen/prayer-countdown.webp 1x, assets/shots/zoom/oyen/prayer-countdown.webp 2x" alt="The prayer countdown in the Cream theme" width="183" height="32" loading="lazy">
           </figure>
           <figure data-i="6">
-            <img class="look-classic" style="--w:387" src="assets/shots/classic/oyenza-money.webp" srcset="assets/shots/classic/oyenza-money.webp 1x, assets/shots/zoom/classic/oyenza-money.webp 2x" alt="Money in at BCA, amount and sender hidden, with a Show button" width="387" height="52" loading="lazy">
-            <img class="look-oyen" style="--w:387" src="assets/shots/oyen/oyenza-money.webp" srcset="assets/shots/oyen/oyenza-money.webp 1x, assets/shots/zoom/oyen/oyenza-money.webp 2x" alt="Money in at BCA, amount and sender hidden, in the Oyen theme" width="387" height="52" loading="lazy">
+            <img class="look-classic" style="--w:387" src="assets/shots/classic/money-notice.webp" srcset="assets/shots/classic/money-notice.webp 1x, assets/shots/zoom/classic/money-notice.webp 2x" alt="Money in at BCA, amount and sender hidden, with a Show button" width="387" height="52" loading="lazy">
+            <img class="look-oyen" style="--w:387" src="assets/shots/oyen/money-notice.webp" srcset="assets/shots/oyen/money-notice.webp 1x, assets/shots/zoom/oyen/money-notice.webp 2x" alt="Money in at BCA, amount and sender hidden, in the Cream theme" width="387" height="52" loading="lazy">
           </figure>
           <figure data-i="7">
             <img class="look-classic" style="--w:99" src="assets/shots/classic/idle-clock.webp" srcset="assets/shots/classic/idle-clock.webp 1x, assets/shots/zoom/classic/idle-clock.webp 2x" alt="The resting island with a clock" width="99" height="30" loading="lazy">
-            <img class="look-oyen" style="--w:133" src="assets/shots/oyen/idle-clock.webp" srcset="assets/shots/oyen/idle-clock.webp 1x, assets/shots/zoom/oyen/idle-clock.webp 2x" alt="The resting island with a clock and Oyen peeking" width="133" height="30" loading="lazy">
+            <img class="look-oyen" style="--w:133" src="assets/shots/oyen/idle-clock.webp" srcset="assets/shots/oyen/idle-clock.webp 1x, assets/shots/zoom/oyen/idle-clock.webp 2x" alt="The resting island with a clock" width="133" height="30" loading="lazy">
           </figure>
         </div>
       </div>
@@ -907,9 +902,8 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
         <div class="sky-layer"></div>
         <div class="isl">
           <img class="look-classic" src="assets/shots/classic/page-media.webp" alt="The Music page: controls and time-synced lyrics" width="660" height="227" loading="lazy">
-          <img class="look-oyen" src="assets/shots/oyen/page-media.webp" alt="The Music page in the Oyen theme" width="660" height="227" loading="lazy">
+          <img class="look-oyen" src="assets/shots/oyen/page-media.webp" alt="The Music page in the Cream theme" width="660" height="227" loading="lazy">
         </div>
-        <img class="pose" src="brand/art/poses/oyen-music.webp" alt="Oyen in headphones" width="480" height="560" loading="lazy">
       </div>
     </div>
   </section>
@@ -926,7 +920,7 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
         <div class="sky-layer"></div>
         <div class="isl">
           <img class="look-classic" src="assets/shots/classic/page-media-ko.webp" alt="The Music page with Korean lyrics, each word's reading in Latin letters set small underneath" width="660" height="227" loading="lazy">
-          <img class="look-oyen" src="assets/shots/oyen/page-media-ko.webp" alt="The same Korean lyrics and readings in the Oyen theme" width="660" height="227" loading="lazy">
+          <img class="look-oyen" src="assets/shots/oyen/page-media-ko.webp" alt="The same Korean lyrics and readings in the Cream theme" width="660" height="227" loading="lazy">
         </div>
         <div class="ruby-row" aria-label="Japanese words read the way they are sung">
           <span class="ruby" style="--d:0.5"><b lang="ja">二人</b><i>futari</i></span>
@@ -943,45 +937,45 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
     </div>
     <div class="content bento">
       <article class="tile rv" id="focus">
-        <div class="tile-text"><div><h4 class="t-card">Focus</h4><p class="t-tile">A Pomodoro timer that keeps counting in the island.</p></div><img class="tile-pose" src="brand/art/poses/oyen-focus.webp" alt="" width="480" height="466" loading="lazy"></div>
+        <div class="tile-text"><div><h4 class="t-card">Focus</h4><p class="t-tile">A Pomodoro timer that keeps counting in the island.</p></div></div>
         <div class="tile-shot"><div class="sky-fill"></div><div class="isl">
           <img class="look-classic" src="assets/shots/classic/page-focus.webp" alt="The Focus page" width="660" height="223" loading="lazy">
-          <img class="look-oyen" src="assets/shots/oyen/page-focus.webp" alt="The Focus page in the Oyen theme" width="660" height="223" loading="lazy">
+          <img class="look-oyen" src="assets/shots/oyen/page-focus.webp" alt="The Focus page in the Cream theme" width="660" height="223" loading="lazy">
         </div></div>
       </article>
       <article class="tile rv" id="health">
-        <div class="tile-text"><div><h4 class="t-card">Health</h4><p class="t-tile">Today's steps and your week, from your phone through Oyenza. Turn on Show on Oyenza Studio under your steps in Oyenza's Health (Sehat) on your phone and they show here, with a notice when you reach your goal.</p></div><img class="tile-pose" src="brand/art/poses/oyen-health.webp" alt="" width="480" height="572" loading="lazy"></div>
+        <div class="tile-text"><div><h4 class="t-card">Health</h4><p class="t-tile">Today's steps and your week, from your phone through Arunika. Turn on Show on Arunika under your steps in Health (Sehat) in the Arunika app on your phone and they show here, with a notice when you reach your goal.</p></div></div>
         <div class="tile-shot"><div class="sky-fill"></div><div class="isl">
           <img class="look-classic" src="assets/shots/classic/page-health.webp" alt="The Health page: 8,412 of 8,000 steps today, and the week as bars" width="660" height="223" loading="lazy">
-          <img class="look-oyen" src="assets/shots/oyen/page-health.webp" alt="The Health page in the Oyen theme" width="660" height="223" loading="lazy">
+          <img class="look-oyen" src="assets/shots/oyen/page-health.webp" alt="The Health page in the Cream theme" width="660" height="223" loading="lazy">
         </div></div>
       </article>
       <article class="tile rv" id="shelf">
-        <div class="tile-text"><div><h4 class="t-card">Shelf</h4><p class="t-tile">Drop files on the island, or send them from your phone.</p></div><img class="tile-pose" src="brand/art/poses/oyen-shelf.webp" alt="" width="480" height="660" loading="lazy"></div>
+        <div class="tile-text"><div><h4 class="t-card">Shelf</h4><p class="t-tile">Drop files on the island, or send them from your phone.</p></div></div>
         <div class="tile-shot"><div class="sky-fill"></div><div class="isl">
           <img class="look-classic" src="assets/shots/classic/page-shelf.webp" alt="The Shelf page" width="660" height="229" loading="lazy">
-          <img class="look-oyen" src="assets/shots/oyen/page-shelf.webp" alt="The Shelf page in the Oyen theme" width="660" height="229" loading="lazy">
+          <img class="look-oyen" src="assets/shots/oyen/page-shelf.webp" alt="The Shelf page in the Cream theme" width="660" height="229" loading="lazy">
         </div></div>
       </article>
       <article class="tile rv" id="tasks">
-        <div class="tile-text"><div><h4 class="t-card">Tasks</h4><p class="t-tile">A tiny to-do list for what you'd otherwise forget.</p></div><img class="tile-pose" src="brand/art/poses/oyen-tasks.webp" alt="" width="480" height="577" loading="lazy"></div>
+        <div class="tile-text"><div><h4 class="t-card">Tasks</h4><p class="t-tile">A tiny to-do list for what you'd otherwise forget.</p></div></div>
         <div class="tile-shot"><div class="sky-fill"></div><div class="isl">
           <img class="look-classic" src="assets/shots/classic/page-tasks.webp" alt="The Tasks page" width="660" height="279" loading="lazy">
-          <img class="look-oyen" src="assets/shots/oyen/page-tasks.webp" alt="The Tasks page in the Oyen theme" width="660" height="279" loading="lazy">
+          <img class="look-oyen" src="assets/shots/oyen/page-tasks.webp" alt="The Tasks page in the Cream theme" width="660" height="279" loading="lazy">
         </div></div>
       </article>
       <article class="tile rv" id="clipboard">
-        <div class="tile-text"><div><h4 class="t-card">Clipboard</h4><p class="t-tile">Recent copied text, kept in memory only. Passwords are skipped.</p></div><img class="tile-pose" src="brand/art/poses/oyen-clipboard.webp" alt="" width="480" height="477" loading="lazy"></div>
+        <div class="tile-text"><div><h4 class="t-card">Clipboard</h4><p class="t-tile">Recent copied text, kept in memory only. Passwords are skipped.</p></div></div>
         <div class="tile-shot"><div class="sky-fill"></div><div class="isl">
           <img class="look-classic" src="assets/shots/classic/page-clipboard.webp" alt="The Clipboard page" width="660" height="283" loading="lazy">
-          <img class="look-oyen" src="assets/shots/oyen/page-clipboard.webp" alt="The Clipboard page in the Oyen theme" width="660" height="283" loading="lazy">
+          <img class="look-oyen" src="assets/shots/oyen/page-clipboard.webp" alt="The Clipboard page in the Cream theme" width="660" height="283" loading="lazy">
         </div></div>
       </article>
       <article class="tile rv" id="today">
-        <div class="tile-text"><div><h4 class="t-card">Today</h4><p class="t-tile">The date and calendar, with CPU, memory, disk and battery.</p></div><img class="tile-pose" src="brand/art/poses/oyen-today.webp" alt="" width="480" height="499" loading="lazy"></div>
+        <div class="tile-text"><div><h4 class="t-card">Today</h4><p class="t-tile">The date and calendar, with CPU, memory, disk and battery.</p></div></div>
         <div class="tile-shot"><div class="sky-fill"></div><div class="isl">
           <img class="look-classic" src="assets/shots/classic/page-today.webp" alt="The Today page" width="660" height="243" loading="lazy">
-          <img class="look-oyen" src="assets/shots/oyen/page-today.webp" alt="The Today page in the Oyen theme" width="660" height="243" loading="lazy">
+          <img class="look-oyen" src="assets/shots/oyen/page-today.webp" alt="The Today page in the Cream theme" width="660" height="243" loading="lazy">
         </div></div>
       </article>
     </div>
@@ -999,9 +993,8 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
         <div class="sky-layer"></div>
         <div class="isl">
           <img class="look-classic" src="assets/shots/classic/page-system.webp" alt="The System page: a strip of every part's live value, the CPU's rings and details, a minute of history, each core's load and the processes using the most" width="660" height="335" loading="lazy">
-          <img class="look-oyen" src="assets/shots/oyen/page-system.webp" alt="The System page in the Oyen theme" width="660" height="335" loading="lazy">
+          <img class="look-oyen" src="assets/shots/oyen/page-system.webp" alt="The System page in the Cream theme" width="660" height="335" loading="lazy">
         </div>
-        <img class="pose" src="brand/art/poses/oyen-system.webp" alt="Oyen holding a computer chip" width="480" height="602" loading="lazy">
       </div>
       <div class="split power-row">
         <div class="head rv">
@@ -1013,7 +1006,7 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
           <div class="sky-layer"></div>
           <div class="isl">
             <img class="look-classic" src="assets/shots/classic/page-system-power-estimate.webp" alt="System › Power on a desktop: 153 W for the whole PC, estimated, split into the CPU's 72 W, the graphics card's 41 W and about 40 W for the rest, with a minute of history; the power supply doesn't report" width="660" height="335" loading="lazy">
-            <img class="look-oyen" src="assets/shots/oyen/page-system-power-estimate.webp" alt="System › Power in the Oyen theme" width="660" height="335" loading="lazy">
+            <img class="look-oyen" src="assets/shots/oyen/page-system-power-estimate.webp" alt="System › Power in the Cream theme" width="660" height="335" loading="lazy">
           </div>
         </div>
       </div>
@@ -1035,8 +1028,8 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
       <div class="panel rv-zoom" data-scene="par" style="--band:28px">
         <div class="sky-layer"></div>
         <div class="isl">
-          <img class="look-classic" src="assets/shots/classic/page-settings.webp" alt="The Settings page: Sign in with Oyenza at the top, then the theme, the idle look, six switches (Tell me about new versions among them) and a Hide or Stay on top choice for full-screen apps" width="660" height="305" loading="lazy">
-          <img class="look-oyen" src="assets/shots/oyen/page-settings.webp" alt="The Settings page in the Oyen theme" width="660" height="305" loading="lazy">
+          <img class="look-classic" src="assets/shots/classic/page-settings.webp" alt="The Settings page: Sign in with Arunika at the top, then the theme, the idle look, six switches (Tell me about new versions among them) and a Hide or Stay on top choice for full-screen apps" width="660" height="305" loading="lazy">
+          <img class="look-oyen" src="assets/shots/oyen/page-settings.webp" alt="The Settings page in the Cream theme" width="660" height="305" loading="lazy">
         </div>
       </div>
     </div>
@@ -1058,7 +1051,7 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
         <div class="sky-layer"></div>
         <div class="isl">
           <img class="look-classic" src="assets/shots/classic/page-shelf-phone-ask.webp" alt="The Shelf with Phone drop open: iPhone wants to send 3 files, with Decline and Accept" width="660" height="393" loading="lazy">
-          <img class="look-oyen" src="assets/shots/oyen/page-shelf-phone-ask.webp" alt="Phone drop asking to accept 3 files from an iPhone, in the Oyen theme" width="660" height="393" loading="lazy">
+          <img class="look-oyen" src="assets/shots/oyen/page-shelf-phone-ask.webp" alt="Phone drop asking to accept 3 files from an iPhone, in the Cream theme" width="660" height="393" loading="lazy">
         </div>
       </div>
     </div>
@@ -1070,7 +1063,7 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
         <div class="sky-layer"></div>
         <div class="isl">
           <img class="look-classic" src="assets/shots/classic/page-shelf-pairing.webp" alt="The Shelf with Pair a phone open: a QR code to scan once, then the phone can send to this PC from any network" width="660" height="393" loading="lazy">
-          <img class="look-oyen" src="assets/shots/oyen/page-shelf-pairing.webp" alt="The pairing code under the Shelf, in the Oyen theme" width="660" height="393" loading="lazy">
+          <img class="look-oyen" src="assets/shots/oyen/page-shelf-pairing.webp" alt="The pairing code under the Shelf, in the Cream theme" width="660" height="393" loading="lazy">
         </div>
       </div>
       <div class="head rv">
@@ -1094,9 +1087,8 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
         <div class="sky-layer"></div>
         <div class="isl">
           <img class="look-classic" src="assets/shots/classic/page-prayer.webp" alt="The Prayer page: Ashar at 14:52, counting down from 00:08:00, Kota Jakarta, today's five prayers on an arc with Ashar lit, Imsak, Terbit and the qibla, and Adzan, Tone or Silent" width="660" height="225" loading="lazy">
-          <img class="look-oyen" src="assets/shots/oyen/page-prayer.webp" alt="The Prayer page in the Oyen theme" width="660" height="225" loading="lazy">
+          <img class="look-oyen" src="assets/shots/oyen/page-prayer.webp" alt="The Prayer page in the Cream theme" width="660" height="225" loading="lazy">
         </div>
-        <img class="pose left" src="brand/art/poses/oyen-prayer.webp" alt="Oyen holding a lantern" width="480" height="562" loading="lazy">
       </div>
       <div class="stats">
         <div class="stat rv"><small>Picks from</small><b>517</b><span>Kemenag places, the nearest one found for you.</span></div>
@@ -1122,7 +1114,7 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
         <div class="sky-layer"></div>
         <div class="isl">
           <img class="look-classic" src="assets/shots/classic/page-addons.webp" alt="The Add-ons tab: Prayer times (1.9 MB), Japanese readings (3.8 MB) and Script reader (Built in), each with its switch off" width="660" height="263" loading="lazy">
-          <img class="look-oyen" src="assets/shots/oyen/page-addons.webp" alt="The Add-ons tab in the Oyen theme" width="660" height="263" loading="lazy">
+          <img class="look-oyen" src="assets/shots/oyen/page-addons.webp" alt="The Add-ons tab in the Cream theme" width="660" height="263" loading="lazy">
         </div>
       </div>
     </div>
@@ -1140,7 +1132,7 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
         <div class="sky-layer"></div>
         <div class="isl">
           <img class="look-classic" src="assets/shots/classic/page-script-reading.webp" alt="The Script page reading a script: the line to say bright, the next ones dim, 140 words a minute, and Hidden from screen shares" width="638" height="269" loading="lazy">
-          <img class="look-oyen" src="assets/shots/oyen/page-script-reading.webp" alt="The Script page reading a script, in the Oyen theme" width="638" height="269" loading="lazy">
+          <img class="look-oyen" src="assets/shots/oyen/page-script-reading.webp" alt="The Script page reading a script, in the Cream theme" width="638" height="269" loading="lazy">
         </div>
       </div>
       <div class="stats">
@@ -1163,7 +1155,7 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
         <div class="sky-layer"></div>
         <div class="isl">
           <img class="look-classic" src="assets/shots/classic/game-stats.webp" srcset="assets/shots/classic/game-stats.webp 1x, assets/shots/zoom/classic/game-stats.webp 2x" style="width:min(582px,100%)" alt="The island over a game: 144 fps, GPU 97% at 71°, CPU 38%" width="291" height="33" loading="lazy">
-          <img class="look-oyen" src="assets/shots/oyen/game-stats.webp" srcset="assets/shots/oyen/game-stats.webp 1x, assets/shots/zoom/oyen/game-stats.webp 2x" style="width:min(582px,100%)" alt="The readout over a game in the Oyen theme: 144 fps, GPU 97% at 71°, CPU 38%" width="291" height="33" loading="lazy">
+          <img class="look-oyen" src="assets/shots/oyen/game-stats.webp" srcset="assets/shots/oyen/game-stats.webp 1x, assets/shots/zoom/oyen/game-stats.webp 2x" style="width:min(582px,100%)" alt="The readout over a game in the Cream theme: 144 fps, GPU 97% at 71°, CPU 38%" width="291" height="33" loading="lazy">
         </div>
         <div class="keys" style="position:absolute;left:0;right:0;bottom:clamp(28px,4vw,56px)" aria-label="Alt, Shift and F show it any time">
           <span class="cap">Alt</span><span class="plus">+</span><span class="cap">Shift</span><span class="plus">+</span><span class="cap">F</span>
@@ -1178,7 +1170,7 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
         <div class="sky-layer"></div>
         <div class="isl">
           <img class="look-classic" src="assets/shots/classic/page-settings-stay-on-top.webp" alt="The Settings page with In full-screen apps set to Stay on top" width="660" height="305" loading="lazy">
-          <img class="look-oyen" src="assets/shots/oyen/page-settings-stay-on-top.webp" alt="In full-screen apps set to Stay on top, in the Oyen theme" width="660" height="305" loading="lazy">
+          <img class="look-oyen" src="assets/shots/oyen/page-settings-stay-on-top.webp" alt="In full-screen apps set to Stay on top, in the Cream theme" width="660" height="305" loading="lazy">
         </div>
       </div>
       <div class="head rv">
@@ -1197,13 +1189,13 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
     <div class="content">
       <div class="looks-stage rv-zoom" id="looksStage">
         <div class="lk on" data-k="classic"><div class="sky-fill"></div><div class="isl"><img src="assets/shots/classic/page-media.webp" alt="Classic: the black island, open on the Music page" width="660" height="227" loading="lazy"></div></div>
-        <div class="lk" data-k="oyen"><div class="sky-fill"></div><div class="isl"><img src="assets/shots/oyen/page-media.webp" alt="Oyen: the cream island with brown type and Oyen's orange, open on the Music page" width="660" height="227" loading="lazy"></div></div>
+        <div class="lk" data-k="oyen"><div class="sky-fill"></div><div class="isl"><img src="assets/shots/oyen/page-media.webp" alt="Cream: the cream island with brown type and orange accents, open on the Music page" width="660" height="227" loading="lazy"></div></div>
         <div class="lk" data-k="glass"><img class="lk-whole" src="assets/shots/glass/light-page-media.webp" alt="Glass: the Music page as frosted glass over a bright web page, which bends at the rim" width="756" height="267" loading="lazy"></div>
         <div class="lk" data-k="pill"><div class="sky-fill"></div><div class="isl float"><img src="assets/shots/pill/page-media.webp" alt="Pill: a black card with four rounded corners floating below the top edge, on the Music page" width="620" height="224" loading="lazy"></div></div>
       </div>
       <div class="swatches" role="radiogroup" aria-label="Look">
         <button class="sw" type="button" role="radio" aria-checked="true" data-k="classic"><i class="sw-classic"></i>Classic</button>
-        <button class="sw" type="button" role="radio" aria-checked="false" data-k="oyen"><i class="sw-oyen"></i>Oyen</button>
+        <button class="sw" type="button" role="radio" aria-checked="false" data-k="oyen"><i class="sw-oyen"></i>Cream</button>
         <button class="sw" type="button" role="radio" aria-checked="false" data-k="glass"><i class="sw-glass"></i>Glass</button>
         <button class="sw" type="button" role="radio" aria-checked="false" data-k="pill"><i class="sw-pill"></i>Pill</button>
       </div>
@@ -1211,35 +1203,34 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
     </div>
   </section>
 
-  <section class="sec band-cream" id="oyen" aria-labelledby="oyen-title">
+  <section class="sec band-cream" id="cream" aria-labelledby="cream-title">
     <div class="content head rv">
-      <p class="t-label">Oyen</p>
-      <h2 class="t-l" id="oyen-title">Oyen takes over the island.</h2>
-      <p class="t-intro">Warm cream, <b>his orange</b> on the controls, and Oyen peeking over the edge.</p>
-      <button class="more" type="button" data-more="m-oyen">More about Oyen<i><svg class="ico"><use href="#i-plus"/></svg></i></button>
+      <p class="t-label">Cream</p>
+      <h2 class="t-l" id="cream-title">The island in warm cream.</h2>
+      <p class="t-intro">Warm cream, dark brown text, and <b>a soft orange</b> on the controls.</p>
+      <button class="more" type="button" data-more="m-cream">More about Cream<i><svg class="ico"><use href="#i-plus"/></svg></i></button>
     </div>
     <div class="content">
       <div class="cards3">
         <figure class="card rv">
           <div class="strip"><div class="sky-fill"></div><div class="isl"><img src="assets/shots/classic/idle-eyes.webp" alt="Classic: two white eyes" width="133" height="30" loading="lazy"></div><span class="tag">Classic</span></div>
-          <div class="strip"><div class="sky-fill"></div><div class="isl"><img src="assets/shots/oyen/idle-eyes.webp" alt="Oyen theme: a cream island with Oyen peeking over its edge" width="119" height="36" loading="lazy"></div><span class="tag">Oyen</span></div>
-          <figcaption class="t-tile"><b>Resting.</b> He blinks, and watches your pointer.</figcaption>
+          <div class="strip"><div class="sky-fill"></div><div class="isl"><img src="assets/shots/oyen/idle-eyes.webp" alt="Cream theme: a cream island at rest" width="119" height="36" loading="lazy"></div><span class="tag">Cream</span></div>
+          <figcaption class="t-tile"><b>Resting.</b> Quiet, in warm cream.</figcaption>
         </figure>
         <figure class="card rv">
           <div class="strip"><div class="sky-fill"></div><div class="isl"><img src="assets/shots/classic/idle-clock.webp" alt="Classic: the clock" width="99" height="30" loading="lazy"></div><span class="tag">Classic</span></div>
-          <div class="strip"><div class="sky-fill"></div><div class="isl"><img src="assets/shots/oyen/idle-clock.webp" alt="Oyen theme: the clock on a cream island, Oyen beside it" width="133" height="30" loading="lazy"></div><span class="tag">Oyen</span></div>
-          <figcaption class="t-tile"><b>Clock.</b> Oyen keeps you company.</figcaption>
+          <div class="strip"><div class="sky-fill"></div><div class="isl"><img src="assets/shots/oyen/idle-clock.webp" alt="Cream theme: the clock on a cream island" width="133" height="30" loading="lazy"></div><span class="tag">Cream</span></div>
+          <figcaption class="t-tile"><b>Clock.</b> The time, always there.</figcaption>
         </figure>
         <figure class="card rv">
           <div class="strip"><div class="sky-fill"></div><div class="isl"><img src="assets/shots/classic/media-activity.webp" alt="Classic: album art and an equalizer" width="135" height="32" loading="lazy"></div><span class="tag">Classic</span></div>
-          <div class="strip"><div class="sky-fill"></div><div class="isl"><img src="assets/shots/oyen/media-activity.webp" alt="Oyen theme: a cream island, Oyen swaying as music notes float up" width="135" height="32" loading="lazy"></div><span class="tag">Oyen</span></div>
+          <div class="strip"><div class="sky-fill"></div><div class="isl"><img src="assets/shots/oyen/media-activity.webp" alt="Cream theme: a cream island, music notes floating up" width="135" height="32" loading="lazy"></div><span class="tag">Cream</span></div>
           <figcaption class="t-tile"><b>Music.</b> Notes float up on every beat.</figcaption>
         </figure>
       </div>
       <div class="panel rv-zoom gap-t" data-scene="par">
         <div class="sky-layer"></div>
-        <div class="isl"><img src="assets/shots/oyen/page-today.webp" alt="The Today page in the Oyen theme: a cream island, brown text, today's date in Oyen's orange, and Oyen peeking up beside the pin" width="660" height="243" loading="lazy"></div>
-        <img class="pose" src="brand/art/oyen-poni-asleep.webp" alt="Oyen asleep on the island while a song plays" width="900" height="654" loading="lazy" style="max-width:46%">
+        <div class="isl"><img src="assets/shots/oyen/page-today.webp" alt="The Today page in the Cream theme: a cream island with brown text and today's date in orange" width="660" height="243" loading="lazy"></div>
       </div>
     </div>
   </section>
@@ -1305,7 +1296,7 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
     <div class="content">
       <div class="seg" role="radiogroup" aria-label="Look on the Mac" id="macSeg">
         <button type="button" role="radio" aria-checked="true" data-k="classic">Classic</button>
-        <button type="button" role="radio" aria-checked="false" data-k="oyen">Oyen</button>
+        <button type="button" role="radio" aria-checked="false" data-k="oyen">Cream</button>
         <button type="button" role="radio" aria-checked="false" data-k="pill">Pill</button>
       </div>
       <div class="mac-set" data-k="classic">
@@ -1321,13 +1312,13 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
       </div>
       <div class="mac-set" data-k="oyen" hidden>
         <div class="mac-strips">
-          <figure class="shot-card"><img src="assets/shots/mac/oyen/media-activity.webp" alt="The same in the Oyen theme: black like the notch, the album art on the left and Oyen on the right" width="420" height="68" loading="lazy"><figcaption class="t-tile"><b>Music.</b> Art left, Oyen right.</figcaption></figure>
-          <figure class="shot-card"><img src="assets/shots/mac/oyen/timer-activity.webp" alt="The focus timer around the notch in the Oyen theme" width="420" height="68" loading="lazy"><figcaption class="t-tile"><b>Focus.</b> Ring left, minutes right.</figcaption></figure>
-          <figure class="shot-card"><img src="assets/shots/mac/oyen/idle-clock.webp" alt="The resting island in the Oyen theme: Oyen peeking left of the notch, the time on its right" width="420" height="68" loading="lazy"><figcaption class="t-tile"><b>Resting.</b> Oyen peeks by the notch.</figcaption></figure>
+          <figure class="shot-card"><img src="assets/shots/mac/oyen/media-activity.webp" alt="The same in the Cream theme: black like the notch, with the album art on the left" width="420" height="68" loading="lazy"><figcaption class="t-tile"><b>Music.</b> Art left, beat right.</figcaption></figure>
+          <figure class="shot-card"><img src="assets/shots/mac/oyen/timer-activity.webp" alt="The focus timer around the notch in the Cream theme" width="420" height="68" loading="lazy"><figcaption class="t-tile"><b>Focus.</b> Ring left, minutes right.</figcaption></figure>
+          <figure class="shot-card"><img src="assets/shots/mac/oyen/idle-clock.webp" alt="The resting island in the Cream theme: the time beside the notch" width="420" height="68" loading="lazy"><figcaption class="t-tile"><b>Resting.</b> The time, by the notch.</figcaption></figure>
         </div>
         <div class="duo gap-t">
-          <figure class="shot-card"><img src="assets/shots/mac/oyen/page-media.webp" alt="The open island in the Oyen theme, black around the notch with cream type and an orange play button: the Music page with synced lyrics" width="710" height="288" loading="lazy"><figcaption class="t-tile"><b>Black</b> like the notch itself.</figcaption></figure>
-          <figure class="shot-card"><img src="assets/shots/mac/oyen/page-today.webp" alt="The Today page in the Oyen theme below the notch" width="710" height="304" loading="lazy"><figcaption class="t-tile"><b>Today,</b> with your Mac's stats.</figcaption></figure>
+          <figure class="shot-card"><img src="assets/shots/mac/oyen/page-media.webp" alt="The open island in the Cream theme, black around the notch with cream type and an orange play button: the Music page with synced lyrics" width="710" height="288" loading="lazy"><figcaption class="t-tile"><b>Black</b> like the notch itself.</figcaption></figure>
+          <figure class="shot-card"><img src="assets/shots/mac/oyen/page-today.webp" alt="The Today page in the Cream theme below the notch" width="710" height="304" loading="lazy"><figcaption class="t-tile"><b>Today,</b> with your Mac's stats.</figcaption></figure>
         </div>
       </div>
       <div class="mac-set" data-k="pill" hidden>
@@ -1365,9 +1356,9 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
           <tr><th scope="row">Shelf, with Phone drop over the same Wi-Fi</th><td class="c yes"><svg viewBox="0 0 24 24" role="img" aria-label="Yes"><use href="#i-check"/></svg></td><td class="c yes"><svg viewBox="0 0 24 24" role="img" aria-label="Yes"><use href="#i-check"/></svg></td></tr>
           <tr><th scope="row">System page</th><td class="c yes"><svg viewBox="0 0 24 24" role="img" aria-label="Yes"><use href="#i-check"/></svg></td><td class="c yes"><svg viewBox="0 0 24 24" role="img" aria-label="Yes"><use href="#i-check"/></svg></td></tr>
           <tr><th scope="row">Volume and charging pop-ups</th><td class="c yes"><svg viewBox="0 0 24 24" role="img" aria-label="Yes"><use href="#i-check"/></svg></td><td class="c yes"><svg viewBox="0 0 24 24" role="img" aria-label="Yes"><use href="#i-check"/></svg></td></tr>
-          <tr><th scope="row">Classic, Oyen, Glass and Pill</th><td class="c yes"><svg viewBox="0 0 24 24" role="img" aria-label="Yes"><use href="#i-check"/></svg></td><td class="c yes"><svg viewBox="0 0 24 24" role="img" aria-label="Yes"><use href="#i-check"/></svg></td></tr>
+          <tr><th scope="row">Classic, Cream, Glass and Pill</th><td class="c yes"><svg viewBox="0 0 24 24" role="img" aria-label="Yes"><use href="#i-check"/></svg></td><td class="c yes"><svg viewBox="0 0 24 24" role="img" aria-label="Yes"><use href="#i-check"/></svg></td></tr>
           <tr><th scope="row">Paired phones, from any network</th><td class="c yes"><svg viewBox="0 0 24 24" role="img" aria-label="Yes"><use href="#i-check"/></svg></td><td class="c no">Not yet</td></tr>
-          <tr><th scope="row">Oyenza sign-in</th><td class="c yes"><svg viewBox="0 0 24 24" role="img" aria-label="Yes"><use href="#i-check"/></svg></td><td class="c yes"><svg viewBox="0 0 24 24" role="img" aria-label="Yes"><use href="#i-check"/></svg></td></tr>
+          <tr><th scope="row">Arunika sign-in</th><td class="c yes"><svg viewBox="0 0 24 24" role="img" aria-label="Yes"><use href="#i-check"/></svg></td><td class="c yes"><svg viewBox="0 0 24 24" role="img" aria-label="Yes"><use href="#i-check"/></svg></td></tr>
           <tr><th scope="row">Script reader</th><td class="c yes"><svg viewBox="0 0 24 24" role="img" aria-label="Yes"><use href="#i-check"/></svg></td><td class="c yes"><svg viewBox="0 0 24 24" role="img" aria-label="Yes"><use href="#i-check"/></svg></td></tr>
           <tr><th scope="row">Prayer times</th><td class="c yes"><svg viewBox="0 0 24 24" role="img" aria-label="Yes"><use href="#i-check"/></svg></td><td class="c yes"><svg viewBox="0 0 24 24" role="img" aria-label="Yes"><use href="#i-check"/></svg></td></tr>
           <tr><th scope="row">Show over games</th><td class="c yes"><svg viewBox="0 0 24 24" role="img" aria-label="Yes"><use href="#i-check"/></svg></td><td class="c no">Not yet</td></tr>
@@ -1378,29 +1369,28 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
     </div>
   </section>
 
-  <section class="sec" id="oyenza" aria-labelledby="oyenza-title">
+  <section class="sec" id="account" aria-labelledby="account-title">
     <div class="content">
-      <div class="dark oyenza rv">
+      <div class="dark account rv">
         <div class="head" style="margin:0">
-          <p class="t-label">Oyenza account · Windows and Mac</p>
-          <h2 class="t-l" id="oyenza-title" style="color:#f5f5f7">Your Oyenza, at the top of your screen.</h2>
+          <p class="t-label">Arunika account · Windows and Mac</p>
+          <h2 class="t-l" id="account-title" style="color:#f5f5f7">Your Arunika, at the top of your screen.</h2>
           <p class="t-intro">Sign in with a code, like on a TV. <b>Money in, bills due and your last 7 days</b>, with amounts hidden until you choose.</p>
-          <button class="more" type="button" data-more="m-oyenza">More about Oyenza<i><svg class="ico"><use href="#i-plus"/></svg></i></button>
+          <button class="more" type="button" data-more="m-account">More about Arunika<i><svg class="ico"><use href="#i-plus"/></svg></i></button>
         </div>
-        <img src="brand/art/oyen-poni-sit.webp" alt="Oyen sitting on the island while a song plays" width="893" height="1200" loading="lazy">
       </div>
       <div class="duo gap-t">
         <figure class="shot-card rv">
           <div class="strip tall"><div class="sky-fill"></div><div class="isl">
-            <img class="look-classic" src="assets/shots/classic/page-oyenza-signin.webp" alt="Sign in to Oyenza: an 8-letter code to enter at oyenza.app/connect" width="660" height="235" loading="lazy">
-            <img class="look-oyen" src="assets/shots/oyen/page-oyenza-signin.webp" alt="The sign-in code in the Oyen theme" width="660" height="235" loading="lazy">
+            <img class="look-classic" src="assets/shots/classic/page-account-signin.webp" alt="Sign in to Arunika: an 8-letter code to enter at arunika.app/connect" width="660" height="235" loading="lazy">
+            <img class="look-oyen" src="assets/shots/oyen/page-account-signin.webp" alt="The sign-in code in the Cream theme" width="660" height="235" loading="lazy">
           </div></div>
-          <figcaption class="t-tile"><b>Sign in with a code</b> at oyenza.app/connect.</figcaption>
+          <figcaption class="t-tile"><b>Sign in with a code</b> at arunika.app/connect.</figcaption>
         </figure>
         <figure class="shot-card rv">
           <div class="strip tall"><div class="sky-fill"></div><div class="isl">
-            <img class="look-classic" src="assets/shots/classic/page-oyenza.webp" alt="The Oyenza page: a strip of days and today's transactions, amounts hidden" width="660" height="341" loading="lazy">
-            <img class="look-oyen" src="assets/shots/oyen/page-oyenza.webp" alt="The Oyenza page in the Oyen theme" width="660" height="341" loading="lazy">
+            <img class="look-classic" src="assets/shots/classic/page-account.webp" alt="The Arunika page: a strip of days and today's transactions, amounts hidden" width="660" height="341" loading="lazy">
+            <img class="look-oyen" src="assets/shots/oyen/page-account.webp" alt="The Arunika page in the Cream theme" width="660" height="341" loading="lazy">
           </div></div>
           <figcaption class="t-tile"><b>Every transaction by day,</b> kept live.</figcaption>
         </figure>
@@ -1431,22 +1421,22 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
   <section class="sec band" id="get" aria-labelledby="get-title">
     <span id="install" class="anchor" aria-hidden="true"></span>
     <div class="content head center rv">
-      <h2 class="t-l" id="get-title">Get Oyenza Studio.</h2>
-      <p class="t-intro">Free and open source. Coming from Oyen Poni? <b>Updating keeps your settings.</b></p>
+      <h2 class="t-l" id="get-title">Get Arunika.</h2>
+      <p class="t-intro">Free and open source.</p>
     </div>
     <div class="content os-cards">
       <article class="os-card rv">
         <svg class="ico"><use href="#i-win"/></svg>
         <h3 class="t-card">Windows</h3>
         <p class="t-tile">Windows 10 and 11. Installs just for you.</p>
-        <a class="btn" href="https://github.com/lucacadalora/oyenza-studio/releases/latest/download/Oyenza-Studio-Setup.exe">Download for Windows</a>
+        <a class="btn" href="https://github.com/Idewara/arunika/releases/latest/download/Arunika-Setup.exe">Download for Windows</a>
         <button class="link" type="button" data-more="m-install-win">How to install</button>
       </article>
       <article class="os-card rv">
         <svg class="ico"><use href="#i-apple"/></svg>
         <h3 class="t-card">Mac</h3>
         <p class="t-tile">macOS 14 or later, Apple silicon or Intel.</p>
-        <a class="btn" data-release="mac-link" href="https://github.com/lucacadalora/oyenza-studio/releases/latest/download/Oyenza-Studio-Mac.dmg">Download for Mac</a>
+        <a class="btn" data-release="mac-link" href="https://github.com/Idewara/arunika/releases/latest/download/Arunika-Mac.dmg">Download for Mac</a>
         <button class="link" type="button" data-more="m-install-mac">How to install</button>
       </article>
     </div>
@@ -1455,9 +1445,9 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
 
 <footer class="foot">
   <div class="content">
-    <span class="grow">© 2026 oyenza.com · Website designed by Jatevo Labs Limited</span>
-    <a href="https://github.com/lucacadalora/oyenza-studio">Open source (MIT)</a>
-    <a href="https://github.com/lucacadalora/oyenza-studio/releases">Releases</a>
+    <span class="grow">© 2026 Arunika Labs · arunika.app</span>
+    <a href="https://github.com/Idewara/arunika">Open source (MIT)</a>
+    <a href="https://github.com/Idewara/arunika/releases">Releases</a>
     <a href="https://lrclib.net">Lyrics by LRCLIB</a>
   </div>
 </footer>
@@ -1472,7 +1462,7 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
     <p>Controls for whatever is playing: <b>Spotify, Apple Music, YouTube in your browser, or any app that shows up in Windows' media controls.</b> Lyrics scroll in time with the song, from the free LRCLIB library, or Apple Music's own synced lyrics if you have a subscription.</p>
     <p>YouTube videos find theirs too, even when the title carries subtitle tags or puts the song name first. After an intro or a break, the waiting dots fold away the moment the next line starts.</p>
     <p>Drag the time bar to jump anywhere in a song: the times follow as you slide, and it jumps when you let go. Since 0.1.20 that works with Apple Music too, and so does Back: the island uses Apple Music's own slider and back button. Lyrics glide into place instead of stepping a pixel at a time.</p>
-    <p><b>New in 0.2.1: the closed island sings along.</b> The line being sung shows on it in Classic, Oyen and Glass, as it does in Pill. Since 0.2.3, Japanese, Korean and Chinese lines bring their reading in Latin letters along, under the line.</p>
+    <p><b>New in 0.2.1: the closed island sings along.</b> The line being sung shows on it in Classic, Cream and Glass, as it does in Pill. Since 0.2.3, Japanese, Korean and Chinese lines bring their reading in Latin letters along, under the line.</p>
   </div>
 </dialog>
 <dialog class="more-sheet" id="m-read" aria-labelledby="m-read-t">
@@ -1503,8 +1493,8 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
     <p class="t-label">Phone drop and paired phones</p>
     <h2 class="t-m" id="m-phone-t">From your phone, from anywhere.</h2>
     <p><b>Phone drop:</b> open the Shelf, click Phone and scan the QR code with your phone's camera. Pick photos or files, tap Send, and the island asks before anything arrives. It works with iPhone and Android over your own Wi-Fi: nothing to install on the phone, and nothing goes through the internet. The phone can save what's on your Shelf too.</p>
-    <p><b>Paired phones:</b> click Pair a phone under Phone drop and scan the code once. After that, your phone finds this PC from anywhere: the same Wi-Fi, another Wi-Fi or mobile data, whenever Oyenza Studio is running. Files from your own phones go straight onto the Shelf, and the island tells you when they land.</p>
-    <p>Keep the page on your iPhone's Home Screen, or install it on Android, where Oyenza Studio joins the share sheet. The phone and the PC meet through drop.oyenza.com, and the files go straight between them over an encrypted link. Paired phones lists each phone with Remove.</p>
+    <p><b>Paired phones:</b> click Pair a phone under Phone drop and scan the code once. After that, your phone finds this PC from anywhere: the same Wi-Fi, another Wi-Fi or mobile data, whenever Arunika is running. Files from your own phones go straight onto the Shelf, and the island tells you when they land.</p>
+    <p>Keep the page on your iPhone's Home Screen, or install it on Android, where Arunika joins the share sheet. The phone and the PC meet through drop.arunika.app, and the files go straight between them over an encrypted link. Paired phones lists each phone with Remove.</p>
   </div>
 </dialog>
 <dialog class="more-sheet" id="m-prayer" aria-labelledby="m-prayer-t">
@@ -1538,24 +1528,22 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
     <p>Staying adds about a frame of delay: any window over a borderless game makes Windows combine the two before they reach the screen. If you'd rather have no added delay, pick Peeks: System › Games › Readout › Peeks, or right-click the island › In full-screen apps › Only for a few seconds. The readout then shows for a few seconds when the game comes to the front, when the frame rate drops sharply, and when you press Alt+Shift+F.</p>
     <p>Switch it on in System › Games, or right-click the island › In full-screen apps › Show FPS, GPU and CPU over games.</p>
     <p>Frames are counted the way Intel's PresentMon and Xbox Game Bar count them, from Windows' own log of each frame a game shows. Nothing is loaded into the game, so anti-cheat has nothing to see. DirectX 9 to 12, Vulkan and OpenGL. The first time, Windows asks once for an admin OK, as Game Bar's FPS counter does, and FPS shows from your next sign-in. Over a full-screen app, Glass draws smoked glass instead of copying the screen.</p>
-    <p><b>Stays on top:</b> when another window covers the island, such as a browser left on top after full screen or an app set to stay on top, the island goes back on top. In full-screen games and videos you choose: right-click the island or open Settings, then In full-screen apps › Hide or Stay on top (on a Mac, the menu bar under Oyen's mark). Hide is the default. A game in exclusive full-screen mode still covers every window.</p>
+    <p><b>Stays on top:</b> when another window covers the island, such as a browser left on top after full screen or an app set to stay on top, the island goes back on top. In full-screen games and videos you choose: right-click the island or open Settings, then In full-screen apps › Hide or Stay on top (on a Mac, the menu bar under the Arunika mark). Hide is the default. A game in exclusive full-screen mode still covers every window.</p>
     <p><b>Over maximized windows it stays.</b> The island sits over the middle of the top edge, so over a maximized browser it can cover the tabs there. To keep that spot clear, pick <b>Hidden until hover</b> as the idle look: while nothing plays, only an invisible strip stays at the top edge until you point at it. (0.2.4 and 0.2.5 stepped aside over maximized windows by default, which made the island seem to vanish; 0.2.6 drops that.)</p>
   </div>
 </dialog>
-<dialog class="more-sheet" id="m-oyen" aria-labelledby="m-oyen-t">
+<dialog class="more-sheet" id="m-cream" aria-labelledby="m-cream-t">
   <form method="dialog"><button class="sheet-x" aria-label="Close"><svg class="ico"><use href="#i-x"/></svg></button></form>
   <div class="sheet-body">
-    <p class="t-label">Oyen</p>
-    <h2 class="t-m" id="m-oyen-t">Oyen takes over the island.</h2>
-    <p>The island stays black and quiet by default. Switch on the Oyen theme and the whole island turns Oyen: warm cream, dark brown text, his orange on the controls, and Oyen himself peeking over the edge, the same Oyen as in the Oyenza app.</p>
+    <p class="t-label">Cream</p>
+    <h2 class="t-m" id="m-cream-t">The island in warm cream.</h2>
+    <p>The island stays black and quiet by default. Switch on the Cream theme and the whole island turns warm cream, with dark brown text and a soft orange on the controls.</p>
     <ul>
-      <li>Cream and brown on every page, with Oyen's orange on the play button, the progress and volume bars and the switches.</li>
+      <li>Cream and brown on every page, with orange on the play button, the progress and volume bars and the switches.</li>
       <li>Every Latin letter on the island is set in Outfit, which ships inside the app.</li>
-      <li>Built from the Oyenza logo, so he stays sharp at every size and scaling. On an open page he peeks up beside the pin, eyes on your cursor. Resting, he blinks now and then and watches your pointer when it comes near.</li>
-      <li>Music notes float up beside Oyen on every beat, and he sways along.</li>
-      <li>He moves only when something happens and sleeps after midnight, so he costs no CPU while nothing moves.</li>
+      <li>Music notes float up on every beat while a song plays.</li>
     </ul>
-    <p>Open the island and press the gear, then <kbd>Theme</kbd> › <kbd>Oyen</kbd>. Switch back to <kbd>Classic</kbd> any time.</p>
+    <p>Open the island and press the gear, then <kbd>Theme</kbd> › <kbd>Cream</kbd>. Switch back to <kbd>Classic</kbd> any time.</p>
   </div>
 </dialog>
 <dialog class="more-sheet" id="m-glass" aria-labelledby="m-glass-t">
@@ -1565,7 +1553,7 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
     <h2 class="t-m" id="m-glass-t">The island, as liquid glass.</h2>
     <p>Its edge bends and magnifies what's under it, the middle is frosted, a light runs along the rim, and it turns light or dark with what's behind it. The open island follows Windows' light or dark mode.</p>
     <ul>
-      <li>To draw the glass, Oyenza Studio copies the part of the screen behind its window (the island and the space it opens into) while Glass is on, and not while the island is hidden or the PC is locked. <b>The copy stays in your PC's memory, each new copy replaces the last, and it's never saved or sent.</b></li>
+      <li>To draw the glass, Arunika copies the part of the screen behind its window (the island and the space it opens into) while Glass is on, and not while the island is hidden or the PC is locked. <b>The copy stays in your PC's memory, each new copy replaces the last, and it's never saved or sent.</b></li>
       <li>While Glass is on, Windows leaves the island out of screenshots, recordings and screen sharing.</li>
       <li>Glass also works on PCs whose colour settings make Windows draw the desktop in 16-bit colour, and on HDR displays. Where it can't copy the screen (Remote Desktop, Windows 10 before version 2004, some laptops), Glass draws smoked glass instead: the same shape and light over a see-through tint, and it stays in screenshots.</li>
       <li>Classic stays the default look.</li>
@@ -1596,13 +1584,13 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
   <div class="sheet-body">
     <p class="t-label">Mac</p>
     <h2 class="t-m" id="m-mac-t">On a Mac, it wraps the notch.</h2>
-    <p>On a MacBook with a camera notch, the island lives around it: what's playing sits either side of the camera, and the island opens downward from the notch when you point at it. On a Mac without a notch, or on another display, it hangs from the top of the screen as it does on Windows. Around the notch, the Oyen theme goes black like the notch itself, with Oyen's cream type, his orange and his face on it.</p>
+    <p>On a MacBook with a camera notch, the island lives around it: what's playing sits either side of the camera, and the island opens downward from the notch when you point at it. On a Mac without a notch, or on another display, it hangs from the top of the screen as it does on Windows. Around the notch, the Cream theme goes black like the notch itself, with cream type and orange accents.</p>
     <ul>
       <li>Music and Spotify, with synced lyrics from LRCLIB, or Apple Music's own with your token, and the reading under Japanese, Korean and Chinese lines, on the closed island too.</li>
       <li>The focus timer, the Shelf with Phone drop over the same Wi-Fi, tasks, clipboard history, and the System page with your Mac's CPU, graphics, memory, drives, network, battery and busiest apps.</li>
-      <li>Pop-ups for volume, charging and Bluetooth headphones (without the battery level; macOS shows AirPods' own when they connect), the Classic, Oyen, Glass and Pill themes, and start at login. Every option is in the menu bar, under Oyen's mark.</li>
+      <li>Pop-ups for volume, charging and Bluetooth headphones (without the battery level; macOS shows AirPods' own when they connect), the Classic, Cream, Glass and Pill themes, and start at login. Every option is in the menu bar, under the Arunika mark.</li>
       <li>Full-screen apps: while a video, a game or a slideshow is full screen, the island stays out of its way and comes back after, as on Windows. Or it stays on top: the menu bar's In full-screen apps, or Settings.</li>
-      <li>Oyenza sign-in: money in and out, bills due and your last 7 days on the island, as on Windows. The Mac's key stays in a file only your Mac account can read.</li>
+      <li>Arunika sign-in: money in and out, bills due and your last 7 days on the island, as on Windows. The Mac's key stays in a file only your Mac account can read.</li>
       <li>Glass is macOS's own glass, Liquid Glass on macOS 26 and a dark blur before it, with a black strip where it meets the notch.</li>
       <li>Pill: on a MacBook with a notch, the resting island, the timer and music between lines stay beside the camera; the line being sung, pop-ups, notices and the open island float just below the notch. Without a notch it floats below the top of the screen, as on Windows.</li>
     </ul>
@@ -1611,20 +1599,20 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
     <p>macOS 14 or later, on Apple silicon or Intel. One app for both, <span data-release-copy="mac-size">3.9&nbsp;MB</span>. It isn't signed with an Apple Developer ID yet, so the first time, macOS holds it back until you allow it in Privacy &amp; Security.</p>
   </div>
 </dialog>
-<dialog class="more-sheet" id="m-oyenza" aria-labelledby="m-oyenza-t">
+<dialog class="more-sheet" id="m-account" aria-labelledby="m-account-t">
   <form method="dialog"><button class="sheet-x" aria-label="Close"><svg class="ico"><use href="#i-x"/></svg></button></form>
   <div class="sheet-body">
-    <p class="t-label">Oyenza account · On Windows and Mac · Steps new in 0.2.5</p>
-    <h2 class="t-m" id="m-oyenza-t">Your Oyenza, at the top of your screen.</h2>
-    <p>Sign in with your <a class="link" href="https://oyenza.app">oyenza.app</a> account the way you sign in on a TV: press the gear, choose Sign in with Oyenza, and approve the code the island shows at oyenza.app/connect. No password is ever typed into Oyenza Studio. An Oyenza page then joins the island.</p>
+    <p class="t-label">Arunika account · On Windows and Mac · Steps new in 0.2.5</p>
+    <h2 class="t-m" id="m-account-t">Your Arunika, at the top of your screen.</h2>
+    <p>Sign in with your <a class="link" href="https://arunika.app">arunika.app</a> account the way you sign in on a TV: press the gear, choose Sign in with Arunika, and approve the code the island shows at arunika.app/connect. No password is ever typed into Arunika. An Arunika page then joins the island.</p>
     <ul>
-      <li><b>Your Oyenza, live, by day.</b> Every transaction of the last 7 days, money in and out, newest first. Pick a day on the strip, and what's logged while you look glows.</li>
-      <li><b>Money in and out as it happens.</b> A notice when Oyenza logs money coming in or going out, with the amount hidden until you click Show.</li>
+      <li><b>Your Arunika, live, by day.</b> Every transaction of the last 7 days, money in and out, newest first. Pick a day on the strip, and what's logged while you look glows.</li>
+      <li><b>Money in and out as it happens.</b> A notice when Arunika logs money coming in or going out, with the amount hidden until you click Show.</li>
       <li><b>Bills before they're due.</b> Subscriptions and card due dates for the next 30 days, and a reminder the day before each one.</li>
-      <li><b>Note a spend in a second.</b> Type "kopi 25rb" on the Oyenza page and press Enter: it goes straight to Oyenza, with 10 seconds to undo.</li>
-      <li><b>Your steps.</b> In Oyenza on your phone, turn on Show on Oyenza Studio under your steps in Health (Sehat), and the Health page shows your daily steps, distance and active energy for the last 7 days, with a notice when you reach your goal.</li>
+      <li><b>Note a spend in a second.</b> Type "kopi 25rb" on the Arunika page and press Enter: it goes straight to Arunika, with 10 seconds to undo.</li>
+      <li><b>Your steps.</b> In Arunika on your phone, turn on Show on Arunika under your steps in Health (Sehat), and the Health page shows your daily steps, distance and active energy for the last 7 days, with a notice when you reach your goal.</li>
     </ul>
-    <p>Signing in is optional. This computer gets a key of its own, never your password: it sees your last 7 days of transactions and the bills due, and saves the spends you type: never balances, account numbers, notes or receipts. With Show on Oyenza Studio on, it also gets your daily step totals for the last 7 days, kept in memory only; sleep, heart rate and weight stay on your phone. Disconnect it in the island's Settings, or in oyenza.app under Connected apps.</p>
+    <p>Signing in is optional. This computer gets a key of its own, never your password: it sees your last 7 days of transactions and the bills due, and saves the spends you type: never balances, account numbers, notes or receipts. With Show on Arunika on, it also gets your daily step totals for the last 7 days, kept in memory only; sleep, heart rate and weight stay on your phone. Disconnect it in the island's Settings, or in arunika.app under Connected apps.</p>
   </div>
 </dialog>
 <dialog class="more-sheet" id="m-install-win" aria-labelledby="m-install-win-t">
@@ -1633,7 +1621,7 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
     <p class="t-label">Windows 10 and 11</p>
     <h2 class="t-m" id="m-install-win-t">Ready in under a minute.</h2>
     <ol>
-      <li><b>Download the installer:</b> Oyenza-Studio-Setup.exe, from the latest release on GitHub. A portable zip is on the <a class="link" href="https://github.com/lucacadalora/oyenza-studio/releases">Releases</a> page too.</li>
+      <li><b>Download the installer:</b> Arunika-Setup.exe, from the latest release on GitHub. A portable zip is on the <a class="link" href="https://github.com/Idewara/arunika/releases">Releases</a> page too.</li>
       <li><b>Run it.</b> It installs just for you and needs no admin rights.</li>
       <li><b>If Windows warns you:</b> builds aren't code-signed yet, so SmartScreen may say "Windows protected your PC". Choose More info, then Run anyway. If Smart App Control is on, Windows won't run unsigned apps at all; a Microsoft Store version is on the way.</li>
     </ol>
@@ -1647,8 +1635,8 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
     <p class="t-label">macOS 14 or later</p>
     <h2 class="t-m" id="m-install-mac-t">Ready in under a minute.</h2>
     <ol>
-      <li><b>Download the app:</b> Oyenza-Studio-Mac.dmg, from the latest release. One app for Apple silicon and Intel.</li>
-      <li><b>Drag it into Applications.</b> Open the DMG: its window shows Oyenza Studio and your Applications folder. Drag the one onto the other.</li>
+      <li><b>Download the app:</b> Arunika-Mac.dmg, from the latest release. One app for Apple silicon and Intel.</li>
+      <li><b>Drag it into Applications.</b> Open the DMG: its window shows Arunika and your Applications folder. Drag the one onto the other.</li>
       <li><b>Allow it the first time:</b> it isn't signed with an Apple Developer ID yet, so macOS warns you the first time you open it. Click Done, then open System Settings › Privacy &amp; Security and click Open Anyway.</li>
     </ol>
     <h4>Where things live</h4>
@@ -1659,15 +1647,15 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
 <script>
 (function () {
   var root = document.documentElement;
-  var WIN = 'https://github.com/lucacadalora/oyenza-studio/releases/latest/download/Oyenza-Studio-Setup.exe';
-  var MAC = 'https://github.com/lucacadalora/oyenza-studio/releases/latest/download/Oyenza-Studio-Mac.dmg';
+  var WIN = 'https://github.com/Idewara/arunika/releases/latest/download/Arunika-Setup.exe';
+  var MAC = 'https://github.com/Idewara/arunika/releases/latest/download/Arunika-Mac.dmg';
   var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var desk = window.matchMedia('(min-width: 1024px)');
   function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
   function clamp(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
   function ease(t) { return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
 
-  // ---- The look of every island picture: Classic or Oyen, remembered.
+  // ---- The look of every island picture: Classic or Cream, remembered.
   var lookButtons = document.querySelectorAll('.look-switch button');
   function setLook(look) {
     root.setAttribute('data-look', look);
@@ -1864,7 +1852,7 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
   // ---- Four looks: swatches switch the stage.
   var caps = {
     classic: '<b>Classic.</b> Black and quiet, the default look.',
-    oyen: '<b>Oyen.</b> Warm cream, his orange, and Oyen peeking over the edge.',
+    oyen: '<b>Cream.</b> Warm cream, brown text, and a soft orange on the controls.',
     glass: '<b>Glass.</b> It bends what\'s under it, light or dark with what\'s behind it.',
     pill: '<b>Pill.</b> A black capsule floating a little below the top.'
   };
@@ -1917,7 +1905,7 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
     primary.href = MAC; primary.setAttribute('data-release', 'mac-link');
     other.href = WIN; other.removeAttribute('data-release'); other.textContent = 'Download for Windows';
   }
-  // On a phone the downloads lead to Get Oyenza Studio, where both are.
+  // On a phone the downloads lead to Get Arunika, where both are.
   if (window.matchMedia('(max-width: 734px) and (pointer: coarse)').matches) {
     [document.querySelector('.top-dl'), primary].forEach(function (a) { a.href = '#get'; a.removeAttribute('data-release'); });
     other.hidden = true;
@@ -1932,12 +1920,12 @@ dialog.more-sheet::backdrop { background: rgba(0, 0, 0, 0.42); -webkit-backdrop-
   }
   ['version', 'size', 'mac-size'].forEach(copy);
   if (window.fetch) {
-    fetch('https://api.github.com/repos/lucacadalora/oyenza-studio/releases/latest')
+    fetch('https://api.github.com/repos/Idewara/arunika/releases/latest')
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (rel) {
         if (!rel || !/^v\d/.test(rel.tag_name || '')) return;
-        var setup = (rel.assets || []).filter(function (a) { return a.name === 'Oyenza-Studio-Setup.exe'; })[0];
-        var dmg = (rel.assets || []).filter(function (a) { return a.name === 'Oyenza-Studio-Mac.dmg'; })[0];
+        var setup = (rel.assets || []).filter(function (a) { return a.name === 'Arunika-Setup.exe'; })[0];
+        var dmg = (rel.assets || []).filter(function (a) { return a.name === 'Arunika-Mac.dmg'; })[0];
         fill('version', function (el) { el.textContent = rel.tag_name.slice(1); });
         if (setup) fill('size', function (el) { el.textContent = (setup.size / 1e6).toFixed(1) + ' MB'; });
         if (dmg) fill('mac-size', function (el) { el.textContent = (dmg.size / 1e6).toFixed(1) + ' MB'; });

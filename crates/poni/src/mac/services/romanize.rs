@@ -3,7 +3,7 @@
 //!
 //! Korean and Chinese need nothing from the system (`poni_core::romanize`).
 //! Japanese kanji have no single reading: Windows asks its own analyzer and
-//! falls back to Oyenza Studio's dictionary (`poni_core::romanize::JaDict`); the
+//! falls back to Arunika's dictionary (`poni_core::romanize::JaDict`); the
 //! Mac reads every Japanese song with that dictionary, which the Japanese
 //! readings add-on brings (`poni_core::addons::JAPANESE_READINGS`, loaded
 //! only for that song). Without the add-on, kana lines still read and the
@@ -49,7 +49,7 @@ fn each_line(texts: &[&str], mut read: impl FnMut(&str) -> Vec<Ruby>) -> Vec<Vec
     texts.iter().map(|t| if romanize::needs_roman(t) { read(t) } else { Vec::new() }).collect()
 }
 
-/// Every line of a Japanese song through Oyenza Studio's own dictionary from the
+/// Every line of a Japanese song through Arunika's own dictionary from the
 /// Japanese readings add-on, loaded for this song (about 0.1 s and 30 MB)
 /// and dropped with it. Without it, kana lines still read.
 pub fn own_song(texts: &[&str]) -> Pronounced {

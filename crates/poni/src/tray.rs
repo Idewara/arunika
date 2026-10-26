@@ -33,7 +33,7 @@ impl Tray {
                 hIcon: icon,
                 ..Default::default()
             };
-            let tip: Vec<u16> = format!("Oyenza Studio {}", crate::version::VERSION).encode_utf16().collect();
+            let tip: Vec<u16> = format!("Arunika {}", crate::version::VERSION).encode_utf16().collect();
             nid.szTip[..tip.len()].copy_from_slice(&tip);
             if !Shell_NotifyIconW(NIM_ADD, &nid).as_bool() {
                 return Err(windows::core::Error::from_win32());
@@ -70,7 +70,7 @@ pub enum MenuCmd {
     OpenSettings,
     ReloadSettings,
     OpenDataFolder,
-    /// "About Oyenza Studio 0.2.3 (…)": opens this version's release notes.
+    /// "About Arunika 0.2.3 (…)": opens this version's release notes.
     About,
     /// "Lyrics by LRCLIB": opens lrclib.net.
     LyricsCredit,
@@ -83,7 +83,7 @@ pub enum MenuCmd {
     OyenzaOpen,
     ToggleOyenzaAmounts,
     RecordScreen,
-    /// "Update to Oyenza Studio 0.2.5…" (`crate::updates`).
+    /// "Update to Arunika 0.2.5…" (`crate::updates`).
     Update,
     Quit,
 }
@@ -152,7 +152,7 @@ pub fn menu_items(s: &Settings, pinned: bool, oyenza: &OyenzaLink, recorder: boo
         // Which version and build this is, as the Mac menu says it.
         item(&crate::version::about_label(), MenuCmd::About, false),
         MenuItem::Separator,
-        item("Quit Oyenza Studio", MenuCmd::Quit, false),
+        item("Quit Arunika", MenuCmd::Quit, false),
     ];
     // Only once the separate recorder app is installed: until then the
     // island doesn't mention recording at all.
@@ -161,7 +161,7 @@ pub fn menu_items(s: &Settings, pinned: bool, oyenza: &OyenzaLink, recorder: boo
     }
     // A new version first, until it is installed.
     if let Some(v) = update {
-        items.splice(0..0, [item(&format!("Update to Oyenza Studio {v}…"), MenuCmd::Update, false), MenuItem::Separator]);
+        items.splice(0..0, [item(&format!("Update to Arunika {v}…"), MenuCmd::Update, false), MenuItem::Separator]);
     }
     items
 }
@@ -180,21 +180,21 @@ fn apple_music_menu() -> MenuItem {
     MenuItem::Sub { label: if on { "Apple Music lyrics: on".into() } else { "Apple Music lyrics".into() }, items }
 }
 
-/// Oyenza, optional: sign in with a code from oyenza.app, then what the
+/// Arunika, optional: sign in with a code from arunika.app, then what the
 /// island may show, and signing out.
 fn oyenza_menu(s: &Settings, link: &OyenzaLink) -> MenuItem {
     let items = match link {
-        OyenzaLink::Off => vec![item("Sign in to Oyenza…", MenuCmd::OyenzaSignIn, false)],
+        OyenzaLink::Off => vec![item("Sign in to Arunika…", MenuCmd::OyenzaSignIn, false)],
         OyenzaLink::Connecting { .. } => vec![item("Cancel sign-in", MenuCmd::OyenzaCancel, false)],
         OyenzaLink::Connected { account } => vec![
             MenuItem::Info { label: format!("Connected as {account}") },
             item("Show amounts on the island", MenuCmd::ToggleOyenzaAmounts, s.oyenza_show_amounts),
-            item("Open oyenza.app", MenuCmd::OyenzaOpen, false),
+            item("Open arunika.app", MenuCmd::OyenzaOpen, false),
             MenuItem::Separator,
             item("Disconnect", MenuCmd::OyenzaDisconnect, false),
         ],
     };
-    MenuItem::Sub { label: "Oyenza".into(), items }
+    MenuItem::Sub { label: "Arunika".into(), items }
 }
 
 fn build(menu: HMENU, items: &[MenuItem], cmds: &mut Vec<MenuCmd>) {
@@ -283,7 +283,7 @@ mod tests {
             .collect();
         let at = |cmd: MenuCmd| labels.iter().position(|l| l.1 == cmd);
         let about = at(MenuCmd::About).expect("no About line");
-        assert!(labels[about].0.starts_with(&format!("About Oyenza Studio {}", env!("CARGO_PKG_VERSION"))), "{}", labels[about].0);
+        assert!(labels[about].0.starts_with(&format!("About Arunika {}", env!("CARGO_PKG_VERSION"))), "{}", labels[about].0);
         // Right above Quit, with the lyrics credit kept above it.
         assert_eq!(at(MenuCmd::Quit), Some(about + 1));
         assert_eq!(at(MenuCmd::LyricsCredit), Some(about - 1));
@@ -296,7 +296,7 @@ mod tests {
             Some(MenuItem::Item { label, cmd, .. }) => Some((label, cmd)),
             _ => None,
         };
-        assert_eq!(first(Some("0.2.5")), Some(("Update to Oyenza Studio 0.2.5…".to_string(), MenuCmd::Update)));
+        assert_eq!(first(Some("0.2.5")), Some(("Update to Arunika 0.2.5…".to_string(), MenuCmd::Update)));
         assert_eq!(first(None).map(|(_, cmd)| cmd), Some(MenuCmd::RecordScreen));
     }
 

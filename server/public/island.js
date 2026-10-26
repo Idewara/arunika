@@ -1,4 +1,4 @@
-// The island at the top of the page. Like Oyenza Studio's island on the PC, it
+// The island at the top of the page. Like Arunika's island on the PC, it
 // says what is happening right now and grows to fit: a green dot when idle,
 // the road to the PC once connected, a progress ring while sending, a check
 // when the files are on the Shelf. Short news (done, oops) shows for a moment
@@ -25,7 +25,7 @@ function icon(name) {
   return s;
 }
 
-let base = { mode: 'idle', title: 'Oyenza Studio' };
+let base = { mode: 'idle', title: 'Arunika' };
 let shown = null;
 let backTimer = null;
 let thumbUrl = null;
@@ -37,7 +37,7 @@ let thumbUrl = null;
  *   o: { title, sub, icon, progress (0..1), thumb (File), live (bool), hold }
  */
 export function setIsland(mode, o = {}) {
-  const s = { mode, title: o.title || 'Oyenza Studio', sub: o.sub || '', icon: o.icon || null, progress: o.progress ?? null, thumb: o.thumb || null, live: Boolean(o.live) };
+  const s = { mode, title: o.title || 'Arunika', sub: o.sub || '', icon: o.icon || null, progress: o.progress ?? null, thumb: o.thumb || null, live: Boolean(o.live) };
   if (o.hold) {
     clearTimeout(backTimer);
     render(s);
@@ -125,19 +125,14 @@ if (document.fonts) {
   if (document.fonts.addEventListener) document.fonts.addEventListener('loadingdone', () => requestAnimationFrame(fit));
 }
 
-/** Swap an Oyen picture, with a little pop; `move` = 'hop' plays a happy jump. */
+/** Swap the stage picture (now the Arunika logo), with a little pop; `move` = 'hop' plays a happy jump. */
 export function pose(id, name, move = '') {
   const img = $(id);
   if (!img) return;
-  const src = `/oyen-${name}.webp`;
+  const src = '/icon-512.png';
   const changed = !img.getAttribute('src') || !img.getAttribute('src').endsWith(src);
   if (changed) {
-    const dims = { peek: [640, 353], sit: [420, 564], asleep: [560, 407], shelf: [320, 440], note: [320, 318] }[name];
     img.setAttribute('src', src);
-    if (dims) {
-      img.width = dims[0];
-      img.height = dims[1];
-    }
     img.dataset.pose = name;
   }
   const anim = move || (changed ? 'pop' : '');
@@ -148,7 +143,7 @@ export function pose(id, name, move = '') {
   }
 }
 
-/** Oyen carries the files while they travel. */
+/** The picture carries the files while they travel. */
 export function carrying(id, on) {
   const img = $(id);
   if (img) img.classList.toggle('carrying', on);

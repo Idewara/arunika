@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<!-- What Oyenza Studio.app may do under the hardened runtime, which a Developer ID signature for
+<!-- What Arunika.app may do under the hardened runtime, which a Developer ID signature for
      notarization needs (tools/sign_mac_dmg.sh). Nothing else is asked for: no JIT, no unsigned
      libraries, no sandbox (outside the Mac App Store). -->
 <plist version="1.0">

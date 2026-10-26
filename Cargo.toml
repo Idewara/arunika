@@ -7,8 +7,8 @@ version = "0.2.6"
 edition = "2021"
 publish = false
 license = "MIT"
-repository = "https://github.com/lucacadalora/oyenza-studio"
-homepage = "https://github.com/lucacadalora/oyenza-studio"
+repository = "https://github.com/Idewara/arunika"
+homepage = "https://arunika.app"
 
 [workspace.dependencies]
 serde = { version = "1", features = ["derive"] }

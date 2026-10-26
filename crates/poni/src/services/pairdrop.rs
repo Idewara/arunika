@@ -6,7 +6,7 @@
 //! With no paired phone it asks nothing at all. With one or more, a worker
 //! thread keeps one request open at the meeting server (about one small
 //! HTTPS request every 25 s, no CPU in between), so a phone on any network
-//! finds this PC whenever Oyenza Studio runs.
+//! finds this PC whenever Arunika runs.
 
 use crate::events::{AppEvent, EventSink};
 use crate::services::http::{Client, FetchError, Method, MtaGuard};
@@ -19,7 +19,7 @@ use std::sync::{Arc, Mutex};
 use std::time::Duration;
 use windows::Win32::Security::Cryptography::{BCryptGenRandom, BCRYPT_ALG_HANDLE, BCRYPT_USE_SYSTEM_PREFERRED_RNG};
 
-const USER_AGENT: &str = concat!("OyenzaStudio/", env!("CARGO_PKG_VERSION"), " (+https://github.com/lucacadalora/oyenza-studio)");
+const USER_AGENT: &str = concat!("Arunika/", env!("CARGO_PKG_VERSION"), " (+https://github.com/Idewara/arunika)");
 
 pub struct PairDropService {
     meet: Meet,
@@ -78,7 +78,7 @@ impl PairDropService {
     }
 }
 
-/// The meeting server: `PONI_DROP_SERVER` (for self-hosting and tests), else Oyenza's.
+/// The meeting server: `PONI_DROP_SERVER` (for self-hosting and tests), else Arunika's.
 fn server() -> String {
     std::env::var("PONI_DROP_SERVER")
         .ok()

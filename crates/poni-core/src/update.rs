@@ -1,4 +1,4 @@
-//! New versions (docs/updates.md): https://studio.oyenza.com/latest.json says
+//! New versions (docs/updates.md): https://arunika.app/latest.json says
 //! which release is the latest, signed with a key from data/update-keys.txt.
 //! The app checks the signature with the system's own crypto
 //! (`services::update`); this module reads the file, refuses anything that
@@ -8,10 +8,10 @@
 use serde::{Deserialize, Serialize};
 
 /// Where every copy looks.
-pub const FEED_URL: &str = "https://studio.oyenza.com/latest.json";
+pub const FEED_URL: &str = "https://arunika.app/latest.json";
 /// Downloads only ever come from this repository's releases.
-const DOWNLOADS: &str = "https://github.com/lucacadalora/oyenza-studio/releases/download/v";
-const RELEASE_PAGE: &str = "https://github.com/lucacadalora/oyenza-studio/releases/tag/v";
+const DOWNLOADS: &str = "https://github.com/Idewara/arunika/releases/download/v";
+const RELEASE_PAGE: &str = "https://github.com/Idewara/arunika/releases/tag/v";
 /// The file's layout this version reads. A file with a newer one is ignored
 /// (a later version of the app will read it).
 pub const SCHEMA: u64 = 1;
@@ -99,7 +99,7 @@ impl Release {
 }
 
 impl Download {
-    /// Its file's name ("Oyenza-Studio-Setup-0.2.5.exe"): plain letters,
+    /// Its file's name ("Arunika-Setup-0.2.5.exe"): plain letters,
     /// digits and `-_.`, as [`parse_payload`] made sure.
     pub fn file_name(&self) -> &str {
         self.url.rsplit('/').next().unwrap_or_default()
@@ -155,7 +155,7 @@ fn headline(text: &str, version: &str) -> String {
     let clean: String = text.chars().map(|c| if c.is_control() { ' ' } else { c }).collect();
     let mut line = clean.split_whitespace().collect::<Vec<_>>().join(" ");
     if line.is_empty() {
-        line = format!("Oyenza Studio {version}");
+        line = format!("Arunika {version}");
     }
     if line.chars().count() > HEADLINE_MAX {
         line = line.chars().take(HEADLINE_MAX - 1).collect::<String>().trim_end().to_string() + "…";
@@ -274,15 +274,14 @@ mod tests {
 
     fn payload(version: &str, extra: &str) -> String {
         format!(
-            r#"{{"schema":1,"version":"{version}","date":"2026-10-25","headline":"Sing along from the closed island","notes":"https://github.com/lucacadalora/oyenza-studio/releases/tag/v{version}","windows":{{"url":"https://github.com/lucacadalora/oyenza-studio/releases/download/v{version}/Oyenza-Studio-Setup-{version}.exe","size":2457657,"sha256":"{SHA}"}}{extra}}}"#
+            r#"{{"schema":1,"version":"{version}","date":"2026-10-25","headline":"Sing along from the closed island","notes":"https://github.com/Idewara/arunika/releases/tag/v{version}","windows":{{"url":"https://github.com/Idewara/arunika/releases/download/v{version}/Arunika-Setup-{version}.exe","size":2457657,"sha256":"{SHA}"}}{extra}}}"#
         )
     }
 
     #[test]
     fn the_built_in_keys_are_trusted_and_others_are_not() {
-        let k = trusted_key("4cb3280eaea65b50").expect("signing key");
+        let k = trusted_key("0684111eef2eb31c").expect("signing key");
         assert_eq!(k[0], 4);
-        assert!(trusted_key("f835f77c60bd2b7f").is_some(), "spare key");
         assert_eq!(trusted_key("0000000000000000"), None);
         assert_eq!(trusted_key(""), None);
     }
@@ -290,11 +289,11 @@ mod tests {
     #[test]
     fn the_file_reads_its_signature_and_key() {
         let sig = "A".repeat(85) + "Q==";
-        let file = format!(r#"{{"about":"…","payload":"{{}}","signature":"{sig}","key":"4cb3280eaea65b50"}}"#);
+        let file = format!(r#"{{"about":"…","payload":"{{}}","signature":"{sig}","key":"0684111eef2eb31c"}}"#);
         let s = parse_file(&file).unwrap();
         assert_eq!(s.payload, "{}");
         assert_eq!(s.signature.len(), 64);
-        assert!(parse_file(&file.replace("4cb3280eaea65b50", "deadbeefdeadbeef")).unwrap_err().contains("doesn't trust"));
+        assert!(parse_file(&file.replace("0684111eef2eb31c", "deadbeefdeadbeef")).unwrap_err().contains("doesn't trust"));
         assert!(parse_file(&file.replace(&sig, "AAAA")).is_err());
         assert!(parse_file("<html>").is_err());
     }
@@ -305,7 +304,7 @@ mod tests {
         assert_eq!((r.version.as_str(), r.date.as_str(), r.headline.as_str()), (V, "2026-10-25", "Sing along from the closed island"));
         assert_eq!(r.download(false).map(|d| d.size), Some(2457657));
         assert_eq!(r.download(true), None, "no DMG yet");
-        let mac = r#","mac":{"url":"https://github.com/lucacadalora/oyenza-studio/releases/download/v0.2.3/Oyenza-Studio-0.2.3-mac.dmg","size":3667341,"sha256":"fabc80efc387be83d7f82702bede7c3d2470f7aa6ef62cc2a8cd095a425f3fb9"}"#;
+        let mac = r#","mac":{"url":"https://github.com/Idewara/arunika/releases/download/v0.2.3/Arunika-0.2.3-mac.dmg","size":3667341,"sha256":"fabc80efc387be83d7f82702bede7c3d2470f7aa6ef62cc2a8cd095a425f3fb9"}"#;
         assert_eq!(parse_payload(&payload(V, mac)).unwrap().download(true).map(|d| d.size), Some(3667341));
     }
 
@@ -313,9 +312,9 @@ mod tests {
     fn a_payload_pointing_elsewhere_is_refused() {
         let p = payload(V, "");
         // Downloads from another place, another version's folder, or a path that climbs out.
-        assert!(parse_payload(&p.replace("https://github.com/lucacadalora/oyenza-studio/releases/download", "https://example.com/x")).is_err());
+        assert!(parse_payload(&p.replace("https://github.com/Idewara/arunika/releases/download", "https://example.com/x")).is_err());
         assert!(parse_payload(&p.replace("download/v0.2.3/", "download/v0.2.2/")).is_err());
-        assert!(parse_payload(&p.replace("Oyenza-Studio-Setup-0.2.3.exe", "../../x/evil.exe")).is_err());
+        assert!(parse_payload(&p.replace("Arunika-Setup-0.2.3.exe", "../../x/evil.exe")).is_err());
         // Notes elsewhere, a bad hash, a newer layout, not a version.
         assert!(parse_payload(&p.replace("releases/tag/v0.2.3", "releases/tag/v9.9.9")).is_err());
         assert!(parse_payload(&p.replace(SHA, &SHA.to_uppercase())).is_err());
@@ -329,7 +328,7 @@ mod tests {
         let r = parse_payload(&payload(V, "").replace("Sing along from the closed island", &format!("{long}\\nmore"))).unwrap();
         assert!(r.headline.chars().count() <= HEADLINE_MAX && r.headline.ends_with('…') && !r.headline.contains('\n'), "{}", r.headline);
         let r = parse_payload(&payload(V, "").replace("Sing along from the closed island", "")).unwrap();
-        assert_eq!(r.headline, "Oyenza Studio 0.2.3");
+        assert_eq!(r.headline, "Arunika 0.2.3");
     }
 
     #[test]
@@ -394,7 +393,7 @@ mod tests {
     fn a_download_knows_its_file() {
         let r = parse_payload(&payload(V, "")).unwrap();
         let d = r.download(false).unwrap();
-        assert_eq!(d.file_name(), "Oyenza-Studio-Setup-0.2.3.exe");
+        assert_eq!(d.file_name(), "Arunika-Setup-0.2.3.exe");
         let bytes = b"not the installer";
         let real = Download { url: d.url.clone(), size: bytes.len() as u64, sha256: crate::sha256::hex(&crate::sha256::sha256(bytes)) };
         assert!(real.matches(bytes));

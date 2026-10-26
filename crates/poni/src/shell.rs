@@ -10,7 +10,7 @@
 //! file-system paths, and `http`/`https` URLs. Anything else (`ms-settings:`,
 //! `javascript:`, `shell:`, relative names that would be searched on `PATH`)
 //! is logged and refused. Two fixed exceptions: Settings > Apps > Startup
-//! ([`open_startup_settings`]), a constant URI, and Oyenza Studio Recorder's
+//! ([`open_startup_settings`]), a constant URI, and Arunika Recorder's
 //! own action links ([`open_recorder_link`]): its fixed scheme and one
 //! percent-encoded value, as `poni_core::recorder` builds them.
 
@@ -54,7 +54,7 @@ pub fn open(target: &str) {
     });
 }
 
-/// Open one of Oyenza Studio Recorder's action links (asynchronously). Only
+/// Open one of Arunika Recorder's action links (asynchronously). Only
 /// the shape `poni_core::recorder` builds reaches the shell.
 pub fn open_recorder_link(link: &str) {
     if !poni_core::recorder::is_action_link(link) {
