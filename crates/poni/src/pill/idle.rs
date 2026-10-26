@@ -49,9 +49,25 @@ pub fn geom(st: &AppState) -> Option<Geom> {
             return Some(g);
         }
     }
-    match st.settings.idle_style {
+    // Under the pointer the Eyes, Minimal and Hidden looks show the clock
+    // instead (`activities::idle_look`), sized here like the Clock look, but
+    // never narrower than the look it stood in for: a pill shrinking under
+    // the pointer would drop the hover and flicker.
+    let look = crate::activities::idle_look(st);
+    let keep = if look != st.settings.idle_style {
+        match st.settings.idle_style {
+            IdleStyle::Eyes => EYES_W,
+            IdleStyle::Minimal => MINIMAL_W,
+            // Hidden rested as Classic's 150-wide invisible strip.
+            IdleStyle::Hidden => 150.0,
+            _ => 0.0,
+        }
+    } else {
+        0.0
+    };
+    match look {
         // Where the status bar leaves the resting pill to us, it is the clock.
-        IdleStyle::Clock | IdleStyle::Status => Some(Geom::new(clock_width(st), H, H / 2.0)),
+        IdleStyle::Clock | IdleStyle::Status => Some(Geom::new(clock_width(st).max(keep), H, H / 2.0)),
         IdleStyle::Minimal => Some(Geom::new(MINIMAL_W, MINIMAL_H, MINIMAL_H / 2.0)),
         IdleStyle::Eyes => Some(Geom::new(EYES_W, H, H / 2.0)),
         // Classic's invisible strip: it only catches the pointer at the edge.
@@ -63,14 +79,14 @@ pub fn draw(ui: &mut Ui, st: &mut AppState, body: Rect) -> bool {
     if st.settings.idle_style == IdleStyle::Status && super::status::draw(ui, st, body) {
         return true;
     }
-    match st.settings.idle_style {
+    match crate::activities::idle_look(st) {
         IdleStyle::Clock | IdleStyle::Status => {
             draw_clock(ui, st, body);
             true
         }
         IdleStyle::Minimal => true,
-        // Classic draws the eyes (centred, blinking on its own wake) and the
-        // invisible strip.
+        // Classic draws the eyes (blinking and glancing on their own wake)
+        // and the invisible strip.
         IdleStyle::Eyes | IdleStyle::Hidden => false,
     }
 }
@@ -92,51 +108,33 @@ fn battery_state(st: &AppState) -> Option<(u8, bool)> {
 
 fn clock_width(st: &AppState) -> f32 {
     let h24 = st.settings.use_24h;
-    // The mascot after the battery (or the centred clock): the pill grows by its slot.
-    let slot = crate::mascot::slot(st);
     if battery_state(st).is_none() {
-        return ((if h24 { CLOCK_W } else { CLOCK_12H_W }) + slot).round();
+        return if h24 { CLOCK_W } else { CLOCK_12H_W };
     }
     let time = if h24 { TIME_SLOT } else { TIME_12H_SLOT };
-    (SIDE + time + MID_GAP + PCT_SLOT + PCT_GAP + BATTERY_W + SIDE + slot).round()
+    (SIDE + time + MID_GAP + PCT_SLOT + PCT_GAP + BATTERY_W + SIDE).round()
 }
 
-/// "13:27" at the left end, "99%" and the battery at the right one (ref2),
-/// the mascot after the battery. Without a battery the time and the mascot
-/// sit centred as one group.
+/// "13:27" at the left end, "99%" and the battery at the right one (ref2).
+/// Without a battery the time sits alone in the middle.
 fn draw_clock(ui: &mut Ui, st: &AppState, body: Rect) {
     let time = fmt_clock(&st.local, st.settings.use_24h);
     let ts = TextStyle::headline().tabular().color(Color::white(1.0));
-    let cy = body.center().y;
-    let m_w = crate::mascot::w(st);
-    let m_slot = crate::mascot::slot(st);
     let Some((percent, charging)) = battery_state(st) else {
-        if m_w <= 0.0 {
-            ui.c.text(&time, body, &ts.center());
-            return;
-        }
-        let (tw, _) = ui.c.measure(&time, &ts, 400.0);
-        let x0 = body.center().x - (tw + m_slot) / 2.0;
-        ui.c.text(&time, Rect::new(x0, body.y, tw + 2.0, body.h), &ts);
-        crate::mascot::draw(ui, st, Rect::new(x0 + tw + crate::mascot::GAP, cy - crate::mascot::H / 2.0, m_w, crate::mascot::H));
+        ui.c.text(&time, body, &ts.center());
         return;
     };
     let (tw, _) = ui.c.measure(&time, &ts, 400.0);
     ui.c.text(&time, Rect::new(body.x + SIDE, body.y, tw + 2.0, body.h), &ts);
 
-    // The battery at the right end, the mascot after it while it shows (the
-    // geom pass counts the same slot).
-    let right = body.right() - SIDE - m_slot;
-    let glyph = Rect::new(right - BATTERY_W, cy - BATTERY_H / 2.0, BATTERY_W, BATTERY_H);
+    let cy = body.center().y;
+    let glyph = Rect::new(body.right() - SIDE - BATTERY_W, cy - BATTERY_H / 2.0, BATTERY_W, BATTERY_H);
     battery(ui, glyph, percent, charging);
     let pct = format!("{percent}%");
     let pct_ts = TextStyle::body().weight(Weight::Medium).tabular().color(PCT_INK);
     let (pw, _) = ui.c.measure(&pct, &pct_ts, 200.0);
     let x = glyph.x - PCT_GAP - pw;
     ui.c.text(&pct, Rect::new(x, body.y, pw + 2.0, body.h), &pct_ts);
-    if m_w > 0.0 {
-        crate::mascot::draw(ui, st, Rect::new(body.right() - SIDE - m_w, cy - crate::mascot::H / 2.0, m_w, crate::mascot::H));
-    }
 }
 
 /// A drawn battery in `r`, the nub on its right (natural size
@@ -200,31 +198,22 @@ mod tests {
     use poni_core::store::Store;
 
     fn state(battery: bool, use_24h: bool) -> AppState {
-        use poni_core::datetime::LocalDateTime;
         let mut st = AppState::new(Settings::default(), Store::default());
         st.settings.theme = Theme::Pill;
+        // The clock look (the app's default is now Eyes).
+        st.settings.idle_style = IdleStyle::Clock;
         st.settings.use_24h = use_24h;
-        // Mid-afternoon and nothing on: the resting (angry) pose, whose art
-        // is 96x85 like the width math below says.
-        st.local = LocalDateTime { hour: 15, ..Default::default() };
         st.power = PowerState { has_battery: battery, percent: 99, charging: false, on_ac: !battery, saver: false };
         st
     }
 
     #[test]
-    fn the_resting_pill_is_a_capsule_sized_to_the_time_the_battery_and_the_mascot() {
-        // The mascot's slot: a 6 DIP gap, then the art (21 DIP tall, 96x85).
-        // The slot joins the UNROUNDED base width and rounds once, the same
-        // way clock_width does — the old constants (152/180/84/104) were
-        // already-rounded results, not bases.
-        let slot = crate::mascot::GAP + crate::mascot::H * 96.0 / 85.0;
-        let base24 = SIDE + TIME_SLOT + MID_GAP + PCT_SLOT + PCT_GAP + BATTERY_W + SIDE;
-        let base12 = SIDE + TIME_12H_SLOT + MID_GAP + PCT_SLOT + PCT_GAP + BATTERY_W + SIDE;
+    fn the_resting_pill_is_a_capsule_sized_to_the_time_and_the_battery() {
         let size = |battery, use_24h| geom(&state(battery, use_24h));
-        assert_eq!(size(true, true), Some(Geom::new((base24 + slot).round(), 32.0, 16.0)));
-        assert_eq!(size(true, false), Some(Geom::new((base12 + slot).round(), 32.0, 16.0)));
-        assert_eq!(size(false, true), Some(Geom::new((CLOCK_W + slot).round(), 32.0, 16.0)));
-        assert_eq!(size(false, false), Some(Geom::new((CLOCK_12H_W + slot).round(), 32.0, 16.0)));
+        assert_eq!(size(true, true), Some(Geom::new(152.0, 32.0, 16.0)));
+        assert_eq!(size(true, false), Some(Geom::new(180.0, 32.0, 16.0)));
+        assert_eq!(size(false, true), Some(Geom::new(84.0, 32.0, 16.0)));
+        assert_eq!(size(false, false), Some(Geom::new(104.0, 32.0, 16.0)));
     }
 
     #[test]
@@ -239,6 +228,15 @@ mod tests {
         assert_eq!(geom(&st), Some(Geom::new(96.0, 24.0, 12.0)));
         st.settings.idle_style = IdleStyle::Eyes;
         assert_eq!(geom(&st), Some(Geom::new(84.0, 32.0, 16.0)));
+        // The pointer on the island: the eyes swap to the clock (152 with the
+        // battery); a narrower clock would keep the eyes' width.
+        st.hovering = true;
+        assert_eq!(geom(&st), Some(Geom::new(152.0, 32.0, 16.0)));
+        let mut no_batt = state(false, true);
+        no_batt.settings.idle_style = IdleStyle::Eyes;
+        no_batt.hovering = true;
+        assert_eq!(geom(&no_batt), Some(Geom::new(84.0, 32.0, 16.0)), "clock and eyes are both 84 wide");
+        st.hovering = false;
         // Hidden stays Classic's invisible strip.
         st.settings.idle_style = IdleStyle::Hidden;
         assert_eq!(geom(&st), None);

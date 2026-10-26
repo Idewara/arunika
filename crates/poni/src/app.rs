@@ -46,7 +46,6 @@ use windows::Win32::UI::WindowsAndMessaging::*;
 /// Not exported by windows-rs 0.58's WindowsAndMessaging module.
 const WM_MOUSELEAVE: u32 = 0x02A3;
 
-const TIMER_HOVER: usize = 1;
 const TIMER_COLLAPSE: usize = 2;
 const TIMER_WAKE: usize = 3;
 const TIMER_SAVE: usize = 4;
@@ -418,12 +417,8 @@ pub struct App {
     outgoing: Option<(Mode, f64, Geom, f32)>,
     /// A page switch in progress: (from page, start time, slide direction).
     page_anim: Option<(PageKind, f64, f32)>,
-    /// Where the hover (dwell) timer was last armed; None when it isn't.
-    hover_arm: Option<Point>,
     /// The pointer left the open island: close it on the next frame.
     collapse_due: bool,
-    /// When the pointer last closed the island by leaving it.
-    left_at: f64,
     /// Phone drop's web server while the Shelf's phone panel is open.
     phone: Option<services::phonedrop::PhoneDrop>,
     /// The Shelf paths last handed to it (to notice changes).
@@ -457,13 +452,6 @@ const MASK_INTERVAL: f64 = 1.0 / 30.0;
 const OUTGOING_FADE: f64 = 0.14;
 /// Page switch cross-fade duration (seconds).
 const PAGE_SWITCH: f64 = 0.26;
-/// Pointer travel (DIPs) that restarts the hover dwell: the island opens
-/// only once the pointer rests on it, not when it brushes past.
-const DWELL_SLOP: f32 = 4.0;
-/// The pointer coming back onto the island this soon after leaving it
-/// (while it is still shrinking) opens it again at once, from where the
-/// outline is: overshooting an edge costs no close-and-reopen.
-const REOPEN_S: f64 = 0.3;
 /// A hold that kept the island open (typing, a file drag, Phone drop, the
 /// pin) ended while the pointer is elsewhere: close after this grace, so
 /// the change can be seen.
@@ -594,9 +582,7 @@ impl App {
             tray_retries: 0,
             outgoing: None,
             page_anim: None,
-            hover_arm: None,
             collapse_due: false,
-            left_at: f64::NEG_INFINITY,
             phone: None,
             phone_offer: Vec::new(),
             pair_offer: None,
@@ -846,7 +832,6 @@ impl App {
                     if self.hovering {
                         self.hovering = false;
                         self.input.mouse = None;
-                        self.cancel_hover();
                         self.pointer_left();
                         self.request_frame();
                     }
@@ -861,18 +846,9 @@ impl App {
                         let _ = TrackMouseEvent(&mut tme);
                         let _ = KillTimer(self.hwnd, TIMER_COLLAPSE);
                     }
-                    if !self.expanded && clock::mono() - self.left_at < REOPEN_S {
-                        // Back onto the island while it is still closing.
-                        self.expand();
-                    } else if !self.expanded {
-                        self.arm_hover(p);
-                    }
-                } else if let Some(p0) = self.hover_arm.filter(|_| !self.expanded) {
-                    // Dwell: moving on restarts the wait, so brushing past on
-                    // the way to a tab or title bar doesn't open the island.
-                    if (p.x - p0.x).hypot(p.y - p0.y) > DWELL_SLOP {
-                        self.arm_hover(p);
-                    }
+                    // Hovering never opens the island (a click does); on the
+                    // closed island it only swaps the idle look to the clock
+                    // (`activities::idle_look`, synced into `st` each frame).
                 }
                 self.request_frame();
                 Some(LRESULT(0))
@@ -880,7 +856,6 @@ impl App {
             WM_MOUSELEAVE => {
                 self.hovering = false;
                 self.input.mouse = None;
-                self.cancel_hover();
                 self.pointer_left();
                 self.request_frame();
                 Some(LRESULT(0))
@@ -924,6 +899,11 @@ impl App {
                         self.st.hud = None;
                         self.expand();
                     }
+                } else if self.input.pressed_id.is_none() {
+                    // A click on the open card's empty space (no widget under
+                    // it) toggles the island closed, as a click on the closed
+                    // island opened it.
+                    self.collapse();
                 } else if self.text_focus && self.input.pressed_id != self.input.focused {
                     self.blur_text();
                 }
@@ -1195,21 +1175,6 @@ impl App {
 
     fn on_timer(&mut self, id: usize) {
         match id {
-            TIMER_HOVER => {
-                unsafe {
-                    let _ = KillTimer(self.hwnd, TIMER_HOVER);
-                }
-                if !self.hovering || self.expanded {
-                    self.hover_arm = None;
-                } else if self.st.notice.as_ref().is_some_and(|n| n.inline.is_some()) {
-                    // A notice with an inline pill stays put under a resting
-                    // pointer so the pill can be clicked (a click on the rest
-                    // of the notice still opens its page). The dwell stays
-                    // armed: the next movement restarts it.
-                } else {
-                    self.expand();
-                }
-            }
             TIMER_RAISE => {
                 self.raises_left = self.raises_left.saturating_sub(1);
                 if self.shown && !self.fullscreen_hidden {
@@ -2025,7 +1990,6 @@ impl App {
     fn expand(&mut self) {
         if !self.expanded {
             self.expanded = true;
-            self.cancel_hover();
             if self.st.page == PageKind::Oyenza {
                 self.oyenza(OyenzaCmd::Refresh);
             } else if self.st.page == PageKind::Health {
@@ -2033,21 +1997,6 @@ impl App {
             }
         }
         self.request_frame();
-    }
-
-    /// (Re)start the hover dwell from `p`.
-    fn arm_hover(&mut self, p: Point) {
-        self.hover_arm = Some(p);
-        unsafe {
-            SetTimer(self.hwnd, TIMER_HOVER, self.st.settings.hover_delay_ms.max(1), None);
-        }
-    }
-
-    fn cancel_hover(&mut self) {
-        self.hover_arm = None;
-        unsafe {
-            let _ = KillTimer(self.hwnd, TIMER_HOVER);
-        }
     }
 
     fn collapse(&mut self) {
@@ -2206,7 +2155,6 @@ impl App {
             }
             if hide {
                 self.collapse();
-                self.cancel_hover();
                 unsafe {
                     let _ = KillTimer(self.hwnd, TIMER_COLLAPSE);
                 }
@@ -2642,7 +2590,7 @@ impl App {
     }
 
     /// Island geometry for `m`. The resting pill lifts a little under the
-    /// pointer: instant feedback while the hover dwell runs.
+    /// pointer: instant feedback before the click that opens it.
     fn geom_for(&self, m: &Mode) -> Geom {
         let g = activities::geom(m, &self.st);
         let liftable = match m {
@@ -2735,11 +2683,25 @@ impl App {
         self.tick();
         let now = self.st.now;
 
+        // What the draw pass reads about the pointer: whether it rests on the
+        // island (the idle look swaps to the clock) and where on screen it is
+        // (the idle eyes glance at it). One GetCursorPos a frame; none in the
+        // self-test, whose scenes pin `st.pointer` themselves.
+        self.st.hovering = self.hovering;
+        if self.selftest.is_none() {
+            let mut pt = POINT::default();
+            unsafe {
+                if GetCursorPos(&mut pt).is_ok() {
+                    let s = self.gfx.scale();
+                    self.st.pointer = Some(Point::new((pt.x - self.surface.x) as f32 / s, (pt.y - self.surface.y) as f32 / s));
+                }
+            }
+        }
+
         // The pointer left the open island since the last frame: the close
         // starts on this frame, no timer in between.
         if std::mem::take(&mut self.collapse_due) && self.expanded && self.free_to_collapse() {
             self.collapse();
-            self.left_at = clock::mono();
         }
 
         // A window under where the island rests: it rests out of the way.

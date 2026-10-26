@@ -112,11 +112,6 @@ const FRAME_SAMPLES: usize = 3;
 const GLASS_SOFT_GPU_BUDGET_MS: f64 = 32.0;
 const GLASS_FRAME_SAMPLES: usize = 6;
 
-// Eye-blink timing of the idle "eyes" style (activities.rs). Only used to
-// avoid capturing a mid-blink screenshot; harmless if it drifts.
-const BLINK_PERIOD: f64 = 5.5;
-const BLINK_GUARD: (f64, f64) = (0.3, 0.3);
-
 // ---------------------------------------------------------------- fake data (all original)
 
 const TITLE: &str = "Paper Boats";
@@ -764,9 +759,10 @@ fn fake_power(plugged: bool) -> PowerState {
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 enum Scene {
     IdleClock,
-    /// The resting clock while the battery charges: the charging mascot.
-    IdleCharging,
     IdleEyes,
+    /// The pointer resting on the closed island: the eyes swap to the clock
+    /// (hover no longer opens the island; a click does).
+    IdleHover,
     Media,
     Timer,
     MediaTimer,
@@ -1029,17 +1025,17 @@ const SCENES: [Scene; 83] = [
     Scene::SettingsUpdate,
     Scene::UpdateSheet,
     Scene::UpdateReady,
-    // Appended so the numbers above stay: the resting clock while the PC
-    // charges, the charging mascot beside it.
-    Scene::IdleCharging,
+    // Appended so the numbers above stay: the pointer resting on the closed
+    // island swaps the eyes for the clock (a click, not a hover, opens it).
+    Scene::IdleHover,
 ];
 
 impl Scene {
     fn name(self) -> String {
         match self {
             Scene::IdleClock => "idle-clock".into(),
-            Scene::IdleCharging => "idle-charging".into(),
             Scene::IdleEyes => "idle-eyes".into(),
+            Scene::IdleHover => "idle-hover".into(),
             Scene::Media => "media-activity".into(),
             Scene::Timer => "timer-activity".into(),
             Scene::MediaTimer => "media-timer".into(),
@@ -1858,7 +1854,7 @@ impl SelfTest {
         let now = clock::mono();
         let st = &mut app.st;
         st.settings.idle_style = match scene {
-            Scene::IdleEyes => IdleStyle::Eyes,
+            Scene::IdleEyes | Scene::IdleHover => IdleStyle::Eyes,
             Scene::IdleStatus => IdleStyle::Status,
             _ => IdleStyle::Clock,
         };
@@ -1880,7 +1876,7 @@ impl SelfTest {
             }
         }
         let st = &mut app.st;
-        st.power = fake_power(matches!(scene, Scene::ChargingHud | Scene::IdleCharging));
+        st.power = fake_power(scene == Scene::ChargingHud);
         if scene == Scene::LowBatteryHud {
             st.power.percent = LOW_BATTERY;
         }
@@ -1888,6 +1884,11 @@ impl SelfTest {
         st.volume = VolumeState { level: 0.64, muted: false, known: true };
         st.pinned = false;
         st.drag_hover = scene == Scene::ShelfDrop;
+        // The eyes' pupils start centred in every scene, and the (unpolled)
+        // pointer is away: screenshots don't depend on the real cursor.
+        st.pointer = None;
+        st.ui.eye_look = (0.0, 0.0);
+        st.ui.eye_target = (0.0, 0.0);
         st.health = match scene {
             Scene::HealthSignedOut | Scene::HealthSignedIn => None,
             Scene::HealthStale => Some(sample_week(st, 3)),
@@ -2061,6 +2062,10 @@ impl SelfTest {
         app.selftest_window_under(scene.window_under());
         app.selftest_hover(None);
         app.selftest_set_expanded(scene.expanded());
+        if scene == Scene::IdleHover {
+            // The pointer rests on the closed island: the eyes swap to the clock.
+            app.selftest_hover(Some(app.island_body().center()));
+        }
     }
 
     fn media_session(&self, timeline: Timeline) -> MediaSession {
@@ -2920,9 +2925,12 @@ fn first_tab_point(body: Rect) -> Point {
     Point::new(header.x + 15.0, header.center().y)
 }
 
+/// In or near a blink (activities::blink_state): the IdleEyes screenshot
+/// waits for a quiet moment, so the eyes are fully open in it.
 fn mid_blink() -> bool {
-    let phase = clock::mono() % BLINK_PERIOD;
-    phase < BLINK_GUARD.0 || phase > BLINK_PERIOD - BLINK_GUARD.1
+    let now = clock::mono();
+    let (closed, next) = crate::activities::blink_state(now);
+    closed || next - now < 0.3
 }
 
 fn round2(v: f64) -> f64 {

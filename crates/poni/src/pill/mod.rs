@@ -1,7 +1,6 @@
 //! The Pill theme: the island floats a little below the top edge as a black
 //! capsule instead of hanging from it, and the theme is its layouts as much
-//! as its look. At rest it shows the time, the battery and the little
-//! mascot (`crate::mascot`); while music plays,
+//! as its look. At rest it shows the time and the battery; while music plays,
 //! the song (and the line being sung); open, every page sits on a rounded
 //! card. Everything else (pages' behaviour, services, settings) is shared
 //! with the other themes.

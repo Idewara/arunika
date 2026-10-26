@@ -2,8 +2,9 @@
 
 Arunika is a "living notch" for Windows 10/11: a black island that hangs from the
 top-centre of the screen, shows live activities (media, timers, pop-ups) while
-collapsed, and expands on hover into pages (Music + synced lyrics, Focus,
-Health, Shelf, Tasks, Clipboard, Today, System). The Shelf's Phone drop serves a
+collapsed, and expands on click into pages (Music + synced lyrics, Focus,
+Health, Shelf, Tasks, Clipboard, Today, System). Hovering the closed island
+only swaps the idle look to the clock. The Shelf's Phone drop serves a
 small web page on the local network so a phone can send files to it.
 
 Forked from Oyenza Studio (called Oyen Poni until 0.2.0), it ships fresh, so the technical

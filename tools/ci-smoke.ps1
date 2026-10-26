@@ -1,6 +1,7 @@
 # Smoke test on a real Windows desktop (used by CI):
 # start Arunika normally, screenshot the top of the screen while idle, hover the
-# island to expand it, screenshot again, and record idle CPU / memory. Also
+# island (the eyes swap to the clock, still closed), click it to expand it,
+# screenshot again, and record idle CPU / memory. Also
 # checks that the island is really on screen, that its transparent
 # surroundings stay click-through, and how smoothly it morphs (the "motion"
 # lines Arunika logs for its first morphs).
@@ -198,14 +199,24 @@ $priv = [Math]::Round($p.PrivateMemorySize64 / 1MB, 1)
 "idle cpu ms over 10s: $([Math]::Round($cpu1 - $cpu0, 1))" | Tee-Object -FilePath $metrics -Append
 "working set MB: $ws; private MB: $priv" | Tee-Object -FilePath $metrics -Append
 
-# Hover the island (top centre) to expand it. Pill: thrown at the top edge,
-# into the gap above the pill.
+# Hover the island (top centre): the idle look swaps to the clock, but the
+# island stays closed — a click, not a hover, opens it. Pill: thrown at the
+# top edge, into the gap above the pill.
 $hoverY = if ($pill) { @(0, 1) } else { @(3, 6) }
 [Native]::SetCursorPos($cx, $hoverY[0]) | Out-Null
 Start-Sleep -Milliseconds 120
 [Native]::SetCursorPos($cx, $hoverY[1]) | Out-Null
 Start-Sleep -Seconds 2
-Shot "2-hover-expanded" 480
+Shot "2-hover-clock" 480
+$shut = ClassAt ($cx + 200) 100
+Expect "hover-stays-closed" ($shut -ne "Arunika.Island") "after hovering: window at ($($cx + 200), 100) = '$shut'"
+
+# Click the island to expand it.
+[Native]::mouse_event(0x0002, 0, 0, 0, [UIntPtr]::Zero)  # left down
+Start-Sleep -Milliseconds 60
+[Native]::mouse_event(0x0004, 0, 0, 0, [UIntPtr]::Zero)  # left up
+Start-Sleep -Seconds 2
+Shot "3-click-expanded" 480
 $c = PixelAt ($cx + 200) 100
 Expect "expanded-visible" ($c.R -lt 40 -and $c.G -lt 40 -and $c.B -lt 40) "pixel ($($cx + 200), 100) = rgb($($c.R), $($c.G), $($c.B))"
 $panel = ClassAt ($cx + 200) 100
@@ -223,15 +234,19 @@ if ($pill) {
 # Leave and let it collapse.
 [Native]::SetCursorPos($cx, [int]($bounds.Height / 2)) | Out-Null
 Start-Sleep -Seconds 2
-Shot "3-collapsed-again"
+Shot "4-collapsed-again"
 $after = ClassAt ($cx + 200) 100
 Expect "collapsed-click-through" ($after -ne "Arunika.Island") "window at ($($cx + 200), 100) = '$after'"
 
-# A few more open/close cycles for the motion log.
+# A few more open/close cycles for the motion log: click open, leave to close.
 for ($i = 0; $i -lt 3; $i++) {
     [Native]::SetCursorPos($cx, $hoverY[0]) | Out-Null
     Start-Sleep -Milliseconds 120
     [Native]::SetCursorPos($cx, $hoverY[1]) | Out-Null
+    Start-Sleep -Milliseconds 120
+    [Native]::mouse_event(0x0002, 0, 0, 0, [UIntPtr]::Zero)  # left down
+    Start-Sleep -Milliseconds 60
+    [Native]::mouse_event(0x0004, 0, 0, 0, [UIntPtr]::Zero)  # left up
     Start-Sleep -Milliseconds 1500
     [Native]::SetCursorPos($cx, [int]($bounds.Height / 2)) | Out-Null
     Start-Sleep -Milliseconds 1500
@@ -250,7 +265,7 @@ try {
     [Native]::mouse_event(0x0002, 0, 0, 0, [UIntPtr]::Zero)  # left down
     [Native]::mouse_event(0x0004, 0, 0, 0, [UIntPtr]::Zero)  # left up
     Start-Sleep -Seconds 2
-    Shot "4-maximized-window"
+    Shot "5-maximized-window"
     # 20 DIPs down: inside the resting island, below the 8 DIP strip a
     # stepped-aside island kept.
     $tab = [int](20 * $dpi)

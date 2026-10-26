@@ -1,5 +1,4 @@
-//! What the collapsed island shows: the idle pill (the clock, its battery
-//! badge and the mascot, `crate::mascot`), live activities (media,
+//! What the collapsed island shows: idle pill, live activities (media,
 //! timer, the minutes before a prayer, the readout over games), HUD
 //! pop-ups (volume, charging, Bluetooth) and notices.
 //!
@@ -191,12 +190,35 @@ fn clock_badge(st: &AppState) -> Option<ClockBadge> {
     }
 }
 
+/// The idle look on screen. While the pointer rests on the closed island the
+/// Eyes, Minimal and Hidden looks swap to the clock (time and battery), a
+/// peek at what a click opens with — for Hidden it's the reveal its name
+/// promises. The pointer leaves and the chosen look returns. Clock and
+/// Status already are what they are.
+pub fn idle_look(st: &AppState) -> IdleStyle {
+    match st.settings.idle_style {
+        IdleStyle::Eyes | IdleStyle::Minimal | IdleStyle::Hidden if st.hovering => IdleStyle::Clock,
+        s => s,
+    }
+}
+
+/// The width the hovered look rested at, when hover swapped it for the clock:
+/// the pill keeps it so the pointer near an end doesn't fall off a pill that
+/// shrank under it (which would flicker the looks). Hidden's is its strip.
+fn resting_w(style: IdleStyle) -> f32 {
+    match style {
+        IdleStyle::Eyes => 118.0,
+        IdleStyle::Minimal | IdleStyle::Hidden => 150.0,
+        _ => 0.0,
+    }
+}
+
 pub fn geom(m: &Mode, st: &AppState) -> Geom {
     if let Some(g) = crate::pill::geom(m, st) {
         return g;
     }
     match m {
-        Mode::Idle => match st.settings.idle_style {
+        Mode::Idle => match idle_look(st) {
             // The status bar is the Pill theme's; the other themes show the clock.
             IdleStyle::Clock | IdleStyle::Status => {
                 let base = if st.settings.use_24h { 84.0 } else { 104.0 };
@@ -205,8 +227,8 @@ pub fn geom(m: &Mode, st: &AppState) -> Geom {
                     Some(ClockBadge::Low(_)) => 34.0,
                     None => 0.0,
                 };
-                // The mascot keeps the clock company: the pill grows by its slot.
-                Geom::new(base + badge + crate::mascot::slot(st), 30.0, 14.0)
+                let keep = if idle_look(st) != st.settings.idle_style { resting_w(st.settings.idle_style) } else { 0.0 };
+                Geom::new((base + badge).max(keep), 30.0, 14.0)
             }
             IdleStyle::Minimal => Geom::new(150.0, 26.0, 12.0),
             IdleStyle::Eyes => Geom::new(118.0, 30.0, 14.0),
@@ -255,17 +277,15 @@ fn hidden_strip() -> Geom {
     Geom::new(150.0, 5.0, 2.5)
 }
 
-/// Needs continuous ambient frames (near 60 fps): animated equalizer while music plays,
-/// the mascot's flame on the resting pill. A paused (lingering) pill is static.
+/// Needs continuous ambient frames (near 60 fps): animated equalizer while music plays.
+/// A paused (lingering) pill is static.
 pub fn is_live(m: &Mode, st: &AppState) -> bool {
     if let Some(live) = crate::pill::is_live(m, st) {
         return live;
     }
+    let Some(media) = st.media.as_ref() else { return false };
     match m {
-        Mode::Idle => crate::mascot::animates(st),
-        Mode::Activity(Activity::Media) | Mode::Activity(Activity::MediaTimer) => {
-            st.media.as_ref().is_some_and(|m| m.is_playing())
-        }
+        Mode::Activity(Activity::Media) | Mode::Activity(Activity::MediaTimer) => media.is_playing(),
         _ => false,
     }
 }
@@ -281,9 +301,16 @@ pub fn next_wake(m: &Mode, st: &AppState) -> Option<f64> {
             next = Some(next.map_or(t, |n: f64| n.min(t)));
         }
     };
-    if *m == Mode::Idle && st.settings.idle_style == IdleStyle::Eyes {
-        let phase = now % BLINK_PERIOD;
-        consider(if phase < BLINK_LEN { now - phase + BLINK_LEN } else { now - phase + BLINK_PERIOD });
+    if *m == Mode::Idle && idle_look(st) == IdleStyle::Eyes && !st.power.saver {
+        // The eyes' own schedule: blinks and wander glances, and a step every
+        // EYE_STEP while the pupils ease toward where they're headed. All
+        // one-shot wakes; the eyes rest on battery saver, as the equalizer
+        // does (lock and display-off gating is the app's, in schedule_wake).
+        consider(blink_next(now));
+        consider(wander_next(now));
+        if st.ui.eye_look != st.ui.eye_target {
+            consider(now + EYE_STEP);
+        }
     }
     if !matches!(m, Mode::Expanded(_)) {
         if let Some(end) = media_grace_end(st) {
@@ -304,8 +331,132 @@ pub fn next_wake(m: &Mode, st: &AppState) -> Option<f64> {
     next
 }
 
+// ------------------------------------------------------------- the eyes
+
+/// A blink every 5.5 s on average, each ±0.75 s: blinks land 4–7 s apart.
 const BLINK_PERIOD: f64 = 5.5;
+const BLINK_JITTER: f64 = 0.75;
 const BLINK_LEN: f64 = 0.14;
+/// A glance in a random direction every 7 s on average, each ±1 s (5–9 s
+/// apart), held this long.
+const WANDER_PERIOD: f64 = 7.0;
+const WANDER_JITTER: f64 = 1.0;
+const WANDER_LEN: f64 = 0.7;
+/// How far the pupils move inside their eye (DIPs): ±2 across, ±1 up/down.
+const PUPIL_X: f32 = 2.0;
+const PUPIL_Y: f32 = 1.0;
+/// The cursor pulls the pupils from this far (DIPs); further away they ease
+/// back to centre instead of snapping.
+const EYE_REACH: f32 = 600.0;
+/// While the pupils ease toward their target, the next frame comes this soon.
+const EYE_STEP: f64 = 0.08;
+
+/// A cycle's cheap deterministic pseudo-random in 0..1 (no RNG state: the
+/// same frame always draws the same eyes, and the wake schedule agrees with
+/// the draw because both compute from `now`).
+fn hash01(n: i64, salt: u64) -> f64 {
+    let mut x = (n as u64).wrapping_mul(0x9E3779B97F4A7C15).wrapping_add(salt);
+    x = (x ^ (x >> 30)).wrapping_mul(0xBF58476D1CE4E5B9);
+    x = (x ^ (x >> 27)).wrapping_mul(0x94D049BB133111EB);
+    x ^= x >> 31;
+    (x >> 11) as f64 / (1u64 << 53) as f64
+}
+
+/// When blink `k` starts (jittered inside its 5.5 s cycle).
+fn blink_at(k: i64) -> f64 {
+    k as f64 * BLINK_PERIOD + (hash01(k, 1) - 0.5) * 2.0 * BLINK_JITTER
+}
+
+/// Eyes closed right now, and the next blink boundary (a start or an end).
+/// `pub(crate)` for the self-test, which waits for a quiet moment before the
+/// IdleEyes screenshot.
+pub(crate) fn blink_state(now: f64) -> (bool, f64) {
+    let k0 = (now / BLINK_PERIOD).floor() as i64;
+    let (mut closed, mut next) = (false, f64::INFINITY);
+    for k in k0..=k0 + 2 {
+        let t = blink_at(k);
+        closed |= (t..t + BLINK_LEN).contains(&now);
+        if t > now {
+            next = next.min(t);
+        }
+        if t + BLINK_LEN > now {
+            next = next.min(t + BLINK_LEN);
+        }
+    }
+    (closed, next)
+}
+
+fn blink_next(now: f64) -> f64 {
+    blink_state(now).1
+}
+
+/// Wander glance `k`: when it starts and the pupil offset it glances at.
+fn wander_at(k: i64) -> (f64, (f32, f32)) {
+    let t = k as f64 * WANDER_PERIOD + (hash01(k, 2) - 0.5) * 2.0 * WANDER_JITTER;
+    let a = hash01(k, 3) * std::f64::consts::TAU;
+    (t, (a.cos() as f32 * PUPIL_X, a.sin() as f32 * PUPIL_Y))
+}
+
+/// The glance under way (its pupil offset), and the next wander boundary.
+fn wander_state(now: f64) -> (Option<(f32, f32)>, f64) {
+    let k0 = (now / WANDER_PERIOD).floor() as i64;
+    let (mut glance, mut next) = (None, f64::INFINITY);
+    for k in k0..=k0 + 2 {
+        let (t, dir) = wander_at(k);
+        if (t..t + WANDER_LEN).contains(&now) {
+            glance = Some(dir);
+        }
+        if t > now {
+            next = next.min(t);
+        }
+        if t + WANDER_LEN > now {
+            next = next.min(t + WANDER_LEN);
+        }
+    }
+    (glance, next)
+}
+
+fn wander_next(now: f64) -> f64 {
+    wander_state(now).1
+}
+
+/// Where the pupils head from here: a wander glance in its moment, else the
+/// cursor while it's within reach, else back to centre.
+fn eye_target(st: &AppState, mouse: Option<Point>, body: Rect) -> (f32, f32) {
+    if let (Some(dir), _) = wander_state(st.now) {
+        return dir;
+    }
+    let c = body.center();
+    match mouse.or(st.pointer).filter(|p| (p.x - c.x).hypot(p.y - c.y) <= EYE_REACH) {
+        Some(p) => (((p.x - c.x) / 300.0).clamp(-1.0, 1.0) * PUPIL_X, ((p.y - c.y) / 200.0).clamp(-1.0, 1.0) * PUPIL_Y),
+        None => (0.0, 0.0),
+    }
+}
+
+/// The two eyes: white capsules with a dark pupil each, closed to a slit
+/// while a blink runs. The pupils ease a step a frame toward `eye_target`
+/// (stored so `next_wake` knows whether more frames are due).
+fn draw_eyes(ui: &mut Ui, st: &mut AppState, body: Rect) {
+    let (blink, _) = blink_state(st.now);
+    let cy = body.center().y;
+    let target = eye_target(st, ui.input.mouse, body);
+    let (lx, ly) = st.ui.eye_look;
+    let (mut nx, mut ny) = (lx + (target.0 - lx) * 0.4, ly + (target.1 - ly) * 0.4);
+    if (nx - target.0).abs() < 0.05 && (ny - target.1).abs() < 0.05 {
+        nx = target.0;
+        ny = target.1;
+    }
+    st.ui.eye_look = (nx, ny);
+    st.ui.eye_target = target;
+    for dx in [-11.0f32, 11.0] {
+        let c = Point::new(body.center().x + dx, cy);
+        let h = if blink { 2.5 } else { 11.0 };
+        ui.c.fill_rrect(Rect::from_center(c, 6.5, h), 3.25, Color::white(0.95));
+        if !blink {
+            ui.c.fill_circle(Point::new(c.x + nx, c.y + ny), 1.8, palette::ISLAND);
+        }
+    }
+}
 
 pub fn draw(ui: &mut Ui, st: &mut AppState, m: &Mode, body: Rect) {
     if crate::pill::draw(ui, st, m, body) {
@@ -329,26 +480,15 @@ fn snap(ui: &Ui, v: f32) -> f32 {
 
 fn draw_idle(ui: &mut Ui, st: &mut AppState, body: Rect) {
     let cy = body.center().y;
-    match st.settings.idle_style {
+    match idle_look(st) {
         IdleStyle::Clock | IdleStyle::Status => {
             let time = fmt_clock(&st.local, st.settings.use_24h);
             let ts = TextStyle::body().weight(Weight::Semibold).tabular();
-            // The mascot after the clock, sharing the group; where it shows
-            // the pill is `slot` wider (the geom pass counts the same slot).
-            let m_w = crate::mascot::w(st);
-            let m_slot = crate::mascot::slot(st);
             let Some(badge) = clock_badge(st) else {
-                if m_w <= 0.0 {
-                    ui.c.text(&time, body, &ts.center());
-                    return;
-                }
-                let (tw, _) = ui.c.measure(&time, &ts, 400.0);
-                let x0 = body.center().x - (tw + m_slot) / 2.0;
-                ui.c.text(&time, Rect::new(x0, body.y, tw + 2.0, body.h), &ts);
-                crate::mascot::draw(ui, st, Rect::new(x0 + tw + crate::mascot::GAP, cy - crate::mascot::H / 2.0, m_w, crate::mascot::H));
+                ui.c.text(&time, body, &ts.center());
                 return;
             };
-            // Badge + gap + time (+ gap + mascot), centred as one group.
+            // Badge + gap + time, centred as one group.
             let (tw, _) = ui.c.measure(&time, &ts, 400.0);
             let pct_ts = TextStyle::footnote().weight(Weight::Semibold).tabular().color(palette::RED);
             let (bw, pct) = match badge {
@@ -358,7 +498,7 @@ fn draw_idle(ui: &mut Ui, st: &mut AppState, body: Rect) {
                     (ui.c.measure(&s, &pct_ts, 100.0).0, s)
                 }
             };
-            let x0 = body.center().x - (bw + BADGE_GAP + tw + m_slot) / 2.0;
+            let x0 = body.center().x - (bw + BADGE_GAP + tw) / 2.0;
             match badge {
                 ClockBadge::Charging => {
                     let r = Rect::new(x0 - BOLT_INSET, cy - BOLT / 2.0, BOLT, BOLT);
@@ -366,22 +506,9 @@ fn draw_idle(ui: &mut Ui, st: &mut AppState, body: Rect) {
                 }
                 ClockBadge::Low(_) => ui.c.text(&pct, Rect::new(x0, body.y, bw + 2.0, body.h), &pct_ts),
             }
-            let tx = x0 + bw + BADGE_GAP;
-            ui.c.text(&time, Rect::new(tx, body.y, tw + 2.0, body.h), &ts);
-            if m_w > 0.0 {
-                crate::mascot::draw(ui, st, Rect::new(tx + tw + crate::mascot::GAP, cy - crate::mascot::H / 2.0, m_w, crate::mascot::H));
-            }
+            ui.c.text(&time, Rect::new(x0 + bw + BADGE_GAP, body.y, tw + 2.0, body.h), &ts);
         }
-        IdleStyle::Eyes => {
-            let blink = (st.now % BLINK_PERIOD) < BLINK_LEN;
-            // Eyes glance toward the cursor while hovering.
-            let look = ui.input.mouse.map(|p| ((p.x - body.center().x) / body.w).clamp(-0.5, 0.5) * 6.0).unwrap_or(0.0);
-            for dx in [-11.0f32, 11.0] {
-                let c = Point::new(body.center().x + dx + look, cy);
-                let h = if blink { 2.5 } else { 11.0 };
-                ui.c.fill_rrect(Rect::from_center(c, 6.5, h), 3.25, Color::white(0.95));
-            }
-        }
+        IdleStyle::Eyes => draw_eyes(ui, st, body),
         IdleStyle::Minimal | IdleStyle::Hidden => {}
     }
 }
@@ -844,6 +971,49 @@ mod tests {
         // Readings switched off: one row again, as for a song without them.
         st.settings.lyrics_pronunciation = false;
         assert_eq!(geom(&media, &st).h, 32.0);
+    }
+
+    #[test]
+    fn hovering_swaps_the_eyes_for_the_clock_at_the_eyes_width() {
+        let mut st = AppState::new(Settings::default(), Store::default());
+        st.settings.idle_style = IdleStyle::Eyes;
+        assert_eq!(idle_look(&st), IdleStyle::Eyes);
+        assert_eq!(geom(&Mode::Idle, &st), Geom::new(118.0, 30.0, 14.0));
+        // The pointer on the island: the clock look, at the eyes' width, so
+        // the pill doesn't shrink out from under it.
+        st.hovering = true;
+        assert_eq!(idle_look(&st), IdleStyle::Clock);
+        assert_eq!(geom(&Mode::Idle, &st), Geom::new(118.0, 30.0, 14.0));
+        // The eyes' wakes stop while the clock shows, and come back after.
+        assert_eq!(next_wake(&Mode::Idle, &st), None);
+        st.hovering = false;
+        assert_eq!(idle_look(&st), IdleStyle::Eyes);
+        assert!(next_wake(&Mode::Idle, &st).is_some());
+        // ...and they rest on battery saver, as the equalizer's frames do.
+        st.power.saver = true;
+        assert_eq!(next_wake(&Mode::Idle, &st), None);
+    }
+
+    #[test]
+    fn blinks_and_wanders_keep_their_spacing_and_stay_schedulable() {
+        // Consecutive starts: blinks 4–7 s apart, wander glances 5–9 s apart.
+        for k in 0..200 {
+            let d = blink_at(k + 1) - blink_at(k);
+            assert!((4.0..=7.0).contains(&d), "blink spacing {d}");
+            let d = wander_at(k + 1).0 - wander_at(k).0;
+            assert!((5.0..=9.0).contains(&d), "wander spacing {d}");
+        }
+        // From any moment the next boundary is ahead and never far.
+        for now in [0.0, 1234.567, 99999.1] {
+            let (_, b) = blink_state(now);
+            assert!(b > now && b <= now + BLINK_PERIOD + 2.0 * BLINK_JITTER, "blink next {b} from {now}");
+            let (_, w) = wander_state(now);
+            assert!(w > now && w <= now + WANDER_PERIOD + 2.0 * WANDER_JITTER, "wander next {w} from {now}");
+        }
+        // Mid-blink is reported closed.
+        let t = blink_at(20);
+        assert!(blink_state(t + BLINK_LEN / 2.0).0);
+        assert!(!blink_state(t + BLINK_LEN + 0.01).0);
     }
 
     #[test]

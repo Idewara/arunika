@@ -43,8 +43,6 @@ mod icons;
 #[cfg(any(windows, target_os = "macos"))]
 mod island;
 #[cfg(any(windows, target_os = "macos"))]
-mod mascot;
-#[cfg(any(windows, target_os = "macos"))]
 mod pages;
 #[cfg(any(windows, target_os = "macos"))]
 mod pill;

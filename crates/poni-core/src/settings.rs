@@ -11,7 +11,8 @@ pub enum IdleStyle {
     Clock,
     /// Small blank pill (like a MacBook notch).
     Minimal,
-    /// A friendly pair of blinking eyes.
+    /// A friendly pair of eyes (the default): they blink, glance around on
+    /// their own and follow the cursor.
     Eyes,
     /// Nothing visible until the cursor reaches the top edge.
     Hidden,
@@ -63,7 +64,9 @@ pub struct Settings {
     pub theme: Theme,
     pub idle_style: IdleStyle,
     pub use_24h: bool,
-    /// Delay before hover expands the island.
+    /// Delay before hover expands the island. Inert since a click (not
+    /// hovering) opens the island: the key stays so files written while it
+    /// was live still load.
     pub hover_delay_ms: u32,
     /// Grace period after the cursor leaves before collapsing (0 = the
     /// island starts closing on the next frame).
@@ -162,7 +165,7 @@ impl Default for Settings {
         Self {
             settings_version: SETTINGS_VERSION,
             theme: Theme::Classic,
-            idle_style: IdleStyle::Clock,
+            idle_style: IdleStyle::Eyes,
             use_24h: true,
             hover_delay_ms: 220,
             collapse_delay_ms: 0,
