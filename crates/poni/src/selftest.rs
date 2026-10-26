@@ -2365,7 +2365,7 @@ impl SelfTest {
             let cx_dip = app.selftest_surface().2 as f32 / 2.0 / scale;
             let mut seen = px.to_vec();
             for (i, p) in seen.chunks_exact_mut(4).enumerate() {
-                let (x, y) = ((i as i32 % w) + r.left, (i / w) as i32 + r.top);
+                let (x, y) = ((i as i32 % w) + r.left, (i as i32 / w) + r.top);
                 let bg = backdrop_dip(run.dark_page(), (x as f32 + 0.5) / scale - cx_dip, (y as f32 + 0.5) / scale);
                 let inv = 1.0 - p[3] as f32 / 255.0;
                 for (k, c) in [2, 1, 0].into_iter().enumerate() {
