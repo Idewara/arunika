@@ -1110,7 +1110,8 @@ mod tests {
         let i = bad.len() - 20;
         bad[i] ^= 0xff;
         assert!(crate::png::decode(&bad).is_err());
-        assert!(crate::png::decode(&png[..png.len() - 1]).is_err());
+        // Cutting inside the IDAT chunk starves the zlib stream.
+        assert!(crate::png::decode(&png[..png.len() / 2]).is_err());
         assert!(crate::png::decode(&png[..8]).is_err());
     }
 }

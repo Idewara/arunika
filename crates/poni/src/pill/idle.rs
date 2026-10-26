@@ -95,7 +95,7 @@ fn clock_width(st: &AppState) -> f32 {
     // The mascot after the battery (or the centred clock): the pill grows by its slot.
     let slot = crate::mascot::slot(st);
     if battery_state(st).is_none() {
-        return (if h24 { CLOCK_W } else { CLOCK_12H_W } + slot).round();
+        return ((if h24 { CLOCK_W } else { CLOCK_12H_W }) + slot).round();
     }
     let time = if h24 { TIME_SLOT } else { TIME_12H_SLOT };
     (SIDE + time + MID_GAP + PCT_SLOT + PCT_GAP + BATTERY_W + SIDE + slot).round()
@@ -214,12 +214,17 @@ mod tests {
     #[test]
     fn the_resting_pill_is_a_capsule_sized_to_the_time_the_battery_and_the_mascot() {
         // The mascot's slot: a 6 DIP gap, then the art (21 DIP tall, 96x85).
+        // The slot joins the UNROUNDED base width and rounds once, the same
+        // way clock_width does — the old constants (152/180/84/104) were
+        // already-rounded results, not bases.
         let slot = crate::mascot::GAP + crate::mascot::H * 96.0 / 85.0;
+        let base24 = SIDE + TIME_SLOT + MID_GAP + PCT_SLOT + PCT_GAP + BATTERY_W + SIDE;
+        let base12 = SIDE + TIME_12H_SLOT + MID_GAP + PCT_SLOT + PCT_GAP + BATTERY_W + SIDE;
         let size = |battery, use_24h| geom(&state(battery, use_24h));
-        assert_eq!(size(true, true), Some(Geom::new((152.0 + slot).round(), 32.0, 16.0)));
-        assert_eq!(size(true, false), Some(Geom::new((180.0 + slot).round(), 32.0, 16.0)));
-        assert_eq!(size(false, true), Some(Geom::new((84.0 + slot).round(), 32.0, 16.0)));
-        assert_eq!(size(false, false), Some(Geom::new((104.0 + slot).round(), 32.0, 16.0)));
+        assert_eq!(size(true, true), Some(Geom::new((base24 + slot).round(), 32.0, 16.0)));
+        assert_eq!(size(true, false), Some(Geom::new((base12 + slot).round(), 32.0, 16.0)));
+        assert_eq!(size(false, true), Some(Geom::new((CLOCK_W + slot).round(), 32.0, 16.0)));
+        assert_eq!(size(false, false), Some(Geom::new((CLOCK_12H_W + slot).round(), 32.0, 16.0)));
     }
 
     #[test]
