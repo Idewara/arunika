@@ -2929,8 +2929,8 @@ fn first_tab_point(body: Rect) -> Point {
 /// waits for a quiet moment, so the eyes are fully open in it.
 fn mid_blink() -> bool {
     let now = clock::mono();
-    let (closed, next) = crate::activities::blink_state(now);
-    closed || next - now < 0.3
+    let (lid, next) = crate::activities::blink_state(now);
+    lid < 1.0 || next - now < 0.3
 }
 
 fn round2(v: f64) -> f64 {
