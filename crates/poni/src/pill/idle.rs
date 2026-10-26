@@ -14,7 +14,8 @@ use poni_core::geom::{palette, Color, Rect};
 use poni_core::settings::IdleStyle;
 use poni_core::svgpath::Seg;
 
-/// Every resting pill is this tall, and a capsule (radius = height / 2).
+/// The clock look's resting pill is this tall, a capsule (radius = height /
+/// 2); the Eyes look sizes its own, taller capsule below.
 const H: f32 = 32.0;
 /// Content keeps this far in from each round end (the radius).
 const SIDE: f32 = 16.0;
@@ -34,8 +35,9 @@ const PCT_INK: Color = Color::white(0.55);
 /// Minimal: a small blank capsule, nothing in it but something to hover.
 const MINIMAL_W: f32 = 96.0;
 const MINIMAL_H: f32 = 24.0;
-/// Eyes: Classic's two eyes, centred in a clock-sized capsule.
-const EYES_W: f32 = 84.0;
+/// Eyes: the island's two eyes over their nebula, in a wider, taller capsule.
+const EYES_W: f32 = 168.0;
+const EYES_H: f32 = 44.0;
 
 /// The battery glyph at its own size (DIPs): a 20 x 10 body, then the nub
 /// 0.75 away and 1.75 wide. [`battery`] scales it with its rect's height.
@@ -52,7 +54,9 @@ pub fn geom(st: &AppState) -> Option<Geom> {
     // Under the pointer the Eyes, Minimal and Hidden looks show the clock
     // instead (`activities::idle_look`), sized here like the Clock look, but
     // never narrower than the look it stood in for: a pill shrinking under
-    // the pointer would drop the hover and flicker.
+    // the pointer would drop the hover and flicker. Hovering in from Eyes,
+    // the clock takes the eyes' whole size (the body's top is spring-anchored,
+    // so a shorter pill would lift its bottom edge off the pointer).
     let look = crate::activities::idle_look(st);
     let keep = if look != st.settings.idle_style {
         match st.settings.idle_style {
@@ -65,11 +69,13 @@ pub fn geom(st: &AppState) -> Option<Geom> {
     } else {
         0.0
     };
+    let from_eyes = st.settings.idle_style == IdleStyle::Eyes && st.hovering;
+    let h = if from_eyes { EYES_H } else { H };
     match look {
         // Where the status bar leaves the resting pill to us, it is the clock.
-        IdleStyle::Clock | IdleStyle::Status => Some(Geom::new(clock_width(st).max(keep), H, H / 2.0)),
+        IdleStyle::Clock | IdleStyle::Status => Some(Geom::new(clock_width(st).max(keep), h, h / 2.0)),
         IdleStyle::Minimal => Some(Geom::new(MINIMAL_W, MINIMAL_H, MINIMAL_H / 2.0)),
-        IdleStyle::Eyes => Some(Geom::new(EYES_W, H, H / 2.0)),
+        IdleStyle::Eyes => Some(Geom::new(EYES_W, EYES_H, EYES_H / 2.0)),
         // Classic's invisible strip: it only catches the pointer at the edge.
         IdleStyle::Hidden => None,
     }
@@ -227,15 +233,15 @@ mod tests {
         st.settings.idle_style = IdleStyle::Minimal;
         assert_eq!(geom(&st), Some(Geom::new(96.0, 24.0, 12.0)));
         st.settings.idle_style = IdleStyle::Eyes;
-        assert_eq!(geom(&st), Some(Geom::new(84.0, 32.0, 16.0)));
+        assert_eq!(geom(&st), Some(Geom::new(168.0, 44.0, 22.0)));
         // The pointer on the island: the eyes swap to the clock (152 with the
-        // battery); a narrower clock would keep the eyes' width.
+        // battery), at the eyes' size so the pill doesn't shrink under it.
         st.hovering = true;
-        assert_eq!(geom(&st), Some(Geom::new(152.0, 32.0, 16.0)));
+        assert_eq!(geom(&st), Some(Geom::new(168.0, 44.0, 22.0)));
         let mut no_batt = state(false, true);
         no_batt.settings.idle_style = IdleStyle::Eyes;
         no_batt.hovering = true;
-        assert_eq!(geom(&no_batt), Some(Geom::new(84.0, 32.0, 16.0)), "clock and eyes are both 84 wide");
+        assert_eq!(geom(&no_batt), Some(Geom::new(168.0, 44.0, 22.0)), "the clock keeps the eyes' size");
         st.hovering = false;
         // Hidden stays Classic's invisible strip.
         st.settings.idle_style = IdleStyle::Hidden;

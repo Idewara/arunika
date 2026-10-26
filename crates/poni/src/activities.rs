@@ -207,7 +207,7 @@ pub fn idle_look(st: &AppState) -> IdleStyle {
 /// shrank under it (which would flicker the looks). Hidden's is its strip.
 fn resting_w(style: IdleStyle) -> f32 {
     match style {
-        IdleStyle::Eyes => 118.0,
+        IdleStyle::Eyes => EYES_W,
         IdleStyle::Minimal | IdleStyle::Hidden => 150.0,
         _ => 0.0,
     }
@@ -228,10 +228,20 @@ pub fn geom(m: &Mode, st: &AppState) -> Geom {
                     None => 0.0,
                 };
                 let keep = if idle_look(st) != st.settings.idle_style { resting_w(st.settings.idle_style) } else { 0.0 };
-                Geom::new((base + badge).max(keep), 30.0, 14.0)
+                // Hovering in from the Eyes look, the clock takes the eyes'
+                // whole size (not only their width): the body's top is
+                // spring-anchored, so a shorter clock would lift the bottom
+                // edge off a pointer standing in the pill's lower rows.
+                let from_eyes = st.settings.idle_style == IdleStyle::Eyes && st.hovering;
+                let h = if from_eyes { EYES_H } else { 30.0 };
+                Geom::new(
+                    (base + badge).max(keep),
+                    h,
+                    if from_eyes { EYES_H / 2.0 } else { 14.0 },
+                )
             }
             IdleStyle::Minimal => Geom::new(150.0, 26.0, 12.0),
-            IdleStyle::Eyes => Geom::new(118.0, 30.0, 14.0),
+            IdleStyle::Eyes => Geom::new(EYES_W, EYES_H, EYES_H / 2.0),
             IdleStyle::Hidden => hidden_strip(),
         },
         Mode::Activity(Activity::Media) => {
@@ -325,6 +335,11 @@ pub fn next_wake(m: &Mode, st: &AppState) -> Option<f64> {
 }
 
 // ------------------------------------------------------------- the eyes
+
+/// The Eyes look's island: bigger than the clock's, room for the art and
+/// the nebula behind it.
+const EYES_W: f32 = 168.0;
+const EYES_H: f32 = 44.0;
 
 /// The two eyes are the reference video's frames played back by [`crate::eyes`];
 /// this module only decides when they show and reserves their slot.
@@ -845,20 +860,20 @@ mod tests {
     }
 
     #[test]
-    fn hovering_swaps_the_eyes_for_the_clock_at_the_eyes_width() {
+    fn hovering_swaps_the_eyes_for_the_clock_at_the_eyes_size() {
         let mut st = AppState::new(Settings::default(), Store::default());
         st.settings.idle_style = IdleStyle::Eyes;
         assert_eq!(idle_look(&st), IdleStyle::Eyes);
-        assert_eq!(geom(&Mode::Idle, &st), Geom::new(118.0, 30.0, 14.0));
+        assert_eq!(geom(&Mode::Idle, &st), Geom::new(168.0, 44.0, 22.0));
         // The eyes showing, their frames advance; no scheduled wakes needed
         // (the sprite is a function of `st.now`, driven by the ambient frames).
         assert!(is_live(&Mode::Idle, &st));
         assert_eq!(next_wake(&Mode::Idle, &st), None);
-        // The pointer on the island: the clock look, at the eyes' width, so
+        // The pointer on the island: the clock look, at the eyes' size, so
         // the pill doesn't shrink out from under it; static, so no frames.
         st.hovering = true;
         assert_eq!(idle_look(&st), IdleStyle::Clock);
-        assert_eq!(geom(&Mode::Idle, &st), Geom::new(118.0, 30.0, 14.0));
+        assert_eq!(geom(&Mode::Idle, &st), Geom::new(168.0, 44.0, 22.0));
         assert!(!is_live(&Mode::Idle, &st));
         st.hovering = false;
         assert_eq!(idle_look(&st), IdleStyle::Eyes);
