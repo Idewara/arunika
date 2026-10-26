@@ -1,4 +1,4 @@
-//! `poni --render <dir> [--theme classic|oyen|glass|pill] [--notch]`: draw the island's
+//! `poni --render <dir> [--theme classic|cream|glass|pill] [--notch]`: draw the island's
 //! states with sample data into PNGs, offscreen, through the Mac renderer.
 //! CI runs it on a Mac with no notch and no person at the screen, so this is
 //! how the Mac drawing gets looked at: every page and activity, each theme,
@@ -257,7 +257,8 @@ pub fn run(dir: &str, args: &[String]) -> i32 {
         return 2;
     }
     let theme = match args.iter().position(|a| a == "--theme").and_then(|i| args.get(i + 1)).map(|s| s.as_str()) {
-        Some("oyen") => Theme::Oyen,
+        // "oyen": the Cream theme's name before the rename.
+        Some("cream") | Some("oyen") => Theme::Cream,
         Some("glass") => Theme::Glass,
         Some("pill") => Theme::Pill,
         _ => Theme::Classic,
@@ -265,7 +266,7 @@ pub fn run(dir: &str, args: &[String]) -> i32 {
     let notch = args.iter().any(|a| a == "--notch").then_some(Notch::MACBOOK);
     let name = match theme {
         Theme::Classic => "",
-        Theme::Oyen => "-oyen",
+        Theme::Cream => "-cream",
         Theme::Glass => "-glass",
         Theme::Pill => "-pill",
     };
@@ -492,7 +493,7 @@ fn base_state(theme: Theme) -> AppState {
     st.now = NOW_MONO;
     st.unix = NOW_UNIX;
     st.local = LocalDateTime { year: 2026, month: 10, day: 24, hour: 9, minute: 41, second: 0 };
-    st.accent = if theme == Theme::Oyen { crate::oyen::ORANGE } else { palette::BLUE };
+    st.accent = if theme == Theme::Cream { poni_core::look::CREAM_ACCENT } else { palette::BLUE };
     st.volume = VolumeState { level: 0.64, muted: false, known: true };
     st.power = PowerState { has_battery: true, percent: 76, charging: false, on_ac: false, saver: false };
     st.stats = SysStats { valid: true, cpu: 0.23, mem_used: 9 << 30, mem_total: 16 << 30, disk_free: 212 << 30, disk_total: 476 << 30, uptime_s: 3 * 86_400 + 4 * 3600 };

@@ -41,7 +41,8 @@ const IO_TIMEOUT: Duration = Duration::from_secs(30);
 const TRANSFER_STALE: Duration = Duration::from_secs(90);
 /// Progress events at most this often.
 const PROGRESS_EVERY: Duration = Duration::from_millis(200);
-/// Staging folders in the inbox: `<prefix><transfer id>`.
+/// Staging folders in the inbox: `<prefix><transfer id>`. The "oyen-poni"
+/// name stays: phone pages served by older copies look for it.
 const STAGING_PREFIX: &str = ".oyen-poni-incoming-";
 
 #[derive(Clone, Debug)]

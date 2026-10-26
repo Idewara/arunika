@@ -1,6 +1,6 @@
 //! Settings page, behind the gear on the right of the header.
 //!
-//! The Oyenza account comes first: the Oyenza app's icon, then signing in
+//! The Oyenza account comes first: its wallet tile, then signing in
 //! (the code itself shows on the Oyenza page), who is signed in, and
 //! Disconnect. Under a line, what the tray menu also changes: the theme and
 //! the idle look as pickers, six switches, and Hide or Stay on top in
@@ -32,7 +32,7 @@ use poni_core::update::Release;
 const HEIGHT: f32 = SWITCHES_Y + ROWS as f32 * ROW_H;
 const HEIGHT_OFFER: f32 = HEIGHT + ROW_H;
 const ACCOUNT_H: f32 = 44.0;
-/// The Oyenza app's icon, and the text column right of it.
+/// The account tile, and the text column right of it.
 const ICON: f32 = 36.0;
 const TEXT_X: f32 = 48.0;
 const RULE_Y: f32 = 54.0;
@@ -64,13 +64,13 @@ const KNOB_INSET: f32 = 2.0;
 const OYENZA: Color = palette::ORANGE;
 
 // Glass: on Windows from a copy of the screen, on a Mac macOS's own glass.
-const THEMES: [(Theme, &str); 4] = [(Theme::Classic, "Classic"), (Theme::Oyen, "Oyen"), (Theme::Glass, "Glass"), (Theme::Pill, "Pill")];
+const THEMES: [(Theme, &str); 4] = [(Theme::Classic, "Classic"), (Theme::Cream, "Cream"), (Theme::Glass, "Glass"), (Theme::Pill, "Pill")];
 
-/// An idle look's name in the picker (`eyes` is Oyen in his theme).
-fn idle_name(s: IdleStyle, eyes: &'static str) -> &'static str {
+/// An idle look's name in the picker.
+fn idle_name(s: IdleStyle) -> &'static str {
     match s {
         IdleStyle::Clock => "Clock",
-        IdleStyle::Eyes => eyes,
+        IdleStyle::Eyes => "Eyes",
         IdleStyle::Minimal => "Minimal",
         IdleStyle::Hidden => "Hidden",
         IdleStyle::Status => "Status",
@@ -141,13 +141,11 @@ pub fn draw(ui: &mut Ui, st: &mut AppState, area: Rect) {
     let theme_names: Vec<&str> = THEMES.iter().map(|t| t.1).collect();
     let theme_sel = THEMES.iter().position(|t| t.0 == st.settings.theme).unwrap_or(0);
     let looks = status::looks(st.settings.theme);
-    // In the Oyen theme the eyes are Oyen's own (as in the tray menu).
-    let eyes = if st.settings.theme == Theme::Oyen { "Oyen" } else { "Eyes" };
-    let look_names: Vec<&str> = looks.iter().map(|s| idle_name(*s, eyes)).collect();
+    let look_names: Vec<&str> = looks.iter().map(|s| idle_name(*s)).collect();
     let look_sel = looks.iter().position(|s| *s == status::shown(st.settings.theme, st.settings.idle_style)).unwrap_or(0);
     // Side by side under their labels when both fit their columns, each
     // closed up only as far as it needs; else a row each. Whether they fit is
-    // asked of this theme's own looks, so Classic, Oyen and Glass sit side by
+    // asked of this theme's own looks, so Classic, Cream and Glass sit side by
     // side exactly where they always did (at a narrow island picking Pill,
     // with its fifth look, can stack them).
     let theme_pad = pad_to_fit(ui, &theme_names, col_w);
@@ -395,7 +393,11 @@ fn flip(st: &mut AppState, sw: Switch, on: Option<bool>) {
 
 fn draw_account(ui: &mut Ui, st: &mut AppState, r: Rect) {
     let cy = r.center().y;
-    crate::oyen::app_icon(ui.c, Point::new(r.x + ICON / 2.0, cy), ICON);
+    // A wallet on the service's orange tile.
+    let c = Point::new(r.x + ICON / 2.0, cy);
+    let tile = Rect::from_center(c, ICON, ICON);
+    ui.c.fill_rrect(tile, ICON * 0.2237, OYENZA);
+    ui.c.icon(Icon::Wallet, tile.inset(ICON * 0.24, ICON * 0.24), palette::ON_ACCENT);
     match st.oyenza.link.clone() {
         OyenzaLink::Off => {
             let label = "Sign in with Arunika";
@@ -440,7 +442,7 @@ fn draw_account(ui: &mut Ui, st: &mut AppState, r: Rect) {
     }
 }
 
-/// The account's name over one dim line, between Oyen and `right` (where
+/// The account's name over one dim line, between the tile and `right` (where
 /// the row's buttons start).
 fn account_text(ui: &mut Ui, r: Rect, right: f32, title: &str, line: &str) {
     let x = r.x + TEXT_X;

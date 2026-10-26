@@ -20,7 +20,8 @@ pub const MAX_TOTAL: u64 = 64 * 1024 * 1024 * 1024;
 /// Bytes per binary frame the PC sends.
 pub const FRAME: usize = 16 * 1024;
 /// Staging folders in the inbox: `<prefix><n>`. Not the same prefix as the
-/// QR phone drop's, which clears its own leftovers whenever it opens.
+/// QR phone drop's, which clears its own leftovers whenever it opens. The
+/// "oyen-poni" name stays: the phone page's wire protocol carries it.
 pub const STAGING_PREFIX: &str = ".oyen-poni-paired-";
 
 /// What a phone says on the data channel.

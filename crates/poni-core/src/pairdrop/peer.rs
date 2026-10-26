@@ -22,7 +22,8 @@ use str0m::channel::ChannelId;
 use str0m::net::{Protocol, Receive};
 use str0m::{Candidate, Event as RtcEvent, IceConnectionState, Input, Output, Rtc};
 
-/// The data channel the phone page opens.
+/// The data channel the phone page opens ("oyen-drop" stays: the wire
+/// protocol's name, spoken by phone pages from older copies).
 pub const LABEL: &str = "oyen-drop";
 /// A link that hasn't connected by now has failed.
 const CONNECT_WITHIN: Duration = Duration::from_secs(30);

@@ -1,6 +1,6 @@
-//! The menu bar item (Oyen's mark) and its menu, also shown on a right-click
-//! of the island. It carries what works on the Mac so far; lyrics and the
-//! Apple Music token join it with the music slice.
+//! The menu bar item (the island's silhouette) and its menu, also shown on a
+//! right-click of the island. It carries what works on the Mac so far; lyrics
+//! and the Apple Music token join it with the music slice.
 
 use objc2::rc::Retained;
 use objc2::runtime::AnyObject;
@@ -9,7 +9,7 @@ use objc2_app_kit::{
     NSControlStateValueOff, NSControlStateValueOn, NSImage, NSMenu, NSMenuItem, NSStatusBar, NSStatusItem, NSVariableStatusItemLength,
 };
 use objc2_core_foundation::CGFloat;
-use objc2_core_graphics::{CGBlendMode, CGContext};
+use objc2_core_graphics::CGContext;
 use objc2_foundation::{NSObject, NSObjectProtocol, NSSize, NSString};
 use crate::state::OyenzaLink;
 use poni_core::settings::{IdleStyle, Settings, Theme};
@@ -69,8 +69,6 @@ pub fn menu_items(s: &Settings, pinned: bool, login: Login, recorder: bool, oyen
     let style = |st: IdleStyle| {
         let label = match st {
             IdleStyle::Clock => "Clock",
-            // In the Oyen theme the eyes are Oyen's own.
-            IdleStyle::Eyes if s.theme == Theme::Oyen => "Oyen",
             IdleStyle::Eyes => "Eyes",
             IdleStyle::Minimal => "Minimal",
             IdleStyle::Hidden => "Hidden until hover",
@@ -82,7 +80,7 @@ pub fn menu_items(s: &Settings, pinned: bool, login: Login, recorder: bool, oyen
         item("Keep island open", MenuCmd::TogglePinned, pinned),
         MenuItem::Sub {
             label: "Theme".into(),
-            items: vec![theme("Classic", Theme::Classic), theme("Oyen", Theme::Oyen), theme("Glass", Theme::Glass), theme("Pill", Theme::Pill)],
+            items: vec![theme("Classic", Theme::Classic), theme("Cream", Theme::Cream), theme("Glass", Theme::Glass), theme("Pill", Theme::Pill)],
         },
         MenuItem::Sub { label: "Idle look".into(), items: crate::pill::status::looks(s.theme).iter().map(|l| style(*l)).collect() },
         item("Synced lyrics", MenuCmd::ToggleLyrics, s.lyrics),
@@ -252,31 +250,24 @@ fn build_into(mtm: MainThreadMarker, target: &MenuTarget, items: &[MenuItem], cm
     menu
 }
 
-/// Oyen's mark as a one-colour template image (macOS tints it for light and
-/// dark menu bars). Drawn from the mark's own outlines with the small cut's
-/// eyes, the size the logo uses at 32 px and below.
+/// The island's silhouette as a one-colour template image (macOS tints it for
+/// light and dark menu bars): the notch shape every theme but Pill hangs from
+/// the top edge.
 fn mark_image(mtm: MainThreadMarker) -> Option<Retained<NSImage>> {
     const PT: f64 = 18.0;
     const SCALE: f32 = 2.0;
     let px = (PT as f32 * SCALE) as usize;
     let bmp = crate::gfx::Bitmap::new(px, px, SCALE)?;
     let ctx: &CGContext = bmp.ctx();
-    let parse = |d: &str| poni_core::svgpath::parse(d).ok().map(|segs| crate::gfx::cg_path(&segs));
-    let (head, fold, eyes) = (parse(poni_core::oyen::mark::HEAD)?, parse(poni_core::oyen::mark::FOLD)?, parse(poni_core::oyen::mark::EYES_SMALL)?);
-    // The mark is 104 units wide, centred on y -11.04 in its own units.
+    // A 104-unit-wide island, 26 tall, its bottom corners rounded to 8.
+    let island = poni_core::svgpath::parse("M0 0 H104 V18 Q104 26 96 26 H8 Q0 26 0 18 Z").ok().map(|segs| crate::gfx::cg_path(&segs))?;
     let s = 16.5 / 104.0;
-    CGContext::translate_ctm(Some(ctx), PT / 2.0, PT / 2.0 + 11.04 * s);
+    CGContext::translate_ctm(Some(ctx), (PT - 104.0 * s) / 2.0, (PT - 26.0 * s) / 2.0);
     CGContext::scale_ctm(Some(ctx), s, s);
     CGContext::set_rgb_fill_color(Some(ctx), 0.0, 0.0, 0.0, 1.0);
-    for p in [&head, &fold] {
-        CGContext::begin_path(Some(ctx));
-        CGContext::add_path(Some(ctx), Some(p));
-        CGContext::fill_path(Some(ctx));
-    }
-    CGContext::set_blend_mode(Some(ctx), CGBlendMode::Clear);
     CGContext::begin_path(Some(ctx));
-    CGContext::add_path(Some(ctx), Some(&eyes));
-    CGContext::eo_fill_path(Some(ctx));
+    CGContext::add_path(Some(ctx), Some(&island));
+    CGContext::fill_path(Some(ctx));
     let cg = bmp.image()?;
     let img = NSImage::initWithCGImage_size(NSImage::alloc(), &cg, NSSize::new(PT as CGFloat, PT as CGFloat));
     img.setTemplate(true);

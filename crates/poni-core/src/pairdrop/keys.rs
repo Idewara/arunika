@@ -13,6 +13,8 @@ use sha2::{Digest, Sha256};
 /// Bytes in a pairing secret.
 pub const SECRET_LEN: usize = 16;
 
+// The "oyen-drop" names stay: they're the wire protocol phone pages from
+// older copies speak, so renaming them would break cross-version pairing.
 const ROOM: &[u8] = b"oyen-drop/1 room";
 const PROOF: &[u8] = b"oyen-drop/1 proof";
 const MAC: &[u8] = b"oyen-drop/1 mac";

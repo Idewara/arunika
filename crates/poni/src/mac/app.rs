@@ -20,7 +20,6 @@ use crate::icons::Icon;
 use crate::island::{Geom, Island, HIT_MARGIN, SHOULDER};
 use crate::menubar::{Login, MenuBar, MenuCmd};
 use crate::notch::{self, Fit, Notch};
-use crate::oyen;
 use crate::pages::{self, PageKind};
 use crate::paths;
 use crate::pill;
@@ -1735,7 +1734,7 @@ impl App {
     }
 
     /// How the island paints: the theme's look, or around a notch the one
-    /// that meets its black (Oyen goes black there).
+    /// that meets its black (Cream goes black there).
     fn look(&self) -> &'static Look {
         match self.screen.notch {
             Some(_) => poni_core::look::around_notch(self.st.settings.theme),
@@ -3231,7 +3230,7 @@ impl App {
                 self.on_oyenza(OyenzaEvent::Disconnected { by_server: false });
                 self.oyenza = None;
             }
-            // The themes on the real window: Glass, then Oyen and Glass
+            // The themes on the real window: Glass, then Cream and Glass
             // around a notch (one the screen pretends to have; CI's Macs
             // have none), open and resting in the menu bar's line.
             "glass-open" => {
@@ -3239,7 +3238,7 @@ impl App {
                 self.st.page = PageKind::Today;
                 self.expand();
             }
-            "glass-collapsed" | "notch-oyen-collapsed" | "pill-collapsed" => self.collapse(),
+            "glass-collapsed" | "notch-cream-collapsed" | "pill-collapsed" => self.collapse(),
             // Around the notch Pill rests in the menu bar's line: with nothing
             // playing and no timer, its resting ears (the time and the battery).
             "notch-pill-collapsed" => {
@@ -3275,7 +3274,7 @@ impl App {
                 self.on_pointer(Point::new(self.cx, pill::TOP_GAP / 2.0));
                 self.cancel_hover();
             }
-            "notch-oyen-open" => {
+            "notch-cream-open" => {
                 // The pointer from pill-hover leaves first, and the timer set
                 // aside for pill-music-cost comes back.
                 self.leave();
@@ -3284,7 +3283,7 @@ impl App {
                 }
                 window::fake_notch(Some(Notch::MACBOOK));
                 self.refresh_screen();
-                self.on_menu(MenuCmd::SetTheme(Theme::Oyen));
+                self.on_menu(MenuCmd::SetTheme(Theme::Cream));
                 self.st.page = PageKind::Today;
                 self.expand();
             }
@@ -3472,10 +3471,10 @@ impl App {
                 let what = glass::kind().unwrap_or("no glass view");
                 Some(("glass-theme", glass::shown() && self.look().material == Material::Glass, format!("{what} under the open island, {notch}")))
             }
-            "notch-oyen-open" | "notch-oyen-collapsed" => {
+            "notch-cream-open" | "notch-cream-collapsed" => {
                 let look = self.look();
-                let ok = self.screen.notch.is_some() && *look == poni_core::look::OYEN_NIGHT && !glass::shown();
-                Some(("oyen-around-notch", ok, format!("ground {:?}, ink {:?}, font {:?}", look.ground, look.ink, look.font)))
+                let ok = self.screen.notch.is_some() && *look == poni_core::look::CREAM_NIGHT && !glass::shown();
+                Some(("cream-around-notch", ok, format!("ground {:?}, ink {:?}, font {:?}", look.ground, look.ink, look.font)))
             }
             "pill-open" | "pill-collapsed" | "notch-pill-open" | "notch-pill-collapsed" => Some(self.pill_report()),
             "music-cost" | "pill-music-cost" => {
@@ -3821,10 +3820,10 @@ fn system_report(st: &AppState) -> (bool, String) {
     (ok, detail)
 }
 
-/// Oyen's orange in his theme, the Mac's accent colour otherwise.
+/// Cream's orange in its theme, the Mac's accent colour otherwise.
 fn theme_accent(theme: Theme) -> Color {
-    if oyen::on(theme) {
-        oyen::ORANGE
+    if theme == Theme::Cream {
+        poni_core::look::CREAM_ACCENT
     } else {
         services::system_accent().unwrap_or(palette::BLUE)
     }
@@ -3932,8 +3931,8 @@ const SMOKE_STEPS: [&str; 53] = [
     "pill-collapsed",
     "pill-hover",
     "pill-music-cost",
-    "notch-oyen-open",
-    "notch-oyen-collapsed",
+    "notch-cream-open",
+    "notch-cream-collapsed",
     "notch-glass-open",
     "notch-pill-open",
     "notch-pill-collapsed",

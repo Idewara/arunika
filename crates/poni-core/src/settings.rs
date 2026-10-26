@@ -27,9 +27,10 @@ pub enum Theme {
     /// The plain black island.
     #[default]
     Classic,
-    /// Oyen, the Oyenza cat, lives in the island: he peeks over its edge
-    /// while it rests, bobs to the music and takes Oyen's orange as accent.
-    Oyen,
+    /// Cream: warm cream paper, espresso ink and a soft orange accent.
+    /// ("oyen" is the name files from before the Cream rename carry.)
+    #[serde(alias = "oyen")]
+    Cream,
     /// Liquid glass: the island bends, frosts and tints what's under it.
     Glass,
     /// Pill: the island floats a little below the top edge as a black
@@ -318,8 +319,13 @@ mod tests {
         // Files written before themes existed keep the black island.
         let s: Settings = serde_json::from_str(r#"{"idle_style":"eyes"}"#).unwrap();
         assert_eq!(s.theme, Theme::Classic);
+        let s: Settings = serde_json::from_str(r#"{"theme":"cream"}"#).unwrap();
+        assert_eq!(s.theme, Theme::Cream);
+        // Files from before the Cream rename read "oyen" as Cream.
         let s: Settings = serde_json::from_str(r#"{"theme":"oyen"}"#).unwrap();
-        assert_eq!(s.theme, Theme::Oyen);
+        assert_eq!(s.theme, Theme::Cream);
+        // New files write "cream".
+        assert!(serde_json::to_string(&Theme::Cream).unwrap().contains("cream"));
         let s: Settings = serde_json::from_str(r#"{"theme":"glass"}"#).unwrap();
         assert_eq!(s.theme, Theme::Glass);
         let s: Settings = serde_json::from_str(r#"{"theme":"pill"}"#).unwrap();

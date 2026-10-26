@@ -1321,7 +1321,8 @@ pub struct SelfTest {
     /// the next line on a held clock, one frame per refresh at that rate.
     scroll_hz: Option<f64>,
     dpi_applied: bool,
-    /// PONI_SELFTEST_THEME=oyen|glass|pill: run every scene in that theme.
+    /// PONI_SELFTEST_THEME=cream|glass|pill: run every scene in that theme
+    /// ("oyen" still reads as Cream).
     theme: Theme,
     /// Glass: which page is under the island (PONI_SELFTEST_GLASS), the
     /// window size its backdrop was drawn for, and the scene last seeded.
@@ -1394,7 +1395,8 @@ impl SelfTest {
             scroll_hz: std::env::var("PONI_SELFTEST_SCROLL").ok().and_then(|v| v.trim().parse().ok()).filter(|hz: &f64| (20.0..=500.0).contains(hz)),
             dpi_applied: false,
             theme: match std::env::var("PONI_SELFTEST_THEME").map(|v| v.trim().to_ascii_lowercase()).as_deref() {
-                Ok("oyen") => Theme::Oyen,
+                // "oyen": the Cream theme's name before the rename.
+                Ok("cream") | Ok("oyen") => Theme::Cream,
                 Ok("glass") => Theme::Glass,
                 Ok("pill") => Theme::Pill,
                 _ => Theme::Classic,
@@ -1491,8 +1493,8 @@ impl SelfTest {
             let works = crate::services::romanize::analyzer_works();
             self.checks.push(check("japanese-analyzer", works.is_ok(), works.err().unwrap_or_else(|| "Windows' analyzer reads Japanese".into())));
         }
-        // PONI_SELFTEST_JA_DICT=<file> (CI passes the repo's copy): Oyen
-        // Poni's own dictionary, put where the Japanese readings add-on keeps
+        // PONI_SELFTEST_JA_DICT=<file> (CI passes the repo's copy): Arunika's
+        // own dictionary, put where the Japanese readings add-on keeps
         // it, so the run reads Japanese the way a PC with the add-on does.
         if let Ok(src) = std::env::var("PONI_SELFTEST_JA_DICT") {
             let file = &JAPANESE_READINGS.files[0];
@@ -1856,7 +1858,7 @@ impl SelfTest {
         };
         if st.settings.theme != self.theme {
             st.settings.theme = self.theme;
-            st.accent = if self.theme == Theme::Oyen { crate::oyen::ORANGE } else { palette::BLUE };
+            st.accent = if self.theme == Theme::Cream { poni_core::look::CREAM_ACCENT } else { palette::BLUE };
         }
         if let Some(run) = self.glass {
             // What's under the window: drawn again whenever the window grows.

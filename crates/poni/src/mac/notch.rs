@@ -27,7 +27,6 @@ use crate::activities::{self, Activity, Mode};
 use crate::gfx::{Canvas, TextStyle, Weight};
 use crate::icons::Icon;
 use crate::island::{Geom, SHOULDER};
-use crate::oyen;
 use crate::pill;
 use crate::state::AppState;
 use crate::ui::Ui;
@@ -142,11 +141,10 @@ fn ear(m: &Mode, st: &AppState) -> f32 {
             }
         }
         Mode::Idle => {
-            let clock = if st.settings.use_24h { 64.0 } else { 84.0 };
-            if oyen::on(st.settings.theme) {
-                clock + 6.0
+            if st.settings.use_24h {
+                64.0
             } else {
-                clock
+                84.0
             }
         }
         Mode::Activity(Activity::Timer) => {
@@ -277,15 +275,6 @@ pub fn draw_ears(ui: &mut Ui, st: &mut AppState, m: &Mode, body: Rect, n: Notch)
     }
     match m {
         Mode::Idle => {
-            if oyen::on(st.settings.theme) {
-                // Oyen rests in the left ear and watches the cursor.
-                let look = ui.input.mouse.map(|p| (p.x - body.center().x) / (body.w / 2.0));
-                let (frame, moving) = oyen::rest(st.now, st.local.hour < 5, look);
-                if moving {
-                    ui.request_anim();
-                }
-                oyen::peek(ui.c, &frame, left.center().x + 4.0, body.bottom() - 5.0, 22.0, body.y + 1.0);
-            }
             let time = fmt_clock(&st.local, st.settings.use_24h);
             let ts = TextStyle::body().weight(Weight::Semibold).tabular().center();
             ui.c.text(&time, right.inset(4.0, 0.0), &ts);
@@ -321,7 +310,7 @@ pub fn draw_ears(ui: &mut Ui, st: &mut AppState, m: &Mode, body: Rect, n: Notch)
             ui.c.text(&format!("{mins} min"), Rect::new(right.x, body.y, right.w - 6.0, body.h), &ts);
             true
         }
-        // Art left and bars (or Oyen) right, no words under the camera: the
+        // Art left and bars right, no words under the camera: the
         // sung line hangs below the notch instead (`fit`).
         Mode::Activity(Activity::Media) => {
             activities::draw_music(ui, st, body, false);

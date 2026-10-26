@@ -195,38 +195,38 @@ jobs:
           "ready: $ready, files: $have, deleted when off: $gone, folder left: $left"
           if (-not $ready -or $have -ne 3 -or -not $gone -or $left) { exit 1 }
 
-      # The Oyen theme (cream look, embedded Outfit font) with the sample song in
+      # The Cream theme (cream look, embedded Outfit font) with the sample song in
       # Japanese: its pronunciation line comes from Windows' own reading
       # analyzer, which Wine doesn't have, so this is where it gets checked.
       # Every line must read (kanji lines too), from a worker thread like the
       # real lyrics lookup.
-      - name: Self-test, Oyen theme, Japanese lyrics
+      - name: Self-test, Cream theme, Japanese lyrics
         if: matrix.group == 'classic'
         shell: pwsh
         env:
-          PONI_SELFTEST_THEME: oyen
+          PONI_SELFTEST_THEME: cream
           PONI_SELFTEST_LYRICS: ja
           PONI_SELFTEST_ANALYZER: required
         run: |
           Add-Type -AssemblyName System.Windows.Forms
-          Add-Type -Namespace PoniCiOyen -Name User32 -MemberDefinition '[DllImport("user32.dll")] public static extern bool SetCursorPos(int x, int y);'
+          Add-Type -Namespace PoniCiCream -Name User32 -MemberDefinition '[DllImport("user32.dll")] public static extern bool SetCursorPos(int x, int y);'
           $b = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
-          [PoniCiOyen.User32]::SetCursorPos([int]($b.Width / 2), [int]($b.Height / 2)) | Out-Null
+          [PoniCiCream.User32]::SetCursorPos([int]($b.Width / 2), [int]($b.Height / 2)) | Out-Null
 
-          New-Item -ItemType Directory -Force -Path selftest-oyen-ja | Out-Null
-          $p = Start-Process -FilePath target\release\poni.exe -ArgumentList "--selftest","selftest-oyen-ja" -PassThru
+          New-Item -ItemType Directory -Force -Path selftest-cream-ja | Out-Null
+          $p = Start-Process -FilePath target\release\poni.exe -ArgumentList "--selftest","selftest-cream-ja" -PassThru
           $null = $p.Handle
           if (-not $p.WaitForExit(120000)) { Stop-Process -Id $p.Id -Force; $code = -1 } else { $code = $p.ExitCode }
-          "oyen + japanese self-test exit code: $code"
-          if (Test-Path selftest-oyen-ja\report.json) {
-            $r = Get-Content selftest-oyen-ja\report.json -Raw | ConvertFrom-Json
+          "cream + japanese self-test exit code: $code"
+          if (Test-Path selftest-cream-ja\report.json) {
+            $r = Get-Content selftest-cream-ja\report.json -Raw | ConvertFrom-Json
             "renderer: $($r.renderer); states passed: $($r.states_passed)/$($r.states_total); failed: $($r.failed_checks -join ', ')"
             if ($r.slow_frames) { "::warning title=Slow frames on CI's software GPU (not counted)::$($r.slow_frames -join '; ')" }
           }
           "---- pronunciation (poni.log)"
-          Select-String -Path selftest-oyen-ja\home\cache\poni.log -Pattern 'selftest: \[ja\]|fonts:|reading analyzer' -ErrorAction SilentlyContinue | ForEach-Object { $_.Line }
+          Select-String -Path selftest-cream-ja\home\cache\poni.log -Pattern 'selftest: \[ja\]|fonts:|reading analyzer' -ErrorAction SilentlyContinue | ForEach-Object { $_.Line }
           if ($code -ne 0) {
-            Get-Content selftest-oyen-ja\home\cache\poni.log -Tail 80 -ErrorAction SilentlyContinue
+            Get-Content selftest-cream-ja\home\cache\poni.log -Tail 80 -ErrorAction SilentlyContinue
             exit 1
           }
 
@@ -238,7 +238,7 @@ jobs:
         if: matrix.group == 'classic'
         shell: pwsh
         env:
-          PONI_SELFTEST_THEME: oyen
+          PONI_SELFTEST_THEME: cream
           PONI_SELFTEST_LYRICS: ja
           PONI_SELFTEST_ANALYZER: "off"
           PONI_SELFTEST_JA_DICT: crates\poni-core\data\ja-readings.dic.zst
@@ -408,7 +408,7 @@ jobs:
           name: poni-screens-${{ matrix.group }}
           path: |
             selftest-out
-            selftest-oyen-ja
+            selftest-cream-ja
             selftest-ja-own
             selftest-glass-light
             selftest-glass-dark

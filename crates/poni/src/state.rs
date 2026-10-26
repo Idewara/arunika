@@ -292,8 +292,6 @@ pub struct PageUiState {
     pub before_settings: Option<PageKind>,
     /// Start with Windows, as last read off the UI thread (None until Settings first opens).
     pub autostart: Option<bool>,
-    /// Oyen theme: the music notes floating up in the media pill.
-    pub notes: crate::oyen::Notes,
 }
 
 /// Whether Windows lets Arunika read a game's frames. Its event tracing
@@ -682,9 +680,9 @@ impl AppState {
     }
 
     /// Accent for media UI: art colour when available, else the system accent.
-    /// The Oyen theme keeps to Oyen's orange.
+    /// The Cream theme keeps to its own orange.
     pub fn media_accent(&self) -> Color {
-        if self.settings.theme == poni_core::settings::Theme::Oyen {
+        if self.settings.theme == poni_core::settings::Theme::Cream {
             return self.accent;
         }
         self.media.as_ref().and_then(|m| m.art_color).unwrap_or(self.accent)

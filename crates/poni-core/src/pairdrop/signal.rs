@@ -53,6 +53,8 @@ impl Msg {
     }
 
     fn text(&self, room: &str) -> String {
+        // "oyen-drop/1" is the wire protocol's version line; it stays so
+        // phone pages from older copies still pair.
         format!("oyen-drop/1\n{room}\n{}\n{}\n{}\n{}\n{}", self.t, self.sid, self.ts, self.name, self.sdp)
     }
 

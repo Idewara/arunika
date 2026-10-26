@@ -209,7 +209,7 @@ pub fn content_height(p: PageKind, st: &AppState) -> f32 {
 /// for the app's wake timer; until it asks, such changes show on the next
 /// repaint.
 pub fn next_wake(page: PageKind, st: &AppState) -> Option<f64> {
-    let wake = match page {
+    match page {
         PageKind::Clipboard => clipboard::next_wake(st),
         PageKind::Tasks => tasks::next_wake(st),
         PageKind::Shelf => shelf::next_wake(st),
@@ -218,12 +218,6 @@ pub fn next_wake(page: PageKind, st: &AppState) -> Option<f64> {
         PageKind::Script => script::next_wake(st),
         PageKind::Prayer => prayer::next_wake(st),
         _ => None,
-    };
-    // Oyen in the header blinks and flicks an ear now and then.
-    let oyen = crate::oyen::on(st.settings.theme).then(|| crate::oyen::next_rest_move(st.now));
-    match (wake, oyen) {
-        (Some(a), Some(b)) => Some(a.min(b)),
-        (a, b) => a.or(b),
     }
 }
 
@@ -366,10 +360,6 @@ const PIN_GAP: f32 = 10.0;
 const PIN: f32 = 28.0;
 const GEAR: f32 = 28.0;
 const GEAR_GAP: f32 = 2.0;
-/// His theme: Oyen peeks up beside the pin, as he does beside the clock when
-/// the island is closed.
-const OYEN_W: f32 = 24.0;
-const OYEN_GAP: f32 = 6.0;
 /// Hover labels: dwell, fade-in, capsule metrics.
 const TIP_DELAY: f64 = 0.4;
 const TIP_FADE: f64 = 0.12;
@@ -482,16 +472,6 @@ pub(crate) fn draw_header(ui: &mut Ui, st: &mut AppState, r: Rect, page: PageKin
 
     let gear_r = Rect::new(snap(left - PIN_GAP - GEAR, scale), cy - GEAR / 2.0, GEAR, GEAR);
     let pin_r = Rect::new(snap(gear_r.x - GEAR_GAP - PIN, scale), cy - PIN / 2.0, PIN, PIN);
-    let oyen_cx = pin_r.x - OYEN_GAP - OYEN_W / 2.0;
-    if crate::oyen::on(st.settings.theme) && oyen_cx - OYEN_W / 2.0 > tabs_end + 12.0 {
-        // Eyes on the cursor while it is over the island; asleep at night.
-        let look = ui.input.mouse.map(|p| ((p.x - r.center().x) / (r.w / 2.0)).clamp(-1.0, 1.0));
-        let (frame, moving) = crate::oyen::rest(st.now, st.local.hour < 5, look);
-        if moving {
-            ui.request_anim();
-        }
-        crate::oyen::peek(ui.c, &frame, oyen_cx, cy + 9.0, OYEN_W, r.y);
-    }
     if pin_r.x > tabs_end + 8.0 {
         let pinned = st.pinned;
         let (icon, color) = if pinned { (Icon::PinFill, st.accent) } else { (Icon::Pin, palette::TEXT_FAINT) };
