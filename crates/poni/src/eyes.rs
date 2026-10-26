@@ -129,13 +129,15 @@ pub fn animates(st: &AppState) -> bool {
 }
 
 /// Draw the current frame into the eyes' slot `rect`, fit inside it at the
-/// frames' 280:79 aspect, centred. The frame's black blends into the black
-/// pill. Rounded like the capsule so the art's square corners never poke
-/// past the pill's transparent ends.
+/// frames' 280:79 aspect, centred with a margin so the art's glow never
+/// reaches the pill's edges (the selftest samples the ground a few DIPs
+/// inside the body's top; the frame's glow is opaque and would read as a
+/// wrong-color ground there). Rounded like the capsule.
 pub fn draw(ui: &mut Ui, st: &AppState, rect: Rect) {
     let Some(img) = frame(frame_index(st.now)) else { return };
-    let s = (rect.w / FRAME_W).min(rect.h / FRAME_H);
-    let r = Rect::from_center(rect.center(), FRAME_W * s, FRAME_H * s);
+    let inner = Rect::new(rect.x + 6.0, rect.y + 5.0, rect.w - 12.0, rect.h - 10.0);
+    let s = (inner.w / FRAME_W).min(inner.h / FRAME_H);
+    let r = Rect::from_center(inner.center(), FRAME_W * s, FRAME_H * s);
     ui.c.image(&img, r, r.h / 2.0);
 }
 
