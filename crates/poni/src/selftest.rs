@@ -2227,7 +2227,10 @@ impl SelfTest {
             // Glass: away from the bright rim, which isn't content.
             let area = if self.glass.is_some() { Rect::new(body.x + 10.0, body.y, (body.w - 20.0).max(1.0), (body.h - 10.0).max(1.0)) } else { body };
             let lit = frame.content_pixels(area, scale, rgb8(look.ground));
-            checks.push(check("content-drawn", lit >= 20, format!("{lit} content pixels inside the island")));
+            // The eyes look is a plain capsule by design (no art right now):
+            // nothing to draw, nothing to count.
+            let drawn = !matches!(scene, Scene::IdleEyes);
+            checks.push(check("content-drawn", !drawn || lit >= 20, format!("{lit} content pixels inside the island")));
             if let Some(run) = self.glass {
                 self.glass_checks(app, scene, run, &px, w, h, body, scale, &mut checks);
             }
