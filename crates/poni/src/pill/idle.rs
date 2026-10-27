@@ -35,7 +35,7 @@ const PCT_INK: Color = Color::white(0.55);
 /// Minimal: a small blank capsule, nothing in it but something to hover.
 const MINIMAL_W: f32 = 96.0;
 const MINIMAL_H: f32 = 24.0;
-/// Eyes: the island's two eyes over their nebula, in a wider, taller capsule.
+/// Eyes: a wider, taller capsule, plain inside until a look's art moves in.
 const EYES_W: f32 = 168.0;
 const EYES_H: f32 = 44.0;
 

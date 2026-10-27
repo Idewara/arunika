@@ -1,5 +1,5 @@
 //! Dependency-free PNG codec (self-test screenshots, generated sample files,
-//! the embedded idle-eyes art).
+//! small art embedded in the exe).
 //!
 //! Writes 8-bit, non-interlaced RGBA or greyscale images. Each row gets the
 //! PNG filter with the smallest sum of absolute differences (the classic
@@ -12,8 +12,8 @@
 //! non-interlaced, colour types 0 (grey), 2 (RGB), 4 (grey + alpha) and 6
 //! (RGBA), any RFC 1950 block layout. Album art and thumbnails stay with the
 //! platform decoders (`services::imaging`, `mac/services/thumbs`); this one
-//! is for small art embedded in the exe (the eyes frames): no COM, no
-//! threads, no new dependencies.
+//! is for small art embedded in the exe: no COM, no threads, no new
+//! dependencies.
 
 use std::path::Path;
 
@@ -1102,18 +1102,17 @@ mod tests {
     }
 
     #[test]
-    fn the_decoder_reads_the_embedded_eyes_art() {
+    fn the_decoder_reads_a_real_rgba_png_with_alpha() {
         // A real zlib stream (dynamic-huffman blocks, every filter type) from
-        // the app's own assets, checksummed chunk by chunk on the way in.
-        // The frames are RGBA: the video's black background is transparent
-        // (flood-keyed from the borders), the eyes and their glow opaque.
-        let png: &[u8] = include_bytes!("../res/eyes/frame_00.png");
-        let d = crate::png::decode(png).expect("the eyes art decodes");
-        assert_eq!((d.width, d.height), (280, 79));
-        assert!(d.pixels.chunks_exact(4).any(|p| p[3] == 255), "has opaque pixels (the eyes)");
-        assert!(d.pixels.chunks_exact(4).any(|p| p[3] == 0), "has transparent pixels (the keyed background)");
+        // the repo's own assets, checksummed chunk by chunk on the way in.
+        // The logo is RGBA: the art is opaque, the background transparent.
+        let png: &[u8] = include_bytes!("../../../docs/brand/arunika-logo-512.png");
+        let d = crate::png::decode(png).expect("the logo decodes");
+        assert_eq!((d.width, d.height), (512, 512));
+        assert!(d.pixels.chunks_exact(4).any(|p| p[3] == 255), "has opaque pixels (the art)");
+        assert!(d.pixels.chunks_exact(4).any(|p| p[3] == 0), "has transparent pixels (the background)");
         assert!(d.pixels.chunks_exact(4).any(|p| p[0] > 0 || p[1] > 0 || p[2] > 0), "has the art's pixels");
-        assert_eq!(d.pixels.len(), (280 * 79 * 4) as usize);
+        assert_eq!(d.pixels.len(), (512 * 512 * 4) as usize);
         // Corruption and truncation are refused, not rendered.
         let mut bad = png.to_vec();
         let i = bad.len() - 20;

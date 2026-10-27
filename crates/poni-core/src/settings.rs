@@ -11,8 +11,8 @@ pub enum IdleStyle {
     Clock,
     /// Small blank pill (like a MacBook notch).
     Minimal,
-    /// A friendly pair of eyes (the default): they blink, glance around on
-    /// their own and follow the cursor.
+    /// A wider, taller capsule (the default), plain for now: a look's art
+    /// can move in later without the pill resizing.
     Eyes,
     /// Nothing visible until the cursor reaches the top edge.
     Hidden,

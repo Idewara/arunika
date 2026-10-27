@@ -287,15 +287,15 @@ fn hidden_strip() -> Geom {
     Geom::new(150.0, 5.0, 2.5)
 }
 
-/// Needs continuous ambient frames (near 60 fps): the idle eyes' sprite
-/// playback and the animated equalizer while music plays. A paused
-/// (lingering) pill is static.
+/// Needs continuous ambient frames (near 60 fps): the animated equalizer
+/// while music plays. A paused (lingering) pill is static; so is the idle
+/// pill, whatever look it wears.
 pub fn is_live(m: &Mode, st: &AppState) -> bool {
     if let Some(live) = crate::pill::is_live(m, st) {
         return live;
     }
     match m {
-        Mode::Idle => crate::eyes::animates(st),
+        Mode::Idle => false,
         Mode::Activity(Activity::Media) | Mode::Activity(Activity::MediaTimer) => {
             st.media.as_ref().is_some_and(|m| m.is_playing())
         }
@@ -305,8 +305,8 @@ pub fn is_live(m: &Mode, st: &AppState) -> bool {
 
 /// Next time the collapsed content changes on its own: a paused pill giving
 /// way to idle, the title peek ending. One-shot wakes, so the app stays at
-/// zero CPU in between. (The idle eyes need none: while they show, `is_live`
-/// keeps the ambient frames coming; the sprite is a function of `st.now`.)
+/// zero CPU in between. (The idle looks need none: while they show, nothing
+/// moves, so no ambient frames run and no wakes are scheduled.)
 pub fn next_wake(m: &Mode, st: &AppState) -> Option<f64> {
     let now = st.now;
     let mut next: Option<f64> = None;
@@ -334,15 +334,15 @@ pub fn next_wake(m: &Mode, st: &AppState) -> Option<f64> {
     next
 }
 
-// ------------------------------------------------------------- the eyes
+// ------------------------------------------------------- the idle capsule
 
-/// The Eyes look's island: bigger than the clock's, room for the art and
-/// the nebula behind it.
+/// The Eyes look's island: bigger than the clock's, a plain black capsule
+/// with room for whatever content a future look draws there.
 const EYES_W: f32 = 168.0;
 const EYES_H: f32 = 44.0;
 
-/// The two eyes are the reference video's frames played back by [`crate::eyes`];
-/// this module only decides when they show and reserves their slot.
+/// The Eyes look draws nothing inside its capsule today; this module only
+/// decides when the look shows and reserves its slot.
 
 pub fn draw(ui: &mut Ui, st: &mut AppState, m: &Mode, body: Rect) {
     if crate::pill::draw(ui, st, m, body) {
@@ -394,8 +394,7 @@ fn draw_idle(ui: &mut Ui, st: &mut AppState, body: Rect) {
             }
             ui.c.text(&time, Rect::new(x0 + bw + BADGE_GAP, body.y, tw + 2.0, body.h), &ts);
         }
-        IdleStyle::Eyes => crate::eyes::draw(ui, st, body),
-        IdleStyle::Minimal | IdleStyle::Hidden => {}
+        IdleStyle::Eyes | IdleStyle::Minimal | IdleStyle::Hidden => {}
     }
 }
 
@@ -865,9 +864,9 @@ mod tests {
         st.settings.idle_style = IdleStyle::Eyes;
         assert_eq!(idle_look(&st), IdleStyle::Eyes);
         assert_eq!(geom(&Mode::Idle, &st), Geom::new(168.0, 44.0, 22.0));
-        // The eyes showing, their frames advance; no scheduled wakes needed
-        // (the sprite is a function of `st.now`, driven by the ambient frames).
-        assert!(is_live(&Mode::Idle, &st));
+        // The eyes look is a plain capsule: nothing animates, nothing is
+        // scheduled; it rests like Minimal and Hidden.
+        assert!(!is_live(&Mode::Idle, &st));
         assert_eq!(next_wake(&Mode::Idle, &st), None);
         // The pointer on the island: the clock look, at the eyes' size, so
         // the pill doesn't shrink out from under it; static, so no frames.
@@ -877,18 +876,9 @@ mod tests {
         assert!(!is_live(&Mode::Idle, &st));
         st.hovering = false;
         assert_eq!(idle_look(&st), IdleStyle::Eyes);
-        assert!(is_live(&Mode::Idle, &st));
-        // ...and they rest on battery saver, as the equalizer's frames do.
+        assert!(!is_live(&Mode::Idle, &st));
         st.power.saver = true;
         assert!(!is_live(&Mode::Idle, &st));
-    }
-
-    #[test]
-    fn the_eyes_frames_step_with_the_clock() {
-        assert_eq!(crate::eyes::frame_index(0.0), 0);
-        assert_eq!(crate::eyes::frame_index(1.0), 15);
-        assert_eq!(crate::eyes::frame_index(4.0), 0, "the 4-second loop wraps");
-        assert_eq!(crate::eyes::frame_index(-1.0), 0, "negative times clamp");
     }
 
     #[test]
